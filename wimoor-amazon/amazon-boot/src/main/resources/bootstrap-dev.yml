@@ -10,13 +10,13 @@ spring:
       # 注册中心
       discovery:
         server-addr: 127.0.0.1:8848
-        ip: 192.168.0.129
-        namespace: prod_liuyulin
+        ip: 127.0.0.1
+        namespace: public
       # 配置中心
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
         file-extension: yaml
-        namespace: prod_liuyulin
+        namespace: public
         # 公共配置
         shared-configs[0]: 
           data-id: wimoor-common
