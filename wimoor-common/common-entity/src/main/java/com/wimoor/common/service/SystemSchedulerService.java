@@ -59,7 +59,9 @@ public interface SystemSchedulerService {
 	List<QuartzJobsVO> listScheduler();
 	  
 	public void refreshTask();
+
 	public void deleteAllTask() ;
+
 	public void insertTask();
 
     public List<QuartzTask> getTaskList();

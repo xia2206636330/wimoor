@@ -403,6 +403,7 @@ public class AdvertController extends ERPBaseController<AmzAdvAuth> {
 		} 
 	}	 
 	@GetMapping(value = "/bindUrl")
+	//todo:亚马逊广告授权(当前授权只局限于2020-12-10之后获取到的授权)
 	public Result<String> bindUrlAction(String groupid,String region)  {
 		String prefix = null;
 		if("NA".equals(region)){
@@ -414,7 +415,7 @@ public class AdvertController extends ERPBaseController<AmzAdvAuth> {
 		} 
 		AmzRegion authRegion = amzAdvAuthService.getRegion(region);
 		String myurl = prefix + "?client_id=" + authRegion.getClientId()
-				  + "&scope=cpc_advertising:campaign_management&response_type=code&state=" + region 
+				  + "&scope=advertising::campaign_management&response_type=code&state=" + region
 				  + "_" + groupid + "&redirect_uri=" + amzAdvAuthService.getRedirecturl();
 	    return Result.success(myurl);
 	 

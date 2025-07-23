@@ -374,8 +374,7 @@ public class AmazonAuthorityServiceImpl extends ServiceImpl<AmazonAuthorityMappe
 	
 	@Override
 	@CacheEvict(value = { "AmazonAuthorityCache","authmarketplaceListCache" }, allEntries = true)
-	public AmazonAuthority authSeller(String state, String selling_partner_id, String mws_auth_token,
-			String spapi_oauth_code) {
+	public AmazonAuthority authSeller(String state, String selling_partner_id, String mws_auth_token, String spapi_oauth_code) {
 		// TODO Auto-generated method stub
 		AmazonAuthority auth=new AmazonAuthority();
 		auth.setSellerid(selling_partner_id);
