@@ -24,3 +24,4 @@ spring:
         shared-configs[1]: 
           data-id: wimoor-commom-ext
           refresh: true
+          # 测试分支提交
