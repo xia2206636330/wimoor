@@ -142,9 +142,13 @@ group by concat( year(v.byday) ,'-' ,month(v.byday))
             UNION
             SELECT 'products' ftype,COUNT(t.profileid) nums FROM t_amz_adv_productads_sd t WHERE t.campaignId=#{param.campaignid,jdbcType=BIGINT}
             UNION
-            SELECT 'targets' ftype,COUNT(t.profileid) nums FROM t_amz_adv_product_targe_sd t WHERE t.campaignId=#{param.campaignid,jdbcType=BIGINT}
+            SELECT 'targets' ftype,COUNT(t.profileid) nums FROM t_amz_adv_product_targe_sd t
+            left join t_amz_adv_adgroups_sd t1 on t.adGroupId=t1.adGroupId
+            WHERE t1.campaignId=#{param.campaignid,jdbcType=BIGINT}
             UNION
-            SELECT 'negtargets' ftype,COUNT(t.profileid) nums FROM t_amz_adv_product_targe_negativa_sd t WHERE t.campaignId=#{param.campaignid,jdbcType=BIGINT}
+            SELECT 'negtargets' ftype,COUNT(t.profileid) nums FROM t_amz_adv_product_targe_negativa_sd t
+            left join t_amz_adv_adgroups_sd t1 on t.adGroupId=t1.adGroupId
+            WHERE t1.campaignId=#{param.campaignid,jdbcType=BIGINT}
             UNION
             SELECT 'targetsquery' ftype,COUNT(t.profileid) nums FROM t_amz_adv_rpt2_sd_product_targets t WHERE t.campaignId=#{param.campaignid,jdbcType=BIGINT}  AND t.profileid=#{param.profileid,jdbcType=BIGINT}
             AND t.bydate>=#{param.fromDate,jdbcType=CHAR}

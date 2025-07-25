@@ -77,7 +77,8 @@
 		CAST( acc.amazonauthid AS CHAR) amazonauthid,
 		acc.settlement_start_date startDate,acc.settlement_end_date endDate,acc.total_amount totalAmount,
 		acc.currency, acc.marketplace_name,m.name marketName ,g.name groupname,acc.deposit_date,'finsett' fatype,
-		c.processing_status pstatus,case when acc.invalid=1 then 'Failed' else ifnull(c.fund_transfer_status,'Succeeded') end  tstatus
+		c.processing_status pstatus,case when acc.invalid=1 then 'Failed' else ifnull(c.fund_transfer_status,'Succeeded') end  tstatus,
+		acc.sumtime
 		from t_amz_settlement_acc_report acc
 		LEFT JOIN t_amz_fin_account c ON c.amazonAuthid=acc.amazonauthid AND c.financial_event_group_start=acc.settlement_start_date
 		AND c.financial_event_group_end=acc.settlement_end_date  AND c.currency=acc.currency

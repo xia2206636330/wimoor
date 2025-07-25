@@ -1,4 +1,9 @@
-
+-- --------------------------------------------------------
+-- 主机:                           wimoor.rwlb.rds.aliyuncs.com
+-- 服务器版本:                        8.0.36 - Source distribution
+-- 服务器操作系统:                      Linux
+-- HeidiSQL 版本:                  12.6.0.6765
+-- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -8,11 +13,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
--- 导出 db_erp 的数据库结构
-CREATE DATABASE IF NOT EXISTS `db_erp` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db_erp`;
 
 -- 导出  表 db_erp.t_dimensions 结构
 CREATE TABLE IF NOT EXISTS `t_dimensions` (
@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_assembly_form_checkinv` (
   `isrun` bit(1) DEFAULT b'0',
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -178,7 +178,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_customer` (
   `opttime` datetime DEFAULT NULL COMMENT '修改时间',
   `oldid` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name_shopid` (`shopid`,`name`)
+  UNIQUE KEY `name_shopid` (`shopid`,`name`),
+  UNIQUE KEY `number_shopid` (`number`,`shopid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -228,7 +229,39 @@ CREATE TABLE IF NOT EXISTS `t_erp_dispatch_form_record` (
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `formid` (`formid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_dispatch_oversea_box 结构
+CREATE TABLE IF NOT EXISTS `t_erp_dispatch_oversea_box` (
+  `id` bigint unsigned NOT NULL,
+  `formid` bigint unsigned DEFAULT NULL,
+  `boxnum` int DEFAULT NULL,
+  `length` decimal(15,2) DEFAULT NULL,
+  `width` decimal(15,2) DEFAULT NULL,
+  `height` decimal(15,2) DEFAULT NULL,
+  `unit` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `weight` decimal(15,2) DEFAULT NULL,
+  `wunit` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  `operator` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `shipmentid_boxnum` (`formid`,`boxnum`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_dispatch_oversea_case 结构
+CREATE TABLE IF NOT EXISTS `t_erp_dispatch_oversea_case` (
+  `id` bigint unsigned NOT NULL,
+  `boxid` bigint unsigned DEFAULT NULL,
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `shipmentid` (`boxid`,`sku`) USING BTREE,
+  KEY `sku` (`sku`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -248,6 +281,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_dispatch_oversea_form` (
   `opttime` datetime DEFAULT NULL,
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `auditstatus` int DEFAULT NULL,
+  `boxnum` int DEFAULT NULL,
   `createdate` datetime DEFAULT NULL,
   `arrivalTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -305,10 +339,10 @@ CREATE TABLE IF NOT EXISTS `t_erp_download_report` (
   `log` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `content` longblob,
   `createtime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `shopid` (`shopid`),
-  KEY `ftype_userid` (`ftype`,`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`id`),
+  KEY `ftype_userid` (`ftype`,`userid`),
+  KEY `shopid` (`shopid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -410,23 +444,6 @@ CREATE TABLE IF NOT EXISTS `t_erp_formtype` (
 
 -- 导出  表 db_erp.t_erp_inventory 结构
 CREATE TABLE IF NOT EXISTS `t_erp_inventory` (
-  `id` bigint unsigned NOT NULL,
-  `warehouseid` bigint unsigned NOT NULL DEFAULT '0',
-  `shopid` bigint unsigned NOT NULL,
-  `materialid` bigint unsigned NOT NULL,
-  `quantity` int DEFAULT '0',
-  `status` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `operator` bigint unsigned DEFAULT NULL,
-  `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `index_w_s_m_s` (`warehouseid`,`materialid`,`shopid`,`status`),
-  KEY `FK_t_erp_inventory_t_erp_material` (`materialid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
-
--- 数据导出被取消选择。
-
--- 导出  表 db_erp.t_erp_inventory_bkp20240613 结构
-CREATE TABLE IF NOT EXISTS `t_erp_inventory_bkp20240613` (
   `id` bigint unsigned NOT NULL,
   `warehouseid` bigint unsigned NOT NULL DEFAULT '0',
   `shopid` bigint unsigned NOT NULL,
@@ -649,12 +666,12 @@ CREATE TABLE IF NOT EXISTS `t_erp_material` (
   `mtype` int DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `skurepeat` (`sku`,`shopid`),
+  KEY `shop_delete_sku_color` (`shopid`,`isDelete`,`mtype`,`issfg`),
   KEY `supplier` (`supplier`),
+  KEY `Index 4` (`shopid`,`owner`,`sku`,`id`),
   KEY `FK_t_erp_material_t_erp_material_sku` (`sku`,`shopid`,`isDelete`),
   KEY `opttime` (`shopid`,`opttime`),
-  KEY `categoryid` (`categoryid`),
-  KEY `shop_delete_sku_color` (`shopid`,`isDelete`,`mtype`,`issfg`) USING BTREE,
-  KEY `Index 4` (`shopid`,`owner`,`sku`,`id`) USING BTREE
+  KEY `categoryid` (`categoryid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -722,7 +739,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_material_consumable_safety_stock` (
   `shopid` bigint unsigned NOT NULL,
   `amount` int unsigned NOT NULL DEFAULT '0',
   `operator` bigint unsigned NOT NULL DEFAULT '0',
-  `opttime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `shopid` (`shopid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1819635035878256642 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
@@ -746,8 +763,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_material_customs` (
   `opttime` datetime DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
   `createtime` datetime DEFAULT NULL,
-  PRIMARY KEY (`materialid`,`country`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='海关表';
+  PRIMARY KEY (`materialid`,`country`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='海关表';
 
 -- 数据导出被取消选择。
 
@@ -769,11 +786,11 @@ CREATE TABLE IF NOT EXISTS `t_erp_material_customs_file` (
 -- 导出  表 db_erp.t_erp_material_customs_item 结构
 CREATE TABLE IF NOT EXISTS `t_erp_material_customs_item` (
   `materialid` bigint unsigned NOT NULL,
-  `country` char(10) NOT NULL COMMENT 'DE UK FR',
-  `code` char(10) DEFAULT NULL,
+  `country` char(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'DE UK FR',
+  `code` char(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `fee` decimal(10,2) DEFAULT NULL,
   `taxrate` decimal(10,2) DEFAULT NULL,
-  `currency` char(50) DEFAULT 'CNY',
+  `currency` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'CNY',
   PRIMARY KEY (`materialid`,`country`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
@@ -931,12 +948,15 @@ CREATE TABLE IF NOT EXISTS `t_erp_order` (
   `id` bigint unsigned NOT NULL,
   `platform_id` bigint unsigned DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
+  `country` char(10) COLLATE utf8mb4_bin DEFAULT NULL,
   `order_id` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `purchase_date` datetime DEFAULT NULL,
   `warehouseid` bigint unsigned DEFAULT NULL,
+  `thirdparty_warehouseid` bigint unsigned DEFAULT NULL,
   `isout` bit(1) DEFAULT NULL,
   `quantity` int DEFAULT NULL,
+  `currency` char(10) COLLATE utf8mb4_bin DEFAULT NULL,
   `price` decimal(20,6) DEFAULT NULL,
   `ship_fee` decimal(20,6) DEFAULT NULL,
   `referral_fee` decimal(20,6) DEFAULT NULL,
@@ -944,11 +964,11 @@ CREATE TABLE IF NOT EXISTS `t_erp_order` (
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `shopid` (`shopid`,`purchase_date`) USING BTREE,
-  KEY `order_id` (`order_id`),
+  UNIQUE KEY `order_id` (`shopid`,`order_id`,`sku`,`platform_id`) USING BTREE,
+  KEY `platform_id` (`platform_id`),
   KEY `sku` (`sku`),
-  KEY `platform_id` (`platform_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  KEY `shopid` (`purchase_date`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -974,8 +994,46 @@ CREATE TABLE IF NOT EXISTS `t_erp_order_invoice` (
   `createtime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `country_shopid` (`country`,`shopid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_order_listing 结构
+CREATE TABLE IF NOT EXISTS `t_erp_order_listing` (
+  `id` bigint unsigned NOT NULL,
+  `shopid` bigint unsigned DEFAULT NULL,
+  `warehouseid` bigint unsigned DEFAULT NULL COMMENT '本地海外仓id',
+  `country` char(5) COLLATE utf8mb4_bin DEFAULT NULL,
+  `sku` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `ename` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `msalesavg` int DEFAULT NULL,
+  `salesavg` int DEFAULT NULL,
+  `sales7` int DEFAULT NULL,
+  `sales15` int DEFAULT NULL,
+  `sales30` int DEFAULT NULL,
+  `qty` int DEFAULT NULL,
+  `shipqty` int DEFAULT NULL,
+  `purchaseqty` int DEFAULT NULL,
+  `msku` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `shopid_platform_id_country_sku` (`shopid`,`warehouseid`,`sku`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_order_plan 结构
+CREATE TABLE IF NOT EXISTS `t_erp_order_plan` (
+  `shopid` bigint unsigned NOT NULL,
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT '0：存储本地SKU，1存储平台SKU',
+  `warehouseid` bigint unsigned NOT NULL COMMENT '0：存储本地仓库，1：存储海外仓',
+  `quantity` int unsigned DEFAULT NULL,
+  `operator` bigint unsigned DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  `ftype` int DEFAULT NULL COMMENT '0:代表采购，1：代表发货',
+  PRIMARY KEY (`shopid`,`sku`,`warehouseid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -990,7 +1048,24 @@ CREATE TABLE IF NOT EXISTS `t_erp_order_platform` (
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `shopid_name` (`shopid`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_order_shipcycle 结构
+CREATE TABLE IF NOT EXISTS `t_erp_order_shipcycle` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `sku` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `warehouseid` bigint unsigned DEFAULT NULL,
+  `transtype` bigint unsigned DEFAULT NULL,
+  `stockingCycle` int DEFAULT NULL COMMENT '安全库存周期',
+  `min_cycle` int DEFAULT NULL COMMENT '最小发货周期',
+  `first_leg_charges` decimal(12,2) DEFAULT NULL COMMENT '头程运输成本',
+  `operator` bigint unsigned DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `sku_warehouseid` (`sku`,`warehouseid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=17392024503393378255 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='FBA仓库配置';
 
 -- 数据导出被取消选择。
 
@@ -998,8 +1073,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_order_platform` (
 CREATE TABLE IF NOT EXISTS `t_erp_order_ship_plan` (
   `shopid` bigint unsigned NOT NULL,
   `materialid` bigint unsigned NOT NULL,
-  PRIMARY KEY (`shopid`,`materialid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`shopid`,`materialid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1011,11 +1086,12 @@ CREATE TABLE IF NOT EXISTS `t_erp_order_ship_plan_form` (
   `auditstatus` int DEFAULT NULL,
   `audittime` datetime DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
+  `isout` bit(1) DEFAULT b'0',
   `operator` bigint unsigned DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `createtime` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1029,6 +1105,56 @@ CREATE TABLE IF NOT EXISTS `t_erp_order_ship_plan_form_entry` (
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `formid_materialid` (`formid`,`materialid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_order_sku_presale 结构
+CREATE TABLE IF NOT EXISTS `t_erp_order_sku_presale` (
+  `id` bigint unsigned NOT NULL,
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `warehouseid` bigint unsigned NOT NULL,
+  `date` date NOT NULL,
+  `quantity` int DEFAULT NULL,
+  `operator` bigint unsigned DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`sku`,`warehouseid`,`date`) USING BTREE,
+  UNIQUE KEY `idx` (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_order_sku_presale_archive 结构
+CREATE TABLE IF NOT EXISTS `t_erp_order_sku_presale_archive` (
+  `id` bigint unsigned NOT NULL,
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `warehouseid` bigint unsigned NOT NULL,
+  `date` date NOT NULL,
+  `quantity` int DEFAULT NULL,
+  `operator` bigint unsigned DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`sku`,`warehouseid`,`date`) USING BTREE,
+  UNIQUE KEY `idx` (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_order_summary 结构
+CREATE TABLE IF NOT EXISTS `t_erp_order_summary` (
+  `id` bigint unsigned NOT NULL,
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `purchase_date` date DEFAULT NULL,
+  `country` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `platformid` bigint unsigned NOT NULL DEFAULT (0),
+  `shopid` bigint unsigned DEFAULT NULL,
+  `thirdparty_warehouseid` bigint unsigned DEFAULT NULL,
+  `warehouseid` bigint unsigned DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `price` decimal(20,6) DEFAULT NULL,
+  `ship_fee` decimal(20,6) DEFAULT NULL,
+  `referral_rate` decimal(20,6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sku` (`shopid`,`purchase_date`,`country`,`sku`,`platformid`,`thirdparty_warehouseid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- 数据导出被取消选择。
@@ -1061,6 +1187,20 @@ CREATE TABLE IF NOT EXISTS `t_erp_outwh_form` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_erp.t_erp_outwh_form_consumable 结构
+CREATE TABLE IF NOT EXISTS `t_erp_outwh_form_consumable` (
+  `id` bigint unsigned NOT NULL,
+  `formid` bigint unsigned NOT NULL,
+  `submid` bigint unsigned DEFAULT NULL,
+  `mainmid` bigint unsigned DEFAULT NULL,
+  `units` decimal(10,2) unsigned DEFAULT NULL,
+  `shipqty` int unsigned DEFAULT NULL,
+  `subout` int unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_erp.t_erp_outwh_form_entry 结构
 CREATE TABLE IF NOT EXISTS `t_erp_outwh_form_entry` (
   `id` bigint unsigned NOT NULL,
@@ -1069,6 +1209,28 @@ CREATE TABLE IF NOT EXISTS `t_erp_outwh_form_entry` (
   `amount` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `formid` (`formid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_oversea_cycle 结构
+CREATE TABLE IF NOT EXISTS `t_erp_oversea_cycle` (
+  `id` bigint unsigned NOT NULL COMMENT 'ID',
+  `shopid` bigint unsigned NOT NULL COMMENT '公司',
+  `transtype` bigint unsigned NOT NULL,
+  `country` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `name` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '名称',
+  `number` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `stocking_cycle` int DEFAULT '0' COMMENT '安全库存周期',
+  `min_cycle` int DEFAULT '0' COMMENT '发货频率',
+  `put_on_days` int DEFAULT '0' COMMENT '上架周期',
+  `first_leg_days` int DEFAULT '0' COMMENT '头程周期',
+  `isdefault` bit(1) NOT NULL DEFAULT (0x00),
+  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '0',
+  `operator` bigint unsigned DEFAULT NULL COMMENT '操作人',
+  `opttime` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `shopid_country` (`shopid`,`country`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -1091,8 +1253,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_preprocessing_form` (
   `creator` bigint unsigned DEFAULT NULL COMMENT '创建人',
   `isrun` bit(1) DEFAULT b'0' COMMENT '是否完成计划',
   `operator` bigint unsigned DEFAULT NULL COMMENT '操作人',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1117,23 +1279,23 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_auth` (
   `appsecret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `shopid_name` (`shopid`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1894013767986167810 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=1945340446431682562 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
 -- 导出  表 db_erp.t_erp_purchase_alibaba_contact 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_contact` (
-  `id` char(30) NOT NULL,
+  `id` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `customer` bigint unsigned NOT NULL,
-  `companyName` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `imInPlatform` varchar(100) DEFAULT NULL,
-  `mobile` varchar(20) DEFAULT NULL,
-  `name` varchar(20) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
+  `companyName` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `email` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `imInPlatform` varchar(100) COLLATE utf8mb4_bin DEFAULT NULL,
+  `mobile` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+  `phone` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`,`customer`),
   KEY `customer` (`customer`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1160,29 +1322,29 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_group` (
 -- 导出  表 db_erp.t_erp_purchase_alibaba_message 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_message` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `content` longtext NOT NULL,
-  `signature` varchar(50) NOT NULL DEFAULT '',
+  `content` longtext COLLATE utf8mb4_bin NOT NULL,
+  `signature` varchar(50) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `opttime` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14404 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=16455 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
 -- 导出  表 db_erp.t_erp_purchase_alibaba_order_baseinfo 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_order_baseinfo` (
   `id` bigint unsigned NOT NULL,
-  `idOfStr` char(30) NOT NULL DEFAULT '',
-  `alipayTradeId` char(50) DEFAULT NULL,
+  `idOfStr` char(30) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `alipayTradeId` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
   `allDeliveredTime` datetime DEFAULT NULL,
   `createTime` datetime DEFAULT NULL,
   `modifyTime` datetime DEFAULT NULL,
   `payTime` datetime DEFAULT NULL,
-  `businessType` char(2) DEFAULT NULL,
-  `status` char(10) DEFAULT NULL,
-  `buyerFeedback` varchar(500) DEFAULT NULL,
-  `remark` varchar(500) DEFAULT NULL,
-  `closeOperateType` char(50) DEFAULT NULL,
-  `tradeType` char(10) DEFAULT NULL,
+  `businessType` char(2) COLLATE utf8mb4_bin DEFAULT NULL,
+  `status` char(10) COLLATE utf8mb4_bin DEFAULT NULL,
+  `buyerFeedback` varchar(500) COLLATE utf8mb4_bin DEFAULT NULL,
+  `remark` varchar(500) COLLATE utf8mb4_bin DEFAULT NULL,
+  `closeOperateType` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `tradeType` char(10) COLLATE utf8mb4_bin DEFAULT NULL,
   `discount` int DEFAULT NULL,
   `refund` int DEFAULT NULL,
   `overSeaOrder` bit(1) DEFAULT NULL,
@@ -1190,11 +1352,11 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_order_baseinfo` (
   `shippingFee` decimal(20,6) DEFAULT NULL,
   `totalAmount` decimal(20,6) DEFAULT NULL,
   `sumProductPayment` decimal(20,6) DEFAULT NULL,
-  `flowTemplateCode` char(50) DEFAULT NULL,
-  `buyerID` char(50) DEFAULT NULL,
-  `sellerID` char(50) DEFAULT NULL,
+  `flowTemplateCode` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `buyerID` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `sellerID` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1217,8 +1379,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_order_productitems` (
   `productImgUrl` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
   `unit` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
   `refundStatus` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
-  `gmtCreate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `gmtModified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `gmtCreate` datetime DEFAULT NULL,
+  `gmtModified` datetime DEFAULT NULL,
   PRIMARY KEY (`orderid`,`skuID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
@@ -1227,43 +1389,43 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_order_productitems` (
 -- 导出  表 db_erp.t_erp_purchase_alibaba_order_receiverinfo 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_order_receiverinfo` (
   `orderid` bigint unsigned DEFAULT NULL,
-  `toArea` varchar(200) DEFAULT NULL,
-  `toDivisionCode` char(50) DEFAULT NULL,
-  `toFullName` char(50) DEFAULT NULL,
-  `toMobile` char(50) DEFAULT NULL,
-  `toPost` char(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+  `toArea` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL,
+  `toDivisionCode` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `toFullName` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `toMobile` char(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `toPost` char(50) COLLATE utf8mb4_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
 -- 导出  表 db_erp.t_erp_purchase_alibaba_order_tradeterms 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_order_tradeterms` (
   `orderid` bigint unsigned NOT NULL,
-  `payStatus` char(20) NOT NULL,
+  `payStatus` char(20) COLLATE utf8mb4_bin NOT NULL,
   `payTime` datetime DEFAULT NULL,
-  `payway` char(20) DEFAULT NULL,
+  `payway` char(20) COLLATE utf8mb4_bin DEFAULT NULL,
   `phasAmount` decimal(20,6) NOT NULL DEFAULT '0.000000',
   `cardPay` bit(1) NOT NULL DEFAULT b'0',
   `expressPay` bit(1) NOT NULL DEFAULT b'0',
-  `payWayDesc` char(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+  `payWayDesc` char(50) COLLATE utf8mb4_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
 -- 导出  表 db_erp.t_erp_purchase_alibaba_productitems 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_productitems` (
-  `productID` char(20) NOT NULL DEFAULT '',
-  `specId` char(36) NOT NULL DEFAULT '',
-  `offerid` char(36) NOT NULL DEFAULT '',
+  `productID` char(20) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `specId` char(36) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `offerid` char(36) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `price` decimal(20,6) NOT NULL DEFAULT '0.000000',
-  `name` varchar(500) NOT NULL DEFAULT '0',
-  `productSnapshotUrl` varchar(100) NOT NULL DEFAULT '0',
-  `productImgUrl` varchar(100) NOT NULL DEFAULT '0',
-  `unit` varchar(5) NOT NULL DEFAULT '0',
-  `skuInfos` varchar(200) NOT NULL DEFAULT '0',
+  `name` varchar(500) COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
+  `productSnapshotUrl` varchar(100) COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
+  `productImgUrl` varchar(100) COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
+  `unit` varchar(5) COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
+  `skuInfos` varchar(200) COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
   PRIMARY KEY (`productID`),
   UNIQUE KEY `specId_offerid` (`specId`,`offerid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1311,7 +1473,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_settlement_order` (
 
 -- 导出  表 db_erp.t_erp_purchase_alibaba_settlement_order_return 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_alibaba_settlement_order_return` (
-  `orderid` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `orderid` char(20) COLLATE utf8mb4_bin NOT NULL,
   `settlementid` bigint unsigned NOT NULL,
   `name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `payamount` decimal(20,6) DEFAULT NULL,
@@ -1360,8 +1522,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_fin_form` (
   `shopid` bigint unsigned DEFAULT NULL,
   `auditstatus` int unsigned DEFAULT '0' COMMENT '0,待审核 1已审核待付款 2已完成 3.已退回',
   `payment_method` int unsigned DEFAULT NULL,
-  `number` char(36) DEFAULT NULL,
-  `remark` varchar(500) DEFAULT NULL,
+  `number` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `remark` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `audittime` datetime DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `createtime` datetime DEFAULT NULL,
@@ -1422,7 +1584,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_consumable` (
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1532,9 +1694,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_entry_change` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `number_shopid` (`number`,`shopid`),
   KEY `warehouseid` (`warehouseid`),
+  KEY `ass_form_id` (`ass_form_id`),
   KEY `materialid` (`materialid`),
-  KEY `entryid` (`entryid`),
-  KEY `ass_form_id` (`ass_form_id`)
+  KEY `entryid` (`entryid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -1549,7 +1711,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_entry_change_attachment` (
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `entrychangeid` (`entrychangeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1687,6 +1849,18 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_payment_method` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_erp.t_erp_purchase_form_payment_method_index 结构
+CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_payment_method_index` (
+  `method_id` int unsigned NOT NULL,
+  `shopid` bigint unsigned NOT NULL,
+  `findex` int unsigned DEFAULT NULL,
+  PRIMARY KEY (`method_id`,`shopid`),
+  KEY `shopid` (`shopid`),
+  KEY `index` (`findex`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_erp.t_erp_purchase_form_print_ip 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_print_ip` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1698,8 +1872,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_print_ip` (
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `shopid_ftype` (`shopid`,`ftype`,`addressid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1852331708022587394 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  UNIQUE KEY `shopid_ftype` (`shopid`,`ftype`,`addressid`)
+) ENGINE=InnoDB AUTO_INCREMENT=1944653077967560707 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1716,9 +1890,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_receive` (
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
+  KEY `consumable_form_id` (`consumable_form_id`),
   KEY `formentryid` (`formentryid`),
-  KEY `opttime` (`opttime`),
-  KEY `consumable_form_id` (`consumable_form_id`)
+  KEY `opttime` (`opttime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -1726,7 +1900,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_form_receive` (
 -- 导出  表 db_erp.t_erp_purchase_plan 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_plan` (
   `id` bigint unsigned NOT NULL DEFAULT '0',
-  `number` char(36) DEFAULT NULL,
+  `number` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `status` tinyint DEFAULT '1' COMMENT '0-取消，1-工作中，2-提交',
   `creator` bigint unsigned DEFAULT NULL,
   `shopid` bigint unsigned NOT NULL,
@@ -1753,11 +1927,11 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_planitem` (
   `amount` int DEFAULT NULL,
   `itemprice` decimal(10,4) DEFAULT NULL,
   `orderprice` decimal(10,4) DEFAULT NULL,
-  `supplier` char(36) DEFAULT NULL,
+  `supplier` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   `isparent` bit(1) DEFAULT NULL,
-  `parent` char(36) DEFAULT NULL,
+  `parent` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index 2` (`subplanid`,`materialid`,`warehouseid`),
@@ -1812,8 +1986,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_purchase_planmodelitem` (
 -- 导出  表 db_erp.t_erp_purchase_planmodelitemsub 结构
 CREATE TABLE IF NOT EXISTS `t_erp_purchase_planmodelitemsub` (
   `itemid` bigint unsigned NOT NULL DEFAULT '0',
-  `sku` char(50) NOT NULL,
-  `marketplaceid` char(15) NOT NULL,
+  `sku` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `marketplaceid` char(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `groupid` bigint unsigned NOT NULL COMMENT '断货时间',
   `needship` int NOT NULL,
   `salesday` int DEFAULT NULL,
@@ -2079,8 +2253,10 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_transchannel` (
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
-  `oldid` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `country` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `disabled` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_shopid` (`shopid`,`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2108,18 +2284,18 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_transcompany` (
 -- 导出  表 db_erp.t_erp_ship_transcompany_api 结构
 CREATE TABLE IF NOT EXISTS `t_erp_ship_transcompany_api` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `api` varchar(200) NOT NULL DEFAULT '0',
-  `name` varchar(200) NOT NULL DEFAULT '0',
-  `openaccount` varchar(200) NOT NULL DEFAULT '0',
-  `openkey` varchar(200) NOT NULL DEFAULT '0',
-  `appkey` varchar(200) NOT NULL DEFAULT '0',
-  `appsecret` varchar(200) NOT NULL DEFAULT '0',
-  `token` varchar(200) NOT NULL DEFAULT '0',
+  `api` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `name` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `openaccount` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `openkey` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `appkey` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `appsecret` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `token` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
   `shopid` bigint unsigned NOT NULL DEFAULT '0',
   `operator` bigint unsigned NOT NULL DEFAULT '0',
-  `opttime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `url` varchar(500) DEFAULT NULL,
-  `system` varchar(50) DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  `url` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `system` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
@@ -2132,7 +2308,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_transcompany_services_zhihui` (
   `apiid` bigint unsigned NOT NULL DEFAULT '0',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `ftype` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`id`,`apiid`) USING BTREE,
+  PRIMARY KEY (`id`,`apiid`),
   KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
@@ -2159,31 +2335,6 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_transdetail` (
   `oldid` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `Index 2` (`company`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
-
--- 数据导出被取消选择。
-
--- 导出  表 db_erp.t_erp_ship_transdetail_bkp20240802 结构
-CREATE TABLE IF NOT EXISTS `t_erp_ship_transdetail_bkp20240802` (
-  `id` bigint unsigned NOT NULL,
-  `company` bigint unsigned DEFAULT NULL,
-  `marketplaceid` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `subarea` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `channel` bigint unsigned DEFAULT NULL,
-  `channame` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `pretime` int DEFAULT NULL COMMENT 'US预计时效',
-  `price` decimal(10,4) DEFAULT NULL,
-  `drate` int DEFAULT '5000',
-  `opttime` datetime DEFAULT NULL,
-  `transtype` bigint unsigned DEFAULT NULL,
-  `priceunits` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `cbmrate` int DEFAULT NULL,
-  `operator` bigint unsigned DEFAULT NULL,
-  `disabled` bit(1) NOT NULL,
-  `oldid` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `Index 2` (`company`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2220,7 +2371,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_transtype_day` (
   `day` int DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`transtypeid`,`shopid`) USING BTREE
+  PRIMARY KEY (`transtypeid`,`shopid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2332,38 +2483,19 @@ CREATE TABLE IF NOT EXISTS `t_erp_stocktaking_warehouse` (
 -- 导出  表 db_erp.t_erp_thirdparty_api 结构
 CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_api` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `api` varchar(200) DEFAULT NULL,
-  `name` varchar(200) DEFAULT NULL,
-  `appkey` varchar(200) DEFAULT NULL,
-  `appsecret` varchar(1000) DEFAULT NULL,
-  `token` varchar(200) DEFAULT NULL,
+  `api` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `appkey` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `appsecret` varchar(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `token` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
-  `url` varchar(500) DEFAULT NULL,
-  `system` varchar(50) DEFAULT NULL,
+  `url` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `system` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `isdelete` bit(1) DEFAULT b'0',
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `name_shopid` (`name`,`shopid`,`system`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=17392024503578653692 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
-
--- 数据导出被取消选择。
-
--- 导出  表 db_erp.t_erp_thirdparty_api_bkp20240830 结构
-CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_api_bkp20240830` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `api` varchar(200) DEFAULT NULL,
-  `name` varchar(200) DEFAULT NULL,
-  `appkey` varchar(200) DEFAULT NULL,
-  `appsecret` varchar(200) DEFAULT NULL,
-  `token` varchar(200) DEFAULT NULL,
-  `shopid` bigint unsigned DEFAULT NULL,
-  `url` varchar(500) DEFAULT NULL,
-  `system` varchar(50) DEFAULT NULL,
-  `isdelete` bit(1) DEFAULT b'0',
-  `operator` bigint unsigned DEFAULT NULL,
-  `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_shopid` (`name`,`shopid`,`system`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17392024503578653692 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2383,8 +2515,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_inventory_k5` (
   `refreshtime` datetime DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `sku_houseid` (`shopid`,`api`,`houseid`,`sku`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1887388682961502211 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  UNIQUE KEY `sku_houseid` (`shopid`,`api`,`houseid`,`sku`)
+) ENGINE=InnoDB AUTO_INCREMENT=1947688070847422468 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -2408,9 +2540,60 @@ CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_inventory_ops` (
   `mark` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `refreshtime` datetime DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sku_houseid` (`shopid`,`api`,`houseid`,`sku`)
+) ENGINE=InnoDB AUTO_INCREMENT=1947686867283501059 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_thirdparty_inventory_xl 结构
+CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_inventory_xl` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `api` bigint unsigned NOT NULL DEFAULT '0',
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `housename` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `houseid` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `code` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `fba_transport` int DEFAULT NULL,
+  `stock_quantity` int DEFAULT NULL,
+  `fba_quantity` int DEFAULT NULL,
+  `fba_available` int DEFAULT NULL,
+  `fba_lock` int DEFAULT NULL,
+  `stock_available` int DEFAULT NULL,
+  `stock_lock` int DEFAULT NULL,
+  `stock_transport` int DEFAULT NULL,
+  `price` decimal(20,6) DEFAULT NULL,
+  `customer_code` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `refreshtime` datetime DEFAULT NULL,
+  `shopid` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `sku_houseid` (`shopid`,`api`,`houseid`,`sku`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1892512979436503044 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=1947688035355222019 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_thirdparty_inventory_yc 结构
+CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_inventory_yc` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `houseid` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `housename` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `api` bigint unsigned NOT NULL DEFAULT '0',
+  `code` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `barcode` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `quality` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `inspection` int DEFAULT NULL,
+  `available` int DEFAULT NULL,
+  `processing` int DEFAULT NULL,
+  `transportation` int DEFAULT NULL,
+  `refreshtime` datetime DEFAULT NULL,
+  `shopid` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `sku_houseid` (`shopid`,`api`,`houseid`,`sku`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1926926498155986947 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -2425,7 +2608,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_quote_buyer` (
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `buyertoken_shopid` (`buyertoken`,`shopid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -2441,7 +2624,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_system` (
   `needkey` bit(1) DEFAULT NULL COMMENT '使用appkey和appsecret',
   `needtoken` bit(1) DEFAULT NULL COMMENT '使用token',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -2455,7 +2638,19 @@ CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_warehouse` (
   `country` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `ext` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1890589091553300482 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=1934540301931356163 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_erp.t_erp_thirdparty_warehouse_bind 结构
+CREATE TABLE IF NOT EXISTS `t_erp_thirdparty_warehouse_bind` (
+  `thirdparty_warehouse_id` bigint unsigned NOT NULL,
+  `local_warehouse_id` bigint unsigned NOT NULL,
+  `operator` bigint unsigned DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`thirdparty_warehouse_id`) USING BTREE,
+  UNIQUE KEY `uni` (`local_warehouse_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- 数据导出被取消选择。
 
@@ -2523,7 +2718,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_v2_calculate_record` (
 CREATE TABLE IF NOT EXISTS `t_erp_v2_calculate_record_history` (
   `id` bigint unsigned NOT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
-  `ftype` char(20) DEFAULT NULL,
+  `ftype` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `iswarn` bit(1) DEFAULT b'0',
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
@@ -2720,16 +2915,16 @@ CREATE TABLE IF NOT EXISTS `t_erp_v2_plan_purchase_form_entry` (
   `id` bigint unsigned NOT NULL,
   `formid` bigint unsigned NOT NULL COMMENT '订单ID',
   `materialid` bigint unsigned NOT NULL COMMENT '本地产品ID',
-  `warehouse` char(50) NOT NULL DEFAULT '' COMMENT '仓库',
+  `warehouse` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '仓库',
   `sumreq` int NOT NULL DEFAULT '0' COMMENT '需求量',
   `salemonth` int NOT NULL DEFAULT '0' COMMENT '月销量',
-  `presalemonth` varchar(500) NOT NULL DEFAULT '0' COMMENT '销售预测',
-  `moreqty` char(50) NOT NULL DEFAULT '0' COMMENT '多余库存',
-  `suggest` varchar(500) NOT NULL DEFAULT '0' COMMENT '月度建议采购量',
+  `presalemonth` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0' COMMENT '销售预测',
+  `moreqty` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0' COMMENT '多余库存',
+  `suggest` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0' COMMENT '月度建议采购量',
   `needqty` int NOT NULL DEFAULT '0' COMMENT '需求量',
   `sugpurchase` int NOT NULL DEFAULT '0' COMMENT '建议采购量',
   `planpurchase` int NOT NULL DEFAULT '0' COMMENT '计划采购量',
-  `detail` text COMMENT '当时计算的需求详情与提货详情',
+  `detail` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci COMMENT '当时计算的需求详情与提货详情',
   `operator` bigint unsigned NOT NULL COMMENT '操作人',
   `creator` bigint unsigned NOT NULL COMMENT '创建人',
   `opttime` datetime NOT NULL COMMENT '操作时间',
@@ -2919,7 +3114,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_v2_shop_units_worktime` (
 -- 导出  表 db_erp.t_erp_v3_purchase_plan 结构
 CREATE TABLE IF NOT EXISTS `t_erp_v3_purchase_plan` (
   `id` bigint unsigned NOT NULL,
-  `number` char(36) DEFAULT NULL,
+  `number` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
   `min_cycle` int unsigned DEFAULT NULL,
   `stocking_cycle` int unsigned DEFAULT NULL,
@@ -2958,7 +3153,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_v3_purchase_plan_item` (
   `warehouseid` bigint unsigned NOT NULL,
   `planid` bigint unsigned NOT NULL,
   `groupid` bigint unsigned DEFAULT NULL,
-  `batchnumber` char(20) DEFAULT NULL,
+  `batchnumber` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `amount` int DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
@@ -3040,6 +3235,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_warehouse` (
   `oldid` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `ishungry` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `name_ftype_shopid` (`name`,`ftype`,`shopid`) USING BTREE,
   KEY `ftype` (`ftype`),
   KEY `Index 2` (`parentid`),
   KEY `name_shopid` (`name`,`shopid`),
@@ -3053,23 +3249,23 @@ CREATE TABLE IF NOT EXISTS `t_erp_warehouse` (
 CREATE TABLE IF NOT EXISTS `t_erp_warehouse_address` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `shopid` bigint unsigned NOT NULL DEFAULT '0',
-  `name` char(50) NOT NULL DEFAULT '0' COMMENT '地址名称',
-  `number` char(50) NOT NULL DEFAULT '0',
-  `detail` varchar(500) DEFAULT '0' COMMENT '地址街道详情',
-  `postcode` char(50) DEFAULT '0' COMMENT '邮编',
-  `phone` char(50) DEFAULT NULL COMMENT '业主电话',
-  `landlord` char(50) DEFAULT NULL COMMENT '业主（房东）',
+  `name` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0' COMMENT '地址名称',
+  `number` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `detail` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '0' COMMENT '地址街道详情',
+  `postcode` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '0' COMMENT '邮编',
+  `phone` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '业主电话',
+  `landlord` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '业主（房东）',
   `lost_effect_date` datetime DEFAULT NULL COMMENT '到期时间',
-  `remark` varchar(200) DEFAULT '' COMMENT '备注',
+  `remark` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '' COMMENT '备注',
   `disabled` bit(1) DEFAULT b'0' COMMENT '是否失效（是否删除）',
   `operator` bigint unsigned DEFAULT '0' COMMENT '修改人',
-  `opttime` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '修改时间',
+  `opttime` datetime DEFAULT NULL COMMENT '修改时间',
   `creator` bigint unsigned DEFAULT '0' COMMENT '创建人',
-  `creattime` datetime DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
+  `creattime` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `shopid_number` (`shopid`,`number`),
   UNIQUE KEY `shopid_name` (`shopid`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 

@@ -12,6 +12,8 @@ import lombok.EqualsAndHashCode;
 public class DispatchWarehouseFormDTO extends BasePageQuery{
 
 	String search;
+
+	String searchtype;
 	
 	String auditstatus;
 	

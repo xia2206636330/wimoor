@@ -1,11 +1,14 @@
 package com.wimoor.amazon.common.contorller;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wimoor.amazon.common.service.IExchangeRateHandlerService;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +33,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ExchangeRateController {
 final IExchangeRateService iExchangeRateService;
-
+final IExchangeRateHandlerService iExchangeRateHandlerService;
+@GetMapping("/changeCurrency")
+public Result<?> changeCurrency(String from, String to, BigDecimal money) {
+	UserInfo user = UserInfoContext.get();
+	BigDecimal result = iExchangeRateHandlerService.changeCurrencyByLocal(user.getCompanyid(), from, to, money);
+	return Result.success(result) ;
+}
 @GetMapping("/getMyCurrencyRate")
 public Result<?> getMyCurrencyRate(String byday) {
 	UserInfo user = UserInfoContext.get();
@@ -62,7 +71,7 @@ public void downDataExcelByRateAction(String byday, HttpServletResponse response
 		workbook.close();
 		fOut.flush();
 		fOut.close();
-	} catch (Exception e) {
+	} catch (IOException e) {
 		e.printStackTrace();
 	}
 }

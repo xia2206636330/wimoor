@@ -124,15 +124,18 @@ public class InventoryHisServiceImpl  extends ServiceImpl<InventoryHisMapper,Inv
 	@Override
 	public void runTask() {
 		// TODO Auto-generated method stub
-		Calendar c=Calendar.getInstance();
-    	c.add(Calendar.DATE, -1);
-    	String byday = GeneralUtil.formatDate(c.getTime());
-    	Calendar c2=Calendar.getInstance();
-    	String endday = GeneralUtil.formatDate(c2.getTime());
-    	this.summaryInvEveryDay(byday, endday);
+//		Calendar c=Calendar.getInstance();
+//    	c.add(Calendar.DATE, -1);
+//    	String byday = GeneralUtil.formatDate(c.getTime());
+//    	Calendar c2=Calendar.getInstance();
+//    	String endday = GeneralUtil.formatDate(c2.getTime());
+//    	this.summaryInvEveryDay(byday, endday);
+		this.summaryInvtoDay();
 	}
-	
-	
+
+	private void summaryInvtoDay() {
+		inventoryHisDayMapper.summaryInvtoDay();
+	}
 
 
 	public List<String> getInvDayField(Map<String, Date> parameter) {

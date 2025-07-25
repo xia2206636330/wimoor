@@ -30,4 +30,6 @@ public class ThirdPartyWarehouse {
     @TableField(value= "api")
     private String api;
 
+    @TableField(exist = false)
+    private Boolean isbind;
 }

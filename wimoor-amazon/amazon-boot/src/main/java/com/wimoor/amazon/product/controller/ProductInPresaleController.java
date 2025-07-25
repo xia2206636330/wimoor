@@ -12,6 +12,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wimoor.common.service.impl.SystemControllerLog;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -54,6 +55,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@SystemControllerLog("预估销量")
 @RequestMapping("/api/v1/report/product/presale")
 public class ProductInPresaleController {
 	final IProductInPresaleService iProductInPresaleService;
@@ -103,8 +105,9 @@ public class ProductInPresaleController {
 	}
 	
     @PostMapping("/save")
+	@SystemControllerLog("保存预估销量")
 	@Transactional
-    Result<?> save(@RequestBody List<ProductInPresale> preList) {
+    public Result<?> saveAction(@RequestBody List<ProductInPresale> preList) {
     	UserInfo user = UserInfoContext.get();
     	String sku=null;
     	String groupid=null;

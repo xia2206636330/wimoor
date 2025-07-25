@@ -182,7 +182,11 @@
 		</if>
 		   and s.addressid=#{param.addressid,jdbcType=CHAR}
 		<if test="param.treepath!=null">
-		    and s.treepath like CONCAT(#{param.treepath,jdbcType=CHAR},'%') 
+		    and (s.treepath like CONCAT(#{param.treepath,jdbcType=CHAR},'!%')
+				<if test="param.rootid!=null">
+					or t.shelfid=#{param.rootid,jdbcType=CHAR}
+				</if>
+		        )
 		</if>
 		   and t.quantity>0
 		<if test="param.search!=null">

@@ -565,7 +565,7 @@ public class ProductInOptServiceImpl extends ServiceImpl<ProductInOptMapper, Pro
 				throw new BizException("Excel文件中“本地SKU”必填字段为空！");
 			}
 		} else {
-			throw new BizException("Excel文件中此平台SKU在系统中找不到！");
+			throw new BizException("Excel文件中["+sku+"]此平台SKU在系统中找不到！");
 		}
 	}
 	@Override

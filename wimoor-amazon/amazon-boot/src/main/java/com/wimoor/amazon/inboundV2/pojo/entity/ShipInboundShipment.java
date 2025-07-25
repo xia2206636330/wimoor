@@ -176,6 +176,10 @@ public class ShipInboundShipment {
 	@TableField(value="isquote")
 	private Boolean isquote;
 
+	@ApiModelProperty(value = "Transportation Token")
+	@TableField(value="transportation_token")
+	String transportationToken;
+
     @TableField(exist = false)
 	private List<ShipInboundItem> itemList=new ArrayList<ShipInboundItem>();
     

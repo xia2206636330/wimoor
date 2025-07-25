@@ -101,7 +101,7 @@ public class RoleController {
         if (result) {
             iSysPermissionService.refreshPermRolesRules();
         }
-        return Result.judge(result);
+        return Result.success(role);
     }
     
     @ApiOperation(value = "角色详情")

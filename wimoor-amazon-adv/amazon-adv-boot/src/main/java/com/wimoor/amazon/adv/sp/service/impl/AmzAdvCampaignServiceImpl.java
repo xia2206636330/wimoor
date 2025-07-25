@@ -436,11 +436,17 @@ public class AmzAdvCampaignServiceImpl extends BaseService<AmzAdvCampaigns> impl
 	}
 
 	public Map<String, Object> getCampaignChart(Map<String, Object> map) {
+		Map<String, Object> mapnew =new HashMap<String, Object>() ;
+		mapnew=map;
 		String campaignType = (String) map.get("campaignType");
 		List<Map<String, Object>> list = null;
 		List<Map<String, Object>> listHsa = null;
 		List<Map<String, Object>> listSD = null;
-		getSerchStr(map);
+		if("sp".equals(campaignType.toLowerCase())||"all".equals(campaignType.toLowerCase())){
+			getSerchStr(map);
+		}else{
+			getSerchStrNew(map);
+		}
 		if(map.get("serchlist")==null) {
 			throw new BizException("数据列未找到！");
 		}
@@ -450,8 +456,9 @@ public class AmzAdvCampaignServiceImpl extends BaseService<AmzAdvCampaigns> impl
 			listHsa = amzAdvCampaignHsaService.getCampaignChart(map);
 		} else if ("all".equals(campaignType)) {
 			list = amzAdvCampaignsMapper.getCampaignChart(map);
-			listHsa = amzAdvCampaignHsaService.getCampaignChart(map);
-			listSD = amzAdvCampaignsSDService.getCampaignChart(map);
+			getSerchStrNew(mapnew);
+			listHsa = amzAdvCampaignHsaService.getCampaignChart(mapnew);
+			listSD = amzAdvCampaignsSDService.getCampaignChart(mapnew);
 		}else if ("SD".equals(campaignType)) {
 			listSD = amzAdvCampaignsSDService.getCampaignChart(map);
 		}
@@ -590,6 +597,58 @@ public class AmzAdvCampaignServiceImpl extends BaseService<AmzAdvCampaigns> impl
 					serchlist = serchlist +"sum(" + serchArray[i] + ") " + serchArray[i] + ",";
 					HSAcsrt = HSAcsrt+"sum(" + serchArray[i] + ") " + serchArray[i] + ",";
 				}
+		}
+		if(serchlist.contains(",")) {
+			serchlist=serchlist.substring(0, serchlist.length()-1);
+		}
+		if(HSAcsrt.contains(",")) {
+			HSAcsrt=HSAcsrt.substring(0, HSAcsrt.length()-1);
+		}
+		map.put("HSAserchlist", HSAcsrt);
+		map.put("serchlist", serchlist);
+		map.put("value1", serchArray[0]);
+	}
+
+	public void getSerchStrNew(Map<String, Object> map) {
+		String campaignType = (String) map.get("campaignType");
+		String serch = (String) map.get("searchlist");
+		String[] serchArray = serch.split(",");
+		String serchlist = "";
+		String HSAcsrt = "";
+		for (int i = 0; i < serchArray.length; i++) {
+			if ("ACOS".equals(serchArray[i])) {
+				HSAcsrt = HSAcsrt + "ifnull(sum(cost) / sum(sales),0) ACOS ,";
+				HSAcsrt= HSAcsrt.replace("7", "14");
+				serchlist = serchlist + "ifnull(sum(cost) / sum(sales),0) ACOS ,";
+			} else if ("ROAS".equals(serchArray[i])) {
+				HSAcsrt = HSAcsrt + "ifnull(sum(sales) / sum(cost),0) ROAS ,";
+				HSAcsrt= HSAcsrt.replace("7", "14");
+				serchlist = serchlist + "ifnull(sum(sales) / sum(cost),0) ROAS ,";
+			} else if ("CSRT".equals(serchArray[i])) {
+				HSAcsrt = HSAcsrt + "ifnull(sum(purchases) / sum(clicks),0) CSRT ,";
+				HSAcsrt= HSAcsrt.replace("7", "14");
+				serchlist = serchlist + "ifnull(sum(purchases) / sum(clicks),0) CSRT ,";
+			} else if ("avgcost".equals(serchArray[i])) {
+				HSAcsrt = HSAcsrt + "ifnull((sum(cost) / sum(clicks)),0) avgcost ,";
+				HSAcsrt= HSAcsrt.replace("7", "14");
+				serchlist = serchlist + "ifnull((sum(cost) / sum(clicks)),0) avgcost ,";
+			} else if ("CTR".equals(serchArray[i])) {
+				HSAcsrt = HSAcsrt + "ifnull(sum(clicks) / sum(impressions),0) CTR ,";
+				HSAcsrt= HSAcsrt.replace("7", "14");
+				serchlist = serchlist + "ifnull(sum(clicks) / sum(impressions),0) CTR ,";
+			}else if ("sumUnits".equals(serchArray[i])) {
+				if ("all".equals(campaignType)) {
+					serchlist = serchlist +"sum(unitsSold) sumUnits,";
+					HSAcsrt = HSAcsrt+"sum(purchases) sumUnits,";
+				} else if ("HSA".equals(campaignType) || "SB".equals(campaignType)) {
+					HSAcsrt = HSAcsrt+"sum(purchases) sumUnits,";
+				} else if ("SP".equals(campaignType)) {
+					serchlist = serchlist +"sum(unitsSold) sumUnits,";
+				}
+			} else {
+				serchlist = serchlist +"sum(" + serchArray[i] + ") " + serchArray[i] + ",";
+				HSAcsrt = HSAcsrt+"sum(" + serchArray[i] + ") " + serchArray[i] + ",";
+			}
 		}
 		if(serchlist.contains(",")) {
 			serchlist=serchlist.substring(0, serchlist.length()-1);

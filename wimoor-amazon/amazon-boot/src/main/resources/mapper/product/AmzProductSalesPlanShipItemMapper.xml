@@ -38,7 +38,8 @@
 <select id="hasplanItem" resultType="java.util.Map" parameterType="com.wimoor.amazon.product.pojo.dto.PlanDetailDTO">
            select  groupid,amazonauthid,case when m.region='EU' then 'EU' else i.marketplaceid end marketplaceid,sku,msku,
                    sum(case when m.region='EU' then 2 else 1 end) subnum,
-                   max(aftersalesday) aftersalesday,sum(amount)  amount 
+                   max(aftersalesday) aftersalesday,sum(amount)  amount ,
+	               sum(case when i.isdefault=1 then 0 else 1 end) subplannum
                    from t_amz_product_sales_plan_ship_item i
                    left join t_marketplace m on m.marketplaceid=i.marketplaceid
                    where shopid=#{shopid,jdbcType=CHAR}
@@ -59,7 +60,10 @@
 
 <select id="hasplanItemEu" resultType="java.util.Map" parameterType="com.wimoor.amazon.product.pojo.dto.PlanDetailDTO">
            select  groupid,amazonauthid,i.marketplaceid,sku,msku,
-                   count(0) subnum,max(aftersalesday) aftersalesday,sum(amount)  amount
+                   count(0) subnum,
+                   max(aftersalesday) aftersalesday,
+                   sum(amount)  amount,
+                   count(0) subplannum
                    from t_amz_product_sales_plan_ship_item i
                    left join t_marketplace m on m.marketplaceid=i.marketplaceid
                    where shopid=#{shopid,jdbcType=CHAR}

@@ -2,6 +2,7 @@ package com.wimoor.amazon.product.pojo.entity;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -54,7 +55,12 @@ public class AmzProductSalesPlanShipItem extends  BaseEntity {
     private LocalDateTime opttime;
 
     private BigInteger operator;
+
+    private Boolean isdefault;
     
     @TableField(exist=false)
     private Integer subnum;
+
+    @TableField(exist=false)
+    List<AmzProductSalesPlanShipItem> subList;
 }

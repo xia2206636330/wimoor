@@ -148,7 +148,7 @@ public class ShipInboundItemController {
 			workbook.close();
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

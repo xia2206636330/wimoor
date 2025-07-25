@@ -2,6 +2,7 @@ package com.wimoor.admin.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.hutool.core.net.URLDecoder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wimoor.admin.pojo.entity.SysUserWechatMP;
 import com.wimoor.admin.service.*;
@@ -396,9 +398,11 @@ public class UserController {
 				List<SysUser> result=new ArrayList<SysUser>();
 				for(SysUserBind item:bindUserList) {
 					SysUser user = iSysUserService.getUserAllById(item.getUserid().toString());
-					user.setPassword("***");
-					user.setSalt("***");
-					result.add(user);
+					if(user!=null){
+						user.setPassword("***");
+						user.setSalt("***");
+						result.add(user);
+					}
 				}
 				userList=result;
 			}
@@ -430,6 +434,19 @@ public class UserController {
 		UserInfo userInfo = UserInfoContext.get();
 		List<UserInfo> userList = iSysUserService.getAllBind(userInfo.getId());
 		if(userList!=null) {
+			for(UserInfo user:userList){
+				Map<String, Object> info = user.getUserinfo();
+				if(info!=null){
+					if(info.get("companyname")!=null) {
+						String companyname=info.get("companyname").toString();
+						if(companyname.contains("%")){
+							companyname= URLDecoder.decode(companyname, Charset.defaultCharset());
+							info.put("companyname", companyname);
+						}
+
+					}
+				}
+			}
 			return Result.success(userList);
 		}else {
 			return Result.failed(ResultCode.USERNAME_OR_PASSWORD_ERROR);

@@ -62,6 +62,13 @@ public class SchedulingConfigController {
 		 amzAdvReportHandlerService.requestReport();
 		 return Result.success();
 	}
+
+	//跑广告产品报表
+	@GetMapping("/requestProductAdsReport")
+	public Result<?> requestProductAdsReport(){
+		amzAdvReportHandlerService.requestProductAdsReport();
+		return Result.success();
+	}
 	@GetMapping("/requestReportByType")
 	public Result<?> requestReport(String profileid,String typeid){
 		    AmzAdvProfile profile =amzAdvAuthService.getAmzAdvProfileByKey(new BigInteger(profileid));
@@ -108,6 +115,19 @@ public class SchedulingConfigController {
 				
 		return Result.success();
 	}
+
+	@GetMapping("/refreshSummaryAll")
+	public Result<?> refreshSummaryAllAction() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				amazonReportAdvSummaryService.refreshSummary(null);
+			}
+		}).start();
+		return Result.success();
+	}
+
+
 
 
 	@GetMapping("/requestSnapshot")

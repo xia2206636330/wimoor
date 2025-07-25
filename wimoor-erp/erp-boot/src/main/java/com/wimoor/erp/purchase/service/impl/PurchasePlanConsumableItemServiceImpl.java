@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 
 import com.wimoor.erp.assembly.pojo.vo.AssemblyVO;
 import com.wimoor.common.GeneralUtil;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
-import com.wimoor.erp.assembly.service.IAssemblyService;
+import com.wimoor.erp.material.service.IAssemblyFormService;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.inventory.service.IInventoryService;
 import com.wimoor.erp.material.service.IMaterialService;
 import com.wimoor.erp.material.service.IStepWisePriceService;

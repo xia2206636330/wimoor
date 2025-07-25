@@ -150,7 +150,8 @@ public class AmzProductSalesPlanController {
 		 }else {
 			 dto.setSearch("%"+dto.getSearch().trim()+"%");
 		 }
-    	 if(StrUtil.isNotBlank(dto.getOwner())) {
+    	 if(StrUtil.isBlank(dto.getOwner())) {
+			 dto.setOwner(null);
     	 }
     	 if(StrUtil.isAllBlank(dto.getName())) {
 			 dto.setName(null);

@@ -400,6 +400,9 @@ public class ShipInboundItemServiceImpl extends  ServiceImpl<ShipInboundItemV2Ma
 				new LambdaQueryWrapper<ShipInboundShipment>()
 						.eq(ShipInboundShipment::getShipmentConfirmationId, confirmShipmentid)
 		);
+		if(shipment==null){
+			return null;
+		}
 		shipmentid= shipment.getShipmentid();
 		for (InboundShipmentItem item:itemResult.getItemData()) {
 			LambdaQueryWrapper<ShipInboundShipmentItem> query = new LambdaQueryWrapper<ShipInboundShipmentItem>()
@@ -426,8 +429,10 @@ public class ShipInboundItemServiceImpl extends  ServiceImpl<ShipInboundItemV2Ma
 				}
 				inbounditem.setQuantity(shipped);
 				inbounditem.setShipmentid(shipmentid);
-				shipInboundShipmentItemV2Mapper.updateById(inbounditem);
-				myResult.add(inbounditem);
+				if(inbounditem.getQuantity()>0) {
+					shipInboundShipmentItemV2Mapper.updateById(inbounditem);
+					myResult.add(inbounditem);
+				}
 			}
 			else if(inbounditem==null)  {
 				inbounditem=new ShipInboundShipmentItem();
@@ -455,8 +460,10 @@ public class ShipInboundItemServiceImpl extends  ServiceImpl<ShipInboundItemV2Ma
 				String msku=iProductInfoService.getMSKU(auth.getId(), plan.getMarketplaceid(), item.getSellerSKU());
 				inbounditem.setMsku(msku);
 				inbounditem.setShipmentid(shipmentid);
-				shipInboundShipmentItemV2Mapper.insert(inbounditem);
-				myResult.add(inbounditem);
+				if(inbounditem.getQuantity()>0){
+					shipInboundShipmentItemV2Mapper.insert(inbounditem);
+					myResult.add(inbounditem);
+				}
 			}
 
 		}
@@ -464,22 +471,6 @@ public class ShipInboundItemServiceImpl extends  ServiceImpl<ShipInboundItemV2Ma
 			if (shipment!=null&&shipment.getStart_receive_date() == null && hasReceived) {
 				shipment.setStart_receive_date(new Date());
 				shipInboundShipmentService.updateById(shipment);
-			}
-			if(needshipqty) {
-				LambdaQueryWrapper<ShipInboundShipmentItem> queryShipmentItem = new LambdaQueryWrapper<ShipInboundShipmentItem>()
-						.eq(ShipInboundShipmentItem::getShipmentid, shipmentid);
-				List<ShipInboundShipmentItem> inbounditemList = shipInboundShipmentItemV2Mapper.selectList(queryShipmentItem);
-				for(ShipInboundShipmentItem item:inbounditemList) {
-					if(hasSku.contains(item.getSku())) {
-						continue;
-					}else {
-						LambdaQueryWrapper<ShipInboundShipmentItem> query = new LambdaQueryWrapper<ShipInboundShipmentItem>()
-								.eq(ShipInboundShipmentItem::getShipmentid, item.getShipmentid())
-								.eq(ShipInboundShipmentItem::getSku, item.getSku());
-						item.setQuantity(0);
-						shipInboundShipmentItemV2Mapper.update(item, query);
-					}
-				}
 			}
 		}
 		return myResult;

@@ -6,31 +6,40 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wimoor.common.GeneralUtil;
 import com.wimoor.common.HttpClientUtil;
+import com.wimoor.erp.order.mapper.OrderListingMapper;
+import com.wimoor.erp.order.pojo.entity.Order;
+import com.wimoor.erp.order.pojo.entity.OrderListing;
+import com.wimoor.erp.order.pojo.entity.OrderPlatform;
+import com.wimoor.erp.order.service.IOrderPlatformService;
+import com.wimoor.erp.order.service.IOrderService;
 import com.wimoor.erp.thirdparty.mapper.ThirdPartyAPIMapper;
 import com.wimoor.erp.thirdparty.mapper.ThirdPartyWarehouseInventoryMapperOps;
 import com.wimoor.erp.thirdparty.mapper.ThirdPartyWarehouseMapper;
 import com.wimoor.erp.thirdparty.pojo.dto.ThirdpartyWarehouseInvDTO;
 import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyAPI;
-import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyWarehouseInventoryK5;
 import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyWarehouse;
+import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyWarehouseBind;
 import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyWarehouseInventoryOps;
-import com.wimoor.erp.thirdparty.service.IWarehouseOPSService;
+import com.wimoor.erp.thirdparty.service.IThirdPartyWarehouseBindService;
+import com.wimoor.erp.thirdparty.service.IThirdPartyWarehouseService;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service("warehouseOPSService")
 @RequiredArgsConstructor
-public class WarehouseOPSServiceImpl implements IWarehouseOPSService {
+public class WarehouseOPSServiceImpl implements IThirdPartyWarehouseService {
     final ThirdPartyAPIMapper thirdPartyAPIMapper;
     final ThirdPartyWarehouseMapper thirdPartyWarehouseMapper;
     final ThirdPartyWarehouseInventoryMapperOps thirdPartyWarehouseInventoryOpsMapper;
+    final IThirdPartyWarehouseBindService iThirdPartyWarehouseBindService;
+    final IOrderPlatformService orderPlatformService;
+    final IOrderService orderService;
+    final OrderListingMapper orderListingMapper;
     final static  String version ="";
     public Map<String,String> getHeader(ThirdPartyAPI api){
         Map<String,String> header=new HashMap<String,String>();
@@ -72,11 +81,11 @@ public class WarehouseOPSServiceImpl implements IWarehouseOPSService {
             query.eq(ThirdPartyWarehouseInventoryOps::getShopid,api.getShopid());
             thirdPartyWarehouseInventoryOpsMapper.delete(query);
             JSONArray returnDatas = GeneralUtil.getJsonArray(response);
+            Map<String,Integer> qtyMap=new HashMap<String,Integer>();
             for(int i=0;returnDatas!=null&&i<returnDatas.size();i++){
                 JSONObject data = (JSONObject)returnDatas.get(i);
                 String itemsku=data.getString("sku");
                 String houseid=dto.getHouseid();
-
                 ThirdPartyWarehouseInventoryOps inventory=new ThirdPartyWarehouseInventoryOps();
                 inventory.setHouseid(houseid);
                 inventory.setSku(itemsku);
@@ -93,9 +102,42 @@ public class WarehouseOPSServiceImpl implements IWarehouseOPSService {
                 inventory.setMark(data.getString("mark"));
                 inventory.setCname(data.getString("cargoName"));
                 inventory.setEname(data.getString("cargoNameEn"));
-                inventory.setHousename(warehouse.getName());
-                    thirdPartyWarehouseInventoryOpsMapper.insert(inventory);
+                inventory.setHousename(warehouse!=null?warehouse.getName():null);
+                qtyMap.put(itemsku,inventory.getQuantity());
+                thirdPartyWarehouseInventoryOpsMapper.insert(inventory);
+                if(warehouse!=null){
+                    ThirdPartyWarehouseBind bind = this.iThirdPartyWarehouseBindService.lambdaQuery().eq(ThirdPartyWarehouseBind::getThirdpartyWarehouseId, warehouse.getId()).one();
+                    if(bind!=null){
+                        OrderListing ol=new OrderListing();
+                        ol.setShopid(api.getShopid());
+                        ol.setWarehouseid(bind.getLocalWarehouseId());
+                        ol.setSku(inventory.getSku());
+                        ol.setName(data.getString("cargoName"));
+                        ol.setEname(data.getString("cargoNameEn"));
+                        ol.setQty(inventory.getQuantity());
+                        LambdaQueryWrapper<OrderListing> oquery=new LambdaQueryWrapper<OrderListing>();
+                        oquery.eq(OrderListing::getShopid,ol.getShopid());
+                        oquery.eq(OrderListing::getWarehouseid,bind.getLocalWarehouseId());
+                        oquery.eq(OrderListing::getSku,ol.getSku());
+                        OrderListing orderListing = orderListingMapper.selectOne(oquery);
+                        if(orderListing==null){
+                            orderListingMapper.insert(ol);
+                        }else{
+                            orderListing.setShopid(api.getShopid());
+                            orderListing.setWarehouseid(bind.getLocalWarehouseId());
+                            orderListing.setSku(inventory.getSku());
+                            orderListing.setName(data.getString("cargoName"));
+                            orderListing.setEname(data.getString("cargoNameEn"));
+                            orderListing.setQty(inventory.getQuantity());
+                            orderListingMapper.update(orderListing,oquery);
+                        }
+                    }
+                }
             }
+            if(warehouse!=null){
+                iThirdPartyWarehouseBindService.asyncLocalInventory(api.getShopid(),warehouse.getId(),qtyMap);
+            }
+
         }
 
         return thirdPartyWarehouseInventoryOpsMapper.findByDto(dto);
@@ -104,11 +146,169 @@ public class WarehouseOPSServiceImpl implements IWarehouseOPSService {
     private void setWarehouseProperties(ThirdPartyWarehouse warehouse, JSONObject data, ThirdPartyAPI api) {
         warehouse.setCode(data.getString("code"));
         warehouse.setName(data.getString("name"));
-        warehouse.setCountry(data.getString("whType"));
+        warehouse.setCountry(null);
         warehouse.setApi(api.getId());
         warehouse.setShopid(api.getShopid());
         warehouse.setExt(data.getString("address"));
     }
+    public JSONObject getOrder(ThirdPartyAPI api, ThirdpartyWarehouseInvDTO dto) {
+        String url=api.getApi()+ version +"/edi/web-services/wms/getOrders";
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -7);
+        String createdStartTime=dto.getCreatedStartTime()==null?GeneralUtil.formatDate(cal.getTime(), "yyyy-MM-dd"):dto.getCreatedStartTime();
+        String createdEndTime=dto.getCreatedEndTime();
+        if(StrUtil.isNotBlank(createdStartTime)){
+            url=url+(url.contains("?")?"&createdStartTime="+createdStartTime:"?createdStartTime="+createdStartTime);
+        }
+        if(StrUtil.isNotBlank(createdEndTime)){
+            url=url+(url.contains("?")?"&createdEndTime="+createdEndTime:"?createdEndTime="+createdEndTime);
+        }
+        url=url+(url.contains("?")?"&pageNum="+(dto.getCurrentpage()-1):"?pageNum="+(dto.getCurrentpage()-1));
+        String response= null;
+        try {
+            response = HttpClientUtil.getUrl(url,getHeader(api));
+        } catch (IOException | HttpException e) {
+            throw new RuntimeException(e);
+        }
+        Integer totalPages=0;
+        JSONObject data = GeneralUtil.getJsonObject(response);
+        if(data!=null&&data.containsKey("totalPages")&&data.getInteger("totalPages")!=1&&data.getInteger("totalPages")>(dto.getCurrentpage()+1)){
+            JSONArray orders = data.getJSONArray("orders");
+            totalPages=data.getInteger("totalPages");
+            if(orders!=null){
+                for(int i=0;i<orders.size();i++){
+                    JSONObject order = orders.getJSONObject(i);
+                    String warehouseCode=order.getString("warehouseCode");
+                    String warehouseName=order.getString("warehouseName");
+                    ThirdPartyWarehouse warehouse =null;
+                    if(StrUtil.isNotBlank(warehouseCode)){
+                        warehouse = thirdPartyWarehouseMapper.selectOne(new LambdaQueryWrapper<ThirdPartyWarehouse>()
+                                                                        .eq(ThirdPartyWarehouse::getCode, warehouseCode)
+                                                                        .eq(ThirdPartyWarehouse::getApi, api.getId())
+                                                                        .eq(ThirdPartyWarehouse::getShopid, api.getShopid()));
+                    }
+                    if(warehouse==null){
+                        warehouse = thirdPartyWarehouseMapper.selectOne(new LambdaQueryWrapper<ThirdPartyWarehouse>()
+                                                                        .eq(ThirdPartyWarehouse::getName, warehouseName)
+                                                                        .eq(ThirdPartyWarehouse::getApi, api.getId())
+                                                                        .eq(ThirdPartyWarehouse::getShopid, api.getShopid()));
+                    }
+                    if(warehouse==null){
+                        continue;
+                    }
+                    List<ThirdPartyWarehouseBind> thridbind = this.iThirdPartyWarehouseBindService.lambdaQuery().eq(ThirdPartyWarehouseBind::getThirdpartyWarehouseId, warehouse.getId()).list();
+                    String warehouseid=null;
+                    if(thridbind!=null&&thridbind.size()>0){
+                        warehouseid=thridbind.get(0).getLocalWarehouseId();
+                    }
+                    String platform=order.getString("platform");
+                    String platformid=null;
+                    if(StrUtil.isNotBlank(platform)){
+                        OrderPlatform orderPlatform = orderPlatformService.lambdaQuery().eq(OrderPlatform::getName, platform)
+                                                                                         .eq(OrderPlatform::getShopid, api.getShopid()).one();
+                        if(orderPlatform==null){
+                            orderPlatform=new OrderPlatform();
+                            orderPlatform.setName(platform);
+                            orderPlatform.setShopid(api.getShopid());
+                            orderPlatform.setOpttime(new Date());
+                            orderPlatform.setOperator(api.getOperator()!=null?api.getOperator().toString():null);
+                            orderPlatform.setDisabled(false);
+                            orderPlatformService.save(orderPlatform);
+                        }
+                        platformid=orderPlatform.getId();
+                        String poNum=order.getString("poNum");
+                        Date createdTime = order.getDate("createdTime");
+                        JSONArray cargoList = order.getJSONArray("cargoList");
+                        if(cargoList!=null){
+                            for(int j=0;j<cargoList.size();j++){
+                                JSONObject cargo = cargoList.getJSONObject(j);
+                                String sku=cargo.getString("sku");
+                                Integer quantity = cargo.getInteger("quantity");
+                                BigDecimal usdValuePerUnit = cargo.getBigDecimal("usdValuePerUnit");
+                                LambdaQueryWrapper<Order> orderQuery=new LambdaQueryWrapper<Order>();
+                                orderQuery.eq(Order::getShopid,api.getShopid());
+                                orderQuery.eq(Order::getPlatformId,platformid);
+                                orderQuery.eq(Order::getOrderId,poNum);
+                                orderQuery.eq(Order::getSku,sku);
+                                Order orderObject = orderService.getOne(orderQuery);
+                                if(orderObject==null){
+                                    orderObject=new Order();
+                                    orderObject.setShopid(api.getShopid());
+                                    orderObject.setPlatformId(platformid);
+                                    orderObject.setOrderId(poNum);
+                                    orderObject.setSku(sku);
+                                    orderObject.setCountry(order.getString("shipperCountryCode"));
+                                    orderObject.setWarehouseid(warehouseid);
+                                    orderObject.setIsout(true);
+                                    orderObject.setThirdpartyWarehouseid(warehouse.getId());
+                                    orderObject.setCurrency(order.getString("sellCur"));
+                                    orderObject.setQuantity(quantity);
+                                    orderObject.setPrice(usdValuePerUnit);
+                                    orderObject.setPurchaseDate(createdTime);
+                                    orderObject.setShipFee(BigDecimal.ZERO);
+                                    orderObject.setReferralFee(BigDecimal.ZERO);
+                                    orderObject.setReferralRate(BigDecimal.ZERO);
+                                    orderObject.setOperator(api.getOperator()!=null?api.getOperator().toString():null);
+                                    orderService.save(orderObject);
+                                }else{
+                                    orderObject.setShopid(api.getShopid());
+                                    orderObject.setPlatformId(platformid);
+                                    orderObject.setOrderId(poNum);
+                                    orderObject.setSku(sku);
+                                    orderObject.setCountry(order.getString("shipperCountryCode"));
+                                    orderObject.setWarehouseid(warehouseid);
+                                    orderObject.setIsout(true);
+                                    orderObject.setThirdpartyWarehouseid(warehouse.getId());
+                                    orderObject.setCurrency(order.getString("sellCur"));
+                                    orderObject.setQuantity(quantity);
+                                    orderObject.setPrice(usdValuePerUnit);
+                                    orderObject.setPurchaseDate(createdTime);
+                                    orderObject.setShipFee(BigDecimal.ZERO);
+                                    orderObject.setReferralFee(BigDecimal.ZERO);
+                                    orderObject.setReferralRate(BigDecimal.ZERO);
+                                    orderObject.setOperator(api.getOperator()!=null?api.getOperator().toString():null);
+                                    orderService.update(orderObject,orderQuery);
+                                }
+                                if(StrUtil.isNotBlank(warehouseid)){
+                                    OrderListing ol=new OrderListing();
+                                    ol.setShopid(api.getShopid());
+                                    ol.setCountry(orderObject.getCountry());
+                                    ol.setWarehouseid(warehouseid);
+                                    ol.setSku(orderObject.getSku());
+                                    ol.setName(cargo.getString("cargoName"));
+                                    ol.setEname(cargo.getString("cargoNameEn"));
+                                    LambdaQueryWrapper<OrderListing> query=new LambdaQueryWrapper<OrderListing>();
+                                    query.eq(OrderListing::getShopid,ol.getShopid());
+                                    query.eq(OrderListing::getWarehouseid,ol.getWarehouseid());
+                                    query.eq(OrderListing::getSku,ol.getSku());
+                                    OrderListing orderListing = orderListingMapper.selectOne(query);
+                                    if(orderListing==null){
+                                        orderListingMapper.insert(ol);
+                                    }else{
+                                        orderListing.setShopid(api.getShopid());
+                                        orderListing.setCountry(orderObject.getCountry());
+                                        orderListing.setWarehouseid(warehouseid);
+                                        orderListing.setSku(orderObject.getSku());
+                                        orderListing.setName(cargo.getString("cargoName"));
+                                        orderListing.setEname(cargo.getString("cargoNameEn"));
+                                        orderListingMapper.update(orderListing,query);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
+            if(dto.getCurrentpage()+1<totalPages){
+                dto.setCurrentpage(dto.getCurrentpage()+1);
+                getOrder(api,dto);
+            }
+        }
+        return data;
+    }
+
     public List<ThirdPartyWarehouse> searchStartHouse(ThirdPartyAPI api) throws HttpException {
         String url=api.getApi()+ version +"/edi/web-services/wms/getDataList?whType=";
         String response= null;

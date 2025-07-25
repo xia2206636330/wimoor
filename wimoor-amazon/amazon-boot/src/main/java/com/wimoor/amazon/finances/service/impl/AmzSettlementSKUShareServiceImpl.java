@@ -383,7 +383,7 @@ public class AmzSettlementSKUShareServiceImpl implements IAmzSettlementSKUShareS
 					item.setProfitMarketfee(new BigDecimal(0)); 
 					item.setProfitLostrate(new BigDecimal(0)); 
 					item.setProfitOtherfee(new BigDecimal(0)); 
-					item.setProfitVat(new BigDecimal(0)); 
+					//item.setProfitVat(new BigDecimal(0));
 					item.setMid(null);
 					item.setPid(null);
 					item.setOwner(null);
@@ -481,7 +481,7 @@ public class AmzSettlementSKUShareServiceImpl implements IAmzSettlementSKUShareS
 				}
 				item.setProfitLostrate(costrate);
 				item.setProfitOtherfee(otherfee);
-				item.setProfitVat(vat);
+				//item.setProfitVat(vat);
 				item.setMid(localitem.get("mid")!=null?localitem.get("mid").toString():null);
 				item.setPid(localitem.get("pid")!=null?localitem.get("pid").toString():null);
 				item.setOwner(localitem.get("owner")!=null?localitem.get("owner").toString():null);

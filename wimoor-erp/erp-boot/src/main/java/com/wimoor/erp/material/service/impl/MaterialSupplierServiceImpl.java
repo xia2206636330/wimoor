@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.wimoor.common.mvc.BizException;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -205,6 +206,9 @@ public class MaterialSupplierServiceImpl extends  ServiceImpl<MaterialSupplierMa
   							stepwise.setOpttime(new Date());
   							stepwise.setPrice(price);
   							stepwise.setSupplierid(supid);
+							  if(StrUtil.isBlank(supid)){
+								  throw new BizException("没有选择对应供应商");
+							  }
   							materialSupplierStepwiseMapper.insert(stepwise);
   						}
   					}

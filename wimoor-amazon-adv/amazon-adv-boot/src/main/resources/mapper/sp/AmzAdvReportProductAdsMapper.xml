@@ -365,84 +365,84 @@
   <insert id="refreshAdvertWarningData" parameterType="java.util.Map">
    delete from t_advert_warning_product_data where shopid= #{shopid,jdbcType=CHAR};
    replace into t_advert_warning_product_data
-  			select v.id,v.shopid,'yesterday',v.groupName,v.market,v.campaignName,v.adGroupName,v.sku,v.asin ,
+  			select v.id,max(v.shopid) shopid,'yesterday',max(v.groupName) groupName,max(v.market) market,max(v.campaignName) campaignName,max(v.adGroupName) adGroupName,max(v.sku) sku,max(v.asin) asin,
 sum(v.click0) clicks,sum(v.impressions0)  impressions,sum(v.cost0) cost,sum(v.order0) orders,sum(v.sales0) sales,
 	null clicksp,null  impressionsp,null costp,null ordersp,null salesp ,
-	sum(v.click1) clickscp,sum(v.impressions1)  impressionscp,sum(v.cost1) costcp,sum(v.order1) orderscp,sum(v.sales1) salescp 
+	sum(v.click1) clickscp,sum(v.impressions1)  impressionscp,sum(v.cost1) costcp,sum(v.order1) orderscp,sum(v.sales1) salescp
 		from (
-			select a.shopid,pdt.adId id, g.name groupName, m.name market, cm.name campaignName,
-				ad.name adGroupName, pd.sku sku, pd.asin asin,
-				case when pdt.bydate=		
+			select pdt.adId id,max(a.shopid) shopid, max(g.name) groupName, max(m.name) market, max(cm.name) campaignName,
+				   max(ad.name) adGroupName, max(pd.sku) sku, max(pd.asin) asin,
+				max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-			        then pdt.clicks else 0 end click0,
-			    case when pdt.bydate=
+			        then pdt.clicks else 0 end) click0,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		         	then pdt.impressions else 0 end impressions0,
-		        case when pdt.bydate=
+		         	then pdt.impressions else 0 end) impressions0,
+				   max(case when pdt.bydate=
 		   			case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		            then pdt.cost else 0 end cost0,
-		        case when pdt.bydate=
+		            then pdt.cost else 0 end) cost0,
+				   max(case when pdt.bydate=
 		 			case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		            then attributedConversions7d else 0 end order0,
-		        case when pdt.bydate=
+		            then attributedConversions7d else 0 end) order0,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		         	then attributedSales7d else 0 end sales0,
-		         	
-		         case when pdt.bydate=
+		         	then attributedSales7d else 0 end) sales0,
+
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			       		then pdt.clicks else 0 end click1,
-			       	case when pdt.bydate=
+			       		then pdt.clicks else 0 end) click1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			 			then pdt.impressions else 0 end impressions1,
-			 		case when pdt.bydate=
+			 			then pdt.impressions else 0 end) impressions1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			 			then pdt.cost else 0 end cost1,
-			 		case when pdt.bydate=
+			 			then pdt.cost else 0 end) cost1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-						then attributedConversions7d else 0 end order1,
-					case when pdt.bydate=
+						then attributedConversions7d else 0 end) order1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			 			then attributedSales7d else 0 end sales1     
+			 			then attributedSales7d else 0 end) sales1
 			 from t_amz_adv_rpt2_sp_productads pdt
 		left join t_amz_adv_rpt2_sp_productads_attributed d on d.adId=pdt.adId and d.bydate=pdt.bydate
 		left join t_amz_adv_productads pd on pd.adGroupId=pdt.adGroupId and pd.campaignId=pdt.campaignId and pd.adId=pdt.adId and pd.profileid=pdt.profileid
@@ -464,119 +464,120 @@ sum(v.click0) clicks,sum(v.impressions0)  impressions,sum(v.cost0) cost,sum(v.or
 		having 1=1;
 		
 		 replace into t_advert_warning_product_data
-		select v.id,v.shopid,'sequent',v.groupName,v.market,v.campaignName,v.adGroupName,v.sku,v.asin,
+		select v.id,max(v.shopid) shopid,'sequent',max(v.groupName) groupName,max(v.market) market,max(v.campaignName) campaignName,
+		       max(v.adGroupName) adGroupName,max(v.sku) sku,max(v.asin) asin,
 		sum(v.click0) clicks,sum(v.impressions0)  impressions,sum(v.cost0) cost,sum(v.order0) orders,sum(v.sales0) sales,
 		sum(v.click1) clicksp,sum(v.impressions1)  impressionsp,sum(v.cost1) costp,sum(v.order1) ordersp,sum(v.sales1) salesp ,
 		sum(v.click2) clickscp,sum(v.impressions2)  impressionscp,sum(v.cost2) costcp,sum(v.order2) orderscp,sum(v.sales2) salescp 
 		from (
-			select a.shopid,pdt.adId id, g.name groupName, m.name market, cm.name campaignName,
-				ad.name adGroupName, pd.sku sku, pd.asin asin,
-				case when pdt.bydate=		
+			select max(a.shopid) shopid,pdt.adId id, max(g.name) groupName, max(m.name) market, max(cm.name) campaignName,
+				   max(ad.name) adGroupName, max(pd.sku) sku, max(pd.asin) asin,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-			        then pdt.clicks else 0 end click0,
-			    case when pdt.bydate=
+			        then pdt.clicks else 0 end) click0,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		         	then pdt.impressions else 0 end impressions0,
-		        case when pdt.bydate=
+		         	then pdt.impressions else 0 end) impressions0,
+				   max(case when pdt.bydate=
 		   			case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		            then pdt.cost else 0 end cost0,
-		        case when pdt.bydate=
+		            then pdt.cost else 0 end) cost0,
+				   max(case when pdt.bydate=
 		 			case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		            then attributedConversions7d else 0 end order0,
-		        case when pdt.bydate=
+		            then attributedConversions7d else 0 end) order0,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		         	then attributedSales7d else 0 end sales0,
-		         	
-		        case when pdt.bydate=
+		         	then attributedSales7d else 0 end) sales0,
+
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			       		then pdt.clicks else 0 end click1,
-			       	case when pdt.bydate=
+			       		then pdt.clicks else 0 end) click1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72 hour),'%Y-%m-%d') end end end
-			 			then pdt.clicks else 0 end click2,
-			 		case when pdt.bydate=
+			 			then pdt.clicks else 0 end) click2,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			 			then pdt.impressions else 0 end impressions1,
-			 		case when pdt.bydate=
+			 			then pdt.impressions else 0 end) impressions1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72 hour),'%Y-%m-%d') end end end
-			 			then pdt.impressions else 0 end impressions2,
-			 		case when pdt.bydate=
+			 			then pdt.impressions else 0 end) impressions2,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			 			then pdt.cost else 0 end cost1,
-			 		case when pdt.bydate=
+			 			then pdt.cost else 0 end) cost1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72 hour),'%Y-%m-%d') end end end
-						then pdt.cost else 0 end cost2,
-					case when pdt.bydate=
+						then pdt.cost else 0 end) cost2,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-						then attributedConversions7d else 0 end order1,
-					case when pdt.bydate=
+						then attributedConversions7d else 0 end) order1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72 hour),'%Y-%m-%d') end end end
-						then attributedConversions7d else 0 end order2,
-					case when pdt.bydate=
+						then attributedConversions7d else 0 end) order2,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -48 hour),'%Y-%m-%d') end end end
-			 			then attributedSales7d else 0 end sales1,
-			 		case when pdt.bydate=
+			 			then attributedSales7d else 0 end) sales1,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -72 hour),'%Y-%m-%d') end end end
-			          	then attributedSales7d else 0 end sales2   
+			          	then attributedSales7d else 0 end) sales2
 			from t_amz_adv_rpt2_sp_productads pdt
 		left join t_amz_adv_rpt2_sp_productads_attributed d on d.adId=pdt.adId and d.bydate=pdt.bydate
 		left join t_amz_adv_productads pd on pd.adGroupId=pdt.adGroupId and pd.campaignId=pdt.campaignId and pd.adId=pdt.adId and pd.profileid=pdt.profileid
@@ -600,84 +601,85 @@ sum(v.click0) clicks,sum(v.impressions0)  impressions,sum(v.cost0) cost,sum(v.or
 		having 1=1;
 		
 		replace into t_advert_warning_product_data
-		select v.id,v.shopid,'co',v.groupName,v.market,v.campaignName,v.adGroupName,v.sku,v.asin,
+		select v.id,max(v.shopid) shopid,'co',max(v.groupName) groupName,max(v.market) market,max(v.campaignName) campaignName,
+		       max(v.adGroupName) adGroupName,max(v.sku) sku,max(v.asin) asin,
 		sum(v.click0) clicks,sum(v.impressions0)  impressions,sum(v.cost0) cost,sum(v.order0) orders,sum(v.sales0) sales,
 		null clicksp,null  impressionsp,null costp,null ordersp,null salesp ,
 		sum(v.click3) clickscp,sum(v.impressions3)  impressionscp,sum(v.cost3) costcp,sum(v.order3) orderscp,sum(v.sales3) salescp
 		from (
-			select a.shopid,pdt.adId id, g.name groupName, m.name market, cm.name campaignName,
-				ad.name adGroupName, pd.sku sku, pd.asin ASIN,
-				case when pdt.bydate=		
+			select max(a.shopid) shopid,pdt.adId id, max(g.name) groupName, max(m.name) market, max(cm.name) campaignName,
+				   max(ad.name) adGroupName, max(pd.sku) sku, max(pd.asin) ASIN,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-			        then pdt.clicks else 0 end click0,
-			    case when pdt.bydate=
+			        then pdt.clicks else 0 end) click0,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		         	then pdt.impressions else 0 end impressions0,
-		        case when pdt.bydate=
+		         	then pdt.impressions else 0 end) impressions0,
+				   max(case when pdt.bydate=
 		   			case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		            then pdt.cost else 0 end cost0,
-		        case when pdt.bydate=
+		            then pdt.cost else 0 end) cost0,
+				   max(case when pdt.bydate=
 		 			case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		            then attributedConversions7d else 0 end order0,
-		        case when pdt.bydate=
+		            then attributedConversions7d else 0 end) order0,
+				   max(case when pdt.bydate=
 					case when pf.timezone='America/Los_Angeles' 
 				    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-16 hour),'%Y-%m-%d')
 				    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-8 hour),'%Y-%m-%d')
 			        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24-7 hour),'%Y-%m-%d')
 			        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -24 hour),'%Y-%m-%d') end end end
-		         	then attributedSales7d else 0 end sales0,
-		         	
-		         	case when pdt.bydate=
+		         	then attributedSales7d else 0 end) sales0,
+
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168 hour),'%Y-%m-%d') end end end
-				        then pdt.clicks else 0 end click3,
-				    case when pdt.bydate=
+				        then pdt.clicks else 0 end) click3,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168 hour),'%Y-%m-%d') end end end
-						then pdt.impressions else 0 end impressions3,
-					case when pdt.bydate=
+						then pdt.impressions else 0 end) impressions3,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168 hour),'%Y-%m-%d') end end end
-			 			then pdt.cost else 0 end cost3,
-			 		case when pdt.bydate=
+			 			then pdt.cost else 0 end) cost3,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168 hour),'%Y-%m-%d') end end end
-			 			then attributedConversions7d else 0 end order3,
-			 		case when pdt.bydate=
+			 			then attributedConversions7d else 0 end) order3,
+				   max(case when pdt.bydate=
 						case when pf.timezone='America/Los_Angeles' 
 					    then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-16 hour),'%Y-%m-%d')
 					    else case when pf.timezone='Europe/Paris' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-8 hour),'%Y-%m-%d')
 				        else case when pf.timezone='Europe/London' then DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168-7 hour),'%Y-%m-%d')
 				        else DATE_FORMAT(date_add(CURRENT_TIMESTAMP , interval -168 hour),'%Y-%m-%d') end end end
-			       		then attributedSales7d else 0 end sales3	   
+			       		then attributedSales7d else 0 end) sales3
 			    	 		     
 			from t_amz_adv_rpt2_sp_productads pdt
 		left join t_amz_adv_rpt2_sp_productads_attributed d on d.adId=pdt.adId and d.bydate=pdt.bydate

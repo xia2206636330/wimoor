@@ -4,7 +4,11 @@ package com.wimoor.erp.warehouse.controller;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyWarehouse;
+import com.wimoor.erp.thirdparty.pojo.entity.ThirdPartyWarehouseBind;
+import com.wimoor.erp.thirdparty.service.IThirdPartyWarehouseBindService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +53,7 @@ public class WarehouseController {
 	
 	final IWarehouseService warehouseService;
 	final ISerialNumService iSerialNumService;
+	final IThirdPartyWarehouseBindService thirdPartyWarehouseBindService;
 
 	@ApiOperation("仓库列表[包含子仓位]")
 	@GetMapping("/list")
@@ -62,7 +67,23 @@ public class WarehouseController {
 	@PostMapping("/listpage")
 	public Result<IPage<Warehouse>> findWarehousePageList(@RequestBody WarehouseDTO dto){
 		UserInfo userinfo = UserInfoContext.get();
-		IPage<Warehouse> list=warehouseService.findByCondition(dto.getPage(),dto.getSearch(),userinfo.getCompanyid(),dto.getFtype(),dto.getParentid());
+		IPage<Warehouse> list=warehouseService.findByCondition(userinfo,dto);
+		if(list!=null){
+			List<String> ids = list.getRecords().stream().map(Warehouse::getId).collect(Collectors.toList());
+			if(ids!=null&&ids.size()>0){
+				List<ThirdPartyWarehouseBind> bindlist = thirdPartyWarehouseBindService.lambdaQuery().in(ThirdPartyWarehouseBind::getLocalWarehouseId,ids).list();
+				if(bindlist!=null&&bindlist.size()>0){
+					List<String> bindids = bindlist.stream().map(ThirdPartyWarehouseBind::getLocalWarehouseId).collect(Collectors.toList());
+					for(Warehouse item: list.getRecords()){
+						if(bindids.contains(item.getId())){
+							item.setIsbind(true);
+						}else{
+							item.setIsbind(false);
+						}
+					}
+				}
+			}
+		}
 		return Result.success(list);
 	}
 	
@@ -107,7 +128,12 @@ public class WarehouseController {
 	@GetMapping("/getOverseaList")
 	public Result<List<Warehouse>> getOverseaListList(String ftype,String groupid,String country){
 		UserInfo userinfo = UserInfoContext.get();
- 
+        if(StrUtil.isBlank(country)){
+			country=null;
+		}
+        if(StrUtil.isBlank(groupid)){
+			groupid=null;
+        }
 		List<Warehouse> list=warehouseService.getOverseaWarehouse(userinfo.getCompanyid(),ftype,groupid,country);
 				 
 		if(ftype==null) {
@@ -200,7 +226,21 @@ public class WarehouseController {
 		}
 		return Result.success();
 	}
-	
+
+	@GetMapping(value = "checkDeleteWarehouse")
+	Result<?> checkDeleteWarehouse(String ids)   {
+		String[] idlist = ids.split(",");
+		String message="";
+		for (int i = 0; i < idlist.length; i++) {
+			String id = idlist[i];
+			if (StrUtil.isNotEmpty(id)) {
+				message=message+warehouseService.checkDeleteWarehouse(id);
+
+			}
+		}
+		return Result.success();
+	}
+
 	@SystemControllerLog(  "更新仓库")
 	@PostMapping(value = "updateData/{id}")
 	@CacheEvict(value = { "warehosueCache" }, allEntries = true)
@@ -267,8 +307,10 @@ public class WarehouseController {
 		model.setOpttime(new Date());
 		model.setShopid(shopid);
 		model.setDisabled(false);
-		String sernum = iSerialNumService.readSerialNumber(shopid, "M");
-		model.setNumber(sernum);
+		if(StrUtil.isBlank(model.getNumber())){
+			String sernum = iSerialNumService.readSerialNumber(shopid, "M");
+			model.setNumber(sernum);
+		}
 		Boolean isdefault = false;
 		// 判断是否有默认仓库 如果没有 新加仓库为默认
 		List<Warehouse> list = warehouseService.findBydefault(shopid);

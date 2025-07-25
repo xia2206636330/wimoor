@@ -6,12 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -122,7 +117,7 @@ public class ErpDispatchOverseaFormController {
 		if (StrUtil.isEmpty(search)) {
 			search = null;
 		} else {
-			search = search.trim() + "%";
+			search = "%"+search.trim() + "%";
 		}
 		List<Integer> statusList = new ArrayList<Integer>();
 		if (StrUtil.isEmpty(auditstatus)) {
@@ -155,6 +150,7 @@ public class ErpDispatchOverseaFormController {
 		}
 		map.put("shopid", shopid);
 		map.put("search", search);
+		map.put("searchtype", dto.getSearchtype());
 		if(StrUtil.isNotBlank(dto.getFromwid())) {
 			map.put("fromwid", dto.getFromwid());
 		}
@@ -329,7 +325,7 @@ public class ErpDispatchOverseaFormController {
 			fOut.flush();
 			fOut.close();
 			workbook.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -352,8 +348,6 @@ public class ErpDispatchOverseaFormController {
 			} catch (InvalidFormatException e) {
 				e.printStackTrace();
 			} catch (BizException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -581,9 +575,7 @@ public class ErpDispatchOverseaFormController {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}  catch (Exception e) {
-			e.printStackTrace();
-		}finally {
+		}  finally {
 			if (document != null && document.isOpen()) {
 				document.close();
 			}
@@ -591,8 +583,27 @@ public class ErpDispatchOverseaFormController {
 	}
 	
 	@GetMapping("/getShipArrivalTimeRecord")
-	public Result<List<Map<String, Object>>> getShipArrivalTimeRecord(String shopid,String country,String groupid,String sku){
-		return Result.success(iErpDispatchOverseaFormService.getShipArrivalTimeRecord(shopid, country, sku, groupid));
+	public Result<List<Map<String, Object>>> getShipArrivalTimeRecord(String warehouseid,String sku){
+		UserInfo user=UserInfoContext.get();
+		return Result.success(iErpDispatchOverseaFormService.getShipArrivalTimeRecord(user,warehouseid, sku));
+	}
+
+	@GetMapping("/shipLine")
+	public Result<com.wimoor.erp.common.pojo.entity.Chart> getSalesLineAction(String warehouseid,String sku,Integer daysize) {
+		UserInfo userinfo = UserInfoContext.get();
+		com.wimoor.erp.common.pojo.entity.Chart chart=new com.wimoor.erp.common.pojo.entity.Chart();
+		List<com.wimoor.erp.common.pojo.entity.ChartLine> lines =new ArrayList<com.wimoor.erp.common.pojo.entity.ChartLine>();
+		List<String> legends=new ArrayList<String>();
+		com.wimoor.erp.common.pojo.entity.ChartLine line= iErpDispatchOverseaFormService.shipArrivalTimeChart(warehouseid,sku,daysize, userinfo);
+		lines.add(line);
+		chart.setLines(lines);
+		Calendar c = Calendar.getInstance();
+		Calendar end=Calendar.getInstance();
+		end.add(Calendar.DATE, daysize-1);
+		chart.setLabels(com.wimoor.erp.common.pojo.entity.ChartPoint.getLabels(com.wimoor.erp.common.pojo.entity.ChartPoint.Daily, c.getTime(), end.getTime()));
+		chart.setLegends(Arrays.asList(sku));
+
+		return Result.success(chart);
 	}
 	
 }

@@ -110,7 +110,7 @@ public class ProductInfoController {
 							Item response = iProductCatalogItemService.captureCatalogProductDim(amazonAuthority,asin,Arrays.asList(marketPlace.getMarketplaceid()));
 						    return Result.success(response);
 		       }
-	    
+		@ApiOperation(value = "获取产品信息")
 		@PostMapping("/productList")
 		public Result<IPage<AmzProductListVo>> productListAction(@RequestBody ProductListQuery query) {
 			String search =query.getSearch();

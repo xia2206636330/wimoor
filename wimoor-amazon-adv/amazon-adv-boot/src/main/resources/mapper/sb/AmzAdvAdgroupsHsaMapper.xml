@@ -38,35 +38,31 @@
 				sum(t.impressions) impressions,sum(t.clicks) clicks,sum(t.cost) cost,
 				ifnull((sum(t.clicks) / sum(t.impressions)),0) CTR,
 				ifnull((sum(t.cost) / sum(t.clicks)),0) avgcost,
-				ifnull(sum(a.attributedSales14d) - sum(a.attributedSales14dSameSKU),0) attributedSales,
-				sum(a.attributedSales14dSameSKU) attributedSalesSameSKU,
-				ifnull(sum(a.attributedConversions14d)-sum(a.attributedConversions14dSameSKU),0) attributedConversions,
-				sum(a.attributedConversions14dSameSKU) attributedConversionsSameSKU,
-				sum(a.attributedConversions14d) attributedUnitsOrdered,
-				sum(a.attributedSales14d) sumSales,
-				sum(a.attributedConversions14d) sumUnits,
-				ifnull((sum(a.attributedConversions14d) / sum(t.clicks)),0) CSRT,
-				case when ifnull(sum(t.cost),0)>0 and ifnull(sum(a.attributedSales14d),0)=0
+				ifnull(sum(a.sales) ,0) attributedSales,
+				ifnull(sum(a.purchases),0) attributedConversions,
+				sum(a.unitsSold) attributedUnitsOrdered,
+				sum(a.sales) sumSales,
+				sum(a.unitsSold) sumUnits,
+				ifnull((sum(a.purchases) / sum(t.clicks)),0) CSRT,
+				case when ifnull(sum(t.cost),0)>0 and ifnull(sum(a.sales),0)=0
 				then 10000000000
-				else ifnull((sum(t.cost) / sum(a.attributedSales14d)),0)
+				else ifnull((sum(t.cost) / sum(a.sales)),0)
 				end ACOS,
-				ifnull((sum(a.attributedSales14d) / sum(t.cost)),0) ROAS,
-		
-				ifnull(sum(a.attributedSales14d) - sum(a.attributedSales14dSameSKU),0) attributedSales14d,
-				sum(a.attributedSales14dSameSKU) attributedSalesSameSKU14d,
-				ifnull(sum(a.attributedConversions14d)-sum(a.attributedConversions14dSameSKU),0) attributedConversions14d,
-				sum(a.attributedConversions14dSameSKU) attributedUnitsOrderedSameSKU14d,
-				sum(a.attributedConversions14d) attributedUnitsOrdered14d,
-				sum(a.attributedSales14d) sumSales14d,
-				sum(a.attributedConversions14d) sumUnits14d,
-				ifnull((sum(a.attributedConversions14d) / sum(t.clicks)),0) CSRT14d,
-				case when ifnull(sum(t.cost),0)>0 and ifnull(sum(a.attributedSales14d),0)=0
+				ifnull((sum(a.sales) / sum(t.cost)),0) ROAS,
+				ifnull(sum(a.sales)  ,0) sales
+
+		<!--,ifnull(sum(a.purchases),0) attributedConversions14d,
+				sum(a.unitsSold) attributedUnitsOrdered14d,
+				sum(a.sales) sumSales14d,
+				sum(a.purchases) sumUnits14d,
+				ifnull((sum(a.purchases) / sum(t.clicks)),0) CSRT14d,
+				case when ifnull(sum(t.cost),0)>0 and ifnull(sum(a.sales),0)=0
 				then 10000000000
-				else ifnull((sum(t.cost) / sum(a.attributedSales14d)),0)
+				else ifnull((sum(t.cost) / sum(a.sales)),0)
 				end ACOS14d,
-				ifnull((sum(a.attributedSales14d) / sum(t.cost)),0) ROAS14d
+				ifnull((sum(a.sales) / sum(t.cost)),0) ROAS14d-->
 			from t_amz_adv_rpt2_hsa_adgroups t
-		    left join t_amz_adv_rpt2_hsa_adgroups_attributed a on a.adGroupId=t.adGroupId and a.bydate=t.bydate
+		    left join t_amz_adv_rpt2_hsa_adgroups_attributed_all a on a.adGroupId=t.adGroupId and a.bydate=t.bydate
 		    left join t_amz_adv_rpt2_hsa_adgroups_brand r on r.adGroupId=t.adGroupId and r.bydate=t.bydate
 		    left join t_amz_adv_rpt2_hsa_adgroups_video v on  v.adGroupId=t.adGroupId and v.bydate=t.bydate
 			where t.bydate &gt;= #{fromDate,jdbcType=DATE} and t.bydate &lt;= #{endDate,jdbcType=DATE}
@@ -132,21 +128,19 @@
 		select sum(impressions) impressions, sum(clicks) clicks, sum(cost) cost,
 			ifnull((sum(cost) / sum(clicks)),0) avgcost,
 			ifnull((sum(clicks) / sum(impressions)),0) CTR,
-			case when ifnull(sum(cost),0)>0 and ifnull(sum(ifnull(attributedSales14d,0)),0)=0
+			case when ifnull(sum(cost),0)>0 and ifnull(sum(ifnull(sales,0)),0)=0
 			then 10000000000
-			else ifnull((sum(cost) / sum(ifnull(attributedSales14d,0))),0)
+			else ifnull((sum(cost) / sum(ifnull(sales,0))),0)
 			end ACOS,
-			ifnull((sum(ifnull(attributedSales14d,0)) / sum(cost)),0) ROAS,
-			ifnull(sum(ifnull(attributedSales14d,0)),0) sumSales,
-			ifnull(sum(ifnull(attributedConversions14d,0)),0) sumUnits,
-			ifnull((sum(attributedConversions14d) / sum(clicks)),0) CSRT,
-			ifnull(sum(attributedConversions14d) - sum(attributedConversions14dSameSKU),0) attributedConversions,
-			ifnull(sum(attributedConversions14dSameSKU),0) attributedConversionsSameSKU,
-			ifnull(sum(attributedConversions14d),0) attributedUnitsOrdered,
-			ifnull(sum(attributedSales14dSameSKU),0) attributedSalesSameSKU,
-			ifnull(sum(attributedSales14d) - sum(attributedSales14dSameSKU),0) attributedSales
+			ifnull((sum(ifnull(sales,0)) / sum(cost)),0) ROAS,
+			ifnull(sum(ifnull(sales,0)),0) sumSales,
+			ifnull(sum(unitsSold),0) sumUnits,
+			ifnull((sum(purchases) / sum(clicks)),0) CSRT,
+			ifnull(sum(purchases) ,0) attributedConversions,
+			ifnull(sum(unitsSold),0) attributedUnitsOrdered,
+			ifnull(sum(sales)  ,0) attributedSales
 		from t_amz_adv_rpt2_hsa_adgroups v
-		left join t_amz_adv_rpt2_hsa_adgroups_attributed d on d.adGroupId=v.adGroupId and d.bydate=v.bydate
+		left join t_amz_adv_rpt2_hsa_adgroups_attributed_all d on d.adGroupId=v.adGroupId and d.bydate=v.bydate
 		left join t_amz_adv_rpt2_hsa_adgroups_brand sa on sa.adGroupId=v.adGroupId and sa.bydate=v.bydate
 		left join t_amz_adv_rpt2_hsa_adgroups_video v1 on  v1.adGroupId=v.adGroupId and v1.bydate=v.bydate
 		left join t_amz_adv_adgroups_hsa t on t.adGroupId = v.adGroupId and t.campaignId = v.campaignId and t.profileid = v.profileid
@@ -218,7 +212,7 @@
 			${serchlist}
 		</if>
 		from t_amz_adv_rpt2_hsa_adgroups v
-		left join t_amz_adv_rpt2_hsa_adgroups_attributed d on d.adGroupId=v.adGroupId and d.bydate=v.bydate
+		left join t_amz_adv_rpt2_hsa_adgroups_attributed_all d on d.adGroupId=v.adGroupId and d.bydate=v.bydate
 		left join t_amz_adv_rpt2_hsa_adgroups_brand sa on sa.adGroupId=v.adGroupId and sa.bydate=v.bydate
 		left join t_amz_adv_rpt2_hsa_adgroups_video vo on vo.adGroupId=v.adGroupId and vo.bydate=v.bydate
 		left join t_amz_adv_adgroups_hsa t on t.adGroupId= v.adGroupId and t.campaignId = v.campaignId and t.profileid = v.profileid

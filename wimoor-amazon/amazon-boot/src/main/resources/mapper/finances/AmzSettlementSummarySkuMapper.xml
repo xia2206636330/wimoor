@@ -437,7 +437,7 @@
 				0  local_return_tax,
 				0 `profit_local_shipmentfee`,
 				0 `profit_marketfee`,
-				0 `profit_vat`,
+				v.vat `profit_vat`,
 				0 `profit_companytax`,
 				0 `profit_customstax`,
 				0 `profit_exchangelost`,
@@ -467,10 +467,13 @@
 		             then amount else 0 end
 		         ) shipping,
 		    sum(case when amount_type='Promotion' then amount else 0 end) promotion,
-		    sum(case when amount_description='Tax' and transaction_type='Order' and amount_type='ItemPrice' then amount else 0 end) tax,
+			sum(case when amount_description='MarketplaceFacilitatorVAT-Principal' and transaction_type='Order'
+				and amount_type='ItemWithheldTax' and (m.region='EU' or m.region='UK')then amount else 0 end) vat,
+			sum(case when amount_description='Tax' and transaction_type='Order' and amount_type='ItemPrice' then amount else 0 end) tax,
             sum(amount) total
 		from t_amz_settlement_summary_day r
 		left JOIN t_amz_settlement_acc_report rt ON r.settlementid=rt.settlement_id
+		left join t_marketplace m on m.point_name=ifnull(rt.marketplace_name,r.marketplace_name)
 		where  r.settlementid=#{settlement_id,jdbcType=CHAR}
 		group BY r.amazonAuthId,IFNULL(r.sku,'*'),rt.marketplace_name,r.posted_date ) v
 	</delete>
@@ -478,12 +481,13 @@
 	<select id="findSettlementOverall" resultType="java.util.Map" parameterType="java.util.Map">
 		select * from (
 		SELECT max(r.id) id,max(a.groupid) pid,r.amazonauthid,r.marketplace_name,max(r.currency) currency,
-		sum(case when amount_description='Principal'  and transaction_type='Order'  then amount else 0 end) principal,
+		sum(case when amount_description='Principal' and amount_type='ItemPrice'  and transaction_type='Order'  then amount else 0 end) principal,
 		sum(case when r.amount_description = 'Commission' AND (r.transaction_type='Order' or  r.transaction_type='Refund')  then amount else 0 end) commission,
 		sum(case when (amount_description like 'FBA%') and transaction_type='Order' then amount else 0 end ) fbafee,
 		sum(case when amount_description='Principal' and transaction_type='Refund' then amount else 0 end ) refund,
 		sum(case when amount_type='Cost of Advertising' and transaction_type='ServiceFee' then amount else 0 end ) advfee,
 		sum(case when amount_description='Tax' and transaction_type='Order' and amount_type='ItemPrice' then amount else 0 end) tax,
+		sum(case when amount_description='MarketplaceFacilitatorVAT-Principal' and transaction_type='Order' and amount_type='ItemPrice' then amount else 0 end) vat,
 		sum(case when amount_description='Storage Fee' and transaction_type='other-transaction' then amount else 0 end ) storagefee,
 		sum(case when amount_description='FBA International Freight Shipping Charge' then amount else 0 end) shipcharge,
 		sum(case when amount_description='Previous Reserve Amount Balance' or 
@@ -550,7 +554,9 @@
 			    ifnull(dim.length,0)*ifnull(dim.width,0)*ifnull(dim.height,0) volume, 
 			    ifnull(dim.weight,0) weight
 		 FROM 
-		   	  (SELECT 	t.amazonAuthId,t.marketplace_name market, t.sku  
+		   	  (SELECT 	t.amazonAuthId,t.marketplace_name market,
+						t.sku,
+		   	           case when  t.sku like  'amzn.gr.%'  then SUBSTRING( t.sku, 9, LOCATE('-',  t.sku)-9 ) else t.sku end msku
 				        from t_amz_settlement_summary_sku t
 		         left join t_amz_settlement_acc_report acc on acc.settlement_id=t.settlementid
 		      	WHERE t.settlementid=#{settlement_id,jdbcType=CHAR}
@@ -558,7 +564,7 @@
 		       ) v
 				left join t_amazon_auth au on au.id=v.amazonAuthId
 			    left join t_marketplace m on m.point_name=v.market
-				left join t_product_info info on info.marketplaceid=m.marketplaceId and info.sku=v.sku and info.amazonauthid=v.amazonAuthId
+				left join t_product_info info on info.marketplaceid=m.marketplaceId and info.sku=v.msku and info.amazonauthid=v.amazonAuthId
 				left join t_product_in_opt opt on opt.pid=info.id
 				left join t_erp_material mt on mt.sku=ifnull(opt.msku,info.sku) and mt.shopid=au.shop_id and mt.isDelete = 0
 				left join t_dimensions dim on dim.id=mt.pkgDimensions

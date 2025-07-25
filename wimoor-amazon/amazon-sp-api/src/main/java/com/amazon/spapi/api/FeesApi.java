@@ -40,6 +40,9 @@ import com.amazon.spapi.model.productfees.GetMyFeesEstimateResponse;
 import com.amazon.spapi.model.productfees.GetMyFeesEstimatesRequest;
 import com.amazon.spapi.model.productfees.GetMyFeesEstimatesResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class FeesApi {
     private ApiClient apiClient;
@@ -70,7 +73,7 @@ public class FeesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMyFeesEstimateForASINCall(GetMyFeesEstimateRequest body, String asin, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getMyFeesEstimateForASINCall(GetMyFeesEstimateRequest body, String asin, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -97,10 +100,10 @@ public class FeesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -113,7 +116,7 @@ public class FeesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getMyFeesEstimateForASINValidateBeforeCall(GetMyFeesEstimateRequest body, String asin, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getMyFeesEstimateForASINValidateBeforeCall(GetMyFeesEstimateRequest body, String asin, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -126,7 +129,7 @@ public class FeesApi {
         }
         
 
-        com.squareup.okhttp.Call call = getMyFeesEstimateForASINCall(body, asin, progressListener, progressRequestListener);
+        Call call = getMyFeesEstimateForASINCall(body, asin, progressListener, progressRequestListener);
         return call;
 
     }
@@ -155,7 +158,7 @@ public class FeesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetMyFeesEstimateResponse> getMyFeesEstimateForASINWithHttpInfo(GetMyFeesEstimateRequest body, String asin) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getMyFeesEstimateForASINValidateBeforeCall(body, asin, null, null);
+        Call call = getMyFeesEstimateForASINValidateBeforeCall(body, asin, null, null);
         Type localVarReturnType = new TypeToken<GetMyFeesEstimateResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -170,7 +173,7 @@ public class FeesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMyFeesEstimateForASINAsync(GetMyFeesEstimateRequest body, String asin, final ApiCallback<GetMyFeesEstimateResponse> callback) throws ApiException, LWAException {
+    public Call getMyFeesEstimateForASINAsync(GetMyFeesEstimateRequest body, String asin, final ApiCallback<GetMyFeesEstimateResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -191,7 +194,7 @@ public class FeesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getMyFeesEstimateForASINValidateBeforeCall(body, asin, progressListener, progressRequestListener);
+        Call call = getMyFeesEstimateForASINValidateBeforeCall(body, asin, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetMyFeesEstimateResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -206,7 +209,7 @@ public class FeesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMyFeesEstimateForSKUCall(GetMyFeesEstimateRequest body, String sellerSKU, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getMyFeesEstimateForSKUCall(GetMyFeesEstimateRequest body, String sellerSKU, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -233,10 +236,10 @@ public class FeesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -249,7 +252,7 @@ public class FeesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getMyFeesEstimateForSKUValidateBeforeCall(GetMyFeesEstimateRequest body, String sellerSKU, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getMyFeesEstimateForSKUValidateBeforeCall(GetMyFeesEstimateRequest body, String sellerSKU, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -262,7 +265,7 @@ public class FeesApi {
         }
         
 
-        com.squareup.okhttp.Call call = getMyFeesEstimateForSKUCall(body, sellerSKU, progressListener, progressRequestListener);
+        Call call = getMyFeesEstimateForSKUCall(body, sellerSKU, progressListener, progressRequestListener);
         return call;
 
     }
@@ -291,7 +294,7 @@ public class FeesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetMyFeesEstimateResponse> getMyFeesEstimateForSKUWithHttpInfo(GetMyFeesEstimateRequest body, String sellerSKU) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getMyFeesEstimateForSKUValidateBeforeCall(body, sellerSKU, null, null);
+        Call call = getMyFeesEstimateForSKUValidateBeforeCall(body, sellerSKU, null, null);
         Type localVarReturnType = new TypeToken<GetMyFeesEstimateResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -306,7 +309,7 @@ public class FeesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMyFeesEstimateForSKUAsync(GetMyFeesEstimateRequest body, String sellerSKU, final ApiCallback<GetMyFeesEstimateResponse> callback) throws ApiException, LWAException {
+    public Call getMyFeesEstimateForSKUAsync(GetMyFeesEstimateRequest body, String sellerSKU, final ApiCallback<GetMyFeesEstimateResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -327,7 +330,7 @@ public class FeesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getMyFeesEstimateForSKUValidateBeforeCall(body, sellerSKU, progressListener, progressRequestListener);
+        Call call = getMyFeesEstimateForSKUValidateBeforeCall(body, sellerSKU, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetMyFeesEstimateResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -341,7 +344,7 @@ public class FeesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMyFeesEstimatesCall(GetMyFeesEstimatesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getMyFeesEstimatesCall(GetMyFeesEstimatesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -367,10 +370,10 @@ public class FeesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -383,7 +386,7 @@ public class FeesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getMyFeesEstimatesValidateBeforeCall(GetMyFeesEstimatesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getMyFeesEstimatesValidateBeforeCall(GetMyFeesEstimatesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -391,7 +394,7 @@ public class FeesApi {
         }
         
 
-        com.squareup.okhttp.Call call = getMyFeesEstimatesCall(body, progressListener, progressRequestListener);
+        Call call = getMyFeesEstimatesCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -418,7 +421,7 @@ public class FeesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetMyFeesEstimatesResponse> getMyFeesEstimatesWithHttpInfo(GetMyFeesEstimatesRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getMyFeesEstimatesValidateBeforeCall(body, null, null);
+        Call call = getMyFeesEstimatesValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<GetMyFeesEstimatesResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -432,7 +435,7 @@ public class FeesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMyFeesEstimatesAsync(GetMyFeesEstimatesRequest body, final ApiCallback<GetMyFeesEstimatesResponse> callback) throws ApiException, LWAException {
+    public Call getMyFeesEstimatesAsync(GetMyFeesEstimatesRequest body, final ApiCallback<GetMyFeesEstimatesResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -453,7 +456,7 @@ public class FeesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getMyFeesEstimatesValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = getMyFeesEstimatesValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetMyFeesEstimatesResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -517,10 +520,10 @@ public class FeesApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new FeesApi(new ApiClient()
+            return new FeesApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

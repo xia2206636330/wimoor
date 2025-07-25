@@ -13,7 +13,7 @@
   </select>
   
     <select id="existByKey" resultType="java.util.Map" parameterType="java.util.Map">
-    SELECT t.`*`,g.name gname,u.name uname,m.name market FROM t_amz_settlement_acc_statement t
+    SELECT t.*,g.name gname,u.name uname,m.name market FROM t_amz_settlement_acc_statement t
 	LEFT JOIN t_amazon_group g ON g.id=t.groupid
 	LEFT JOIN t_userinfo u ON u.id=t.operator
 	LEFT JOIN t_marketplace m ON m.marketplaceId=t.marketplaceid

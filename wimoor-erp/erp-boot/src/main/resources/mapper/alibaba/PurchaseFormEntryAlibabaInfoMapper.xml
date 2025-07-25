@@ -5,14 +5,11 @@
     <id column="entryid" property="entryid" jdbcType="CHAR" />
     <result column="alibaba_auth" property="alibabaAuth" jdbcType="BIGINT" />
     <result column="alibaba_orderid" property="alibabaOrderid" jdbcType="BIGINT" />
-    <result column="order_status" property="orderStatus" jdbcType="CHAR" />
     <result column="logistics_info" property="logisticsInfo" jdbcType="LONGVARCHAR" />
     <result column="order_info" property="orderInfo" jdbcType="LONGVARCHAR" />
     <result column="logistics_trace_info" property="logisticsTraceInfo" jdbcType="LONGVARCHAR" />
-    <result column="order_refresh_time" property="orderRefreshTime" jdbcType="TIMESTAMP" />
-    <result column="logistics_refresh_time" property="logisticsRefreshTime" jdbcType="TIMESTAMP" />
-    <result column="logistics_trace_refresh_time" property="logisticsTraceRefreshTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
   <sql id="Base_Column_List" >
 	entryid,
 	alibaba_auth,
@@ -22,7 +19,7 @@
 	order_info,
   </sql>
  <select id="findNeedRefresh" resultMap="BaseResultMap"   >
-        select 
+    select
     info.entryid, 
     info.alibaba_auth,
     info.alibaba_orderid,

@@ -260,6 +260,7 @@ public class ShipTransCompanyController  {
 		} else {
 			param.put("channel", null);
 		}
+		param.put("ftype", dto.getFtype());
 		IPage<Map<String, Object>> pagelist = shipInboundTransService.getShipmentFeeDetailReport(dto.getPage(),param);
 		return Result.success(pagelist);
 	}
@@ -312,6 +313,7 @@ public class ShipTransCompanyController  {
 			String isShip =dto.getIsShip();
 			params.put("shopid", shopid);
 			params.put("isShip", isShip);
+			params.put("ftype", dto.getFtype());
 			shipInboundTransService.setShipmentFeeDetailReport(workbook, params);
 			workbook.write(fOut);
 			workbook.close();

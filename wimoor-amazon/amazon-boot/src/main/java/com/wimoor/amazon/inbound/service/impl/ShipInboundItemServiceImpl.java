@@ -427,6 +427,10 @@ public class ShipInboundItemServiceImpl extends  ServiceImpl<ShipInboundItemMapp
 		title.put(15, "发货时效");
 		title.put(16, "收货时效");
 		title.put(17, "总时效");
+		title.put(18, "物流公司");
+		title.put(19, "运输方式");
+		title.put(20, "渠道");
+		title.put(21, "渠道别名");
 
 		Map<String, String> titlemap = new HashMap<String, String>();
 		titlemap.put("平台SKU","sku");
@@ -447,6 +451,10 @@ public class ShipInboundItemServiceImpl extends  ServiceImpl<ShipInboundItemMapp
 		titlemap.put("发货时效","shipdays");
 		titlemap.put("收货时效","receivedays");
 		titlemap.put("总时效","days");
+		titlemap.put("物流公司","logitics");
+		titlemap.put("运输方式","transtype");
+		titlemap.put("渠道","channelname");
+		titlemap.put("渠道别名","channame");
 
 		Sheet sheet = workbook.createSheet();
 		Row row = sheet.createRow(0);

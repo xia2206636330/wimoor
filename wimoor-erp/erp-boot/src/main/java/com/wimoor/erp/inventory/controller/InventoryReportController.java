@@ -415,7 +415,7 @@ public class InventoryReportController {
 			cell = row.createCell(0);
 			cell.setCellValue("SKU");
 
-			titlemap.put("fulfillable", 1);
+			titlemap.put("quantity", 1);
 			cell = row.createCell(1);
 			cell.setCellValue("现有库存");
 

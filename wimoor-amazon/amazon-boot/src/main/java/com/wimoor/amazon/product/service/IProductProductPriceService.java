@@ -6,7 +6,7 @@ import java.util.List;
 import com.amazon.spapi.client.ApiException;
 import com.amazon.spapi.model.productpricing.GetOffersResponse;
 import com.amazon.spapi.model.productpricing.GetPricingResponse;
-import com.squareup.okhttp.Call;
+import okhttp3.Call;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.service.IRunAmazonService;
 import com.wimoor.amazon.product.pojo.entity.AmzProductRefresh;

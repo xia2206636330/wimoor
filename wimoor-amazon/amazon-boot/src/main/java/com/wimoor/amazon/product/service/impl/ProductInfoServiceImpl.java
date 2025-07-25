@@ -627,7 +627,9 @@ public class ProductInfoServiceImpl extends ServiceImpl<ProductInfoMapper, Produ
 			 
 			    if(parameter.get("profit" )!=null) {
 			    		item.setNewprorate(parameter.get("profit").toString());
+						item.setParam(parameter);
 			    }
+
 				item.setLandedCurrency(GeneralUtil.formatCurrency(item.getLandedCurrency()));
 			} 
 		}
@@ -1009,7 +1011,7 @@ public class ProductInfoServiceImpl extends ServiceImpl<ProductInfoMapper, Produ
 					map.put("dimensionsWeight", productInProfit.getWeight());
 					costDetailStr = productInProfit.getCostdetail();
 				}
-				
+				map.put("costDetailMapPofit", productInProfit.getCostdetail());
 			} else {
 				CostDetail costDetail = calculateProfitService.getProfit(info, myprice, auth,dim_local,cost,profitcfgid);
 				if(costDetail==null) {
@@ -1042,6 +1044,7 @@ public class ProductInfoServiceImpl extends ServiceImpl<ProductInfoMapper, Produ
 						 }
 					}
 				}
+				map.put("costDetailMap", costDetail);
 			}
 			if(map.get("onlymargin")==null) {
 				Map<String, String> costDetailMap = profitService.jsonToMap(costDetailStr);

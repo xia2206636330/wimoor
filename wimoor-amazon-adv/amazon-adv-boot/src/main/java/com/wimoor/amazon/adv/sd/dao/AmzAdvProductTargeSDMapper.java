@@ -20,4 +20,6 @@ public interface AmzAdvProductTargeSDMapper  extends BaseMapper<AmzAdvProductTar
 	public List<Map<String,Object>> getProductTargeChart(Map<String,Object> map);
 	
 	public Map<String,Object> getSumProductTarge(Map<String,Object> map);
+
+	List<Map<String, Object>> getTargetReport(Map<String, Object> param);
 }

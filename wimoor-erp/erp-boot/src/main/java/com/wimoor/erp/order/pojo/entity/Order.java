@@ -26,6 +26,15 @@ public class Order  extends ErpBaseEntity {
     @TableField("warehouseid")
     String warehouseid;
 
+    @TableField("country")
+    String country;
+
+    @TableField("thirdparty_warehouseid")
+    String thirdpartyWarehouseid;
+
+    @TableField("currency")
+    String currency;
+
     @TableField("isout")
     boolean isout;
 

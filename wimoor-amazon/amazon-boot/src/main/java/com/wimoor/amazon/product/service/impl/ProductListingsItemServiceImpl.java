@@ -16,8 +16,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import com.wimoor.amazon.product.pojo.dto.ProductListingPushDTO;
+import com.wimoor.amazon.product.service.*;
+import okhttp3.Call;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.amazon.spapi.SellingPartnerAPIAA.LWAException;
@@ -38,7 +41,6 @@ import com.amazon.spapi.model.listings.PatchOperation;
 import com.amazon.spapi.model.listings.PatchOperation.OpEnum;
 import com.amazon.spapi.model.listings.Issue.SeverityEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.squareup.okhttp.Call;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.pojo.entity.Marketplace;
 import com.wimoor.amazon.auth.service.IAmazonAuthorityService;
@@ -58,10 +60,6 @@ import com.wimoor.amazon.product.pojo.entity.AmzProductRefresh;
 import com.wimoor.amazon.product.pojo.entity.ProductInOpt;
 import com.wimoor.amazon.product.pojo.entity.ProductInOrder;
 import com.wimoor.amazon.product.pojo.entity.ProductInfo;
-import com.wimoor.amazon.product.service.IAmzProductRefreshService;
-import com.wimoor.amazon.product.service.IProductCatalogItemService;
-import com.wimoor.amazon.product.service.IProductInfoService;
-import com.wimoor.amazon.product.service.IProductListingsItemService;
 import com.wimoor.amazon.util.AmzDateUtils;
 import com.wimoor.amazon.util.EmojiFilterUtils;
 import com.wimoor.common.GeneralUtil;
@@ -98,6 +96,9 @@ public class ProductListingsItemServiceImpl implements IProductListingsItemServi
 	AmzProductPriceRecordMapper amzProductPriceRecordMapper;
 	@Autowired
 	ISubmitfeedService submitfeedService;
+	@Autowired
+	@Lazy
+	IProductInReviewService iProductInReviewService;
 	@Override
 	public Item captureListMatchingProduct(AmazonAuthority amazonAuthority, String sku, List<String> marketplaces,String issueLocale, List<String> includedData ) {
 		// TODO Auto-generated method stub
@@ -123,6 +124,16 @@ public class ProductListingsItemServiceImpl implements IProductListingsItemServi
 		AmzProductRefresh skuRefresh=iAmzProductRefreshService.findForDetailRefresh(amazonAuthority.getId());
 		if(skuRefresh!=null) {
 			List<String> markets = Arrays.asList(skuRefresh.getMarketplaceid());
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try{
+						iProductInReviewService.capture(amazonAuthority,skuRefresh);
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+			});
 			captureListMatchingProductSync(amazonAuthority,skuRefresh,markets);
 		}
 	}		

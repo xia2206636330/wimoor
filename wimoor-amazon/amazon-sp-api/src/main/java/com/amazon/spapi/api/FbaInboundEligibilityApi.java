@@ -37,6 +37,9 @@ import com.amazon.spapi.client.ProgressResponseBody;
 import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.fbainboundeligibility.GetItemEligibilityPreviewResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class FbaInboundEligibilityApi {
     private ApiClient apiClient;
@@ -68,7 +71,7 @@ public class FbaInboundEligibilityApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getItemEligibilityPreviewCall(String asin, String program, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getItemEligibilityPreviewCall(String asin, String program, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -100,10 +103,10 @@ public class FbaInboundEligibilityApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -116,7 +119,7 @@ public class FbaInboundEligibilityApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getItemEligibilityPreviewValidateBeforeCall(String asin, String program, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getItemEligibilityPreviewValidateBeforeCall(String asin, String program, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'asin' is set
         if (asin == null) {
@@ -129,7 +132,7 @@ public class FbaInboundEligibilityApi {
         }
         
 
-        com.squareup.okhttp.Call call = getItemEligibilityPreviewCall(asin, program, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getItemEligibilityPreviewCall(asin, program, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -160,7 +163,7 @@ public class FbaInboundEligibilityApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetItemEligibilityPreviewResponse> getItemEligibilityPreviewWithHttpInfo(String asin, String program, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getItemEligibilityPreviewValidateBeforeCall(asin, program, marketplaceIds, null, null);
+        Call call = getItemEligibilityPreviewValidateBeforeCall(asin, program, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<GetItemEligibilityPreviewResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -176,7 +179,7 @@ public class FbaInboundEligibilityApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getItemEligibilityPreviewAsync(String asin, String program, List<String> marketplaceIds, final ApiCallback<GetItemEligibilityPreviewResponse> callback) throws ApiException, LWAException {
+    public Call getItemEligibilityPreviewAsync(String asin, String program, List<String> marketplaceIds, final ApiCallback<GetItemEligibilityPreviewResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -197,7 +200,7 @@ public class FbaInboundEligibilityApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getItemEligibilityPreviewValidateBeforeCall(asin, program, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getItemEligibilityPreviewValidateBeforeCall(asin, program, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetItemEligibilityPreviewResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -261,10 +264,10 @@ public class FbaInboundEligibilityApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new FbaInboundEligibilityApi(new ApiClient()
+            return new FbaInboundEligibilityApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

@@ -27,6 +27,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Resource;
 
+import okhttp3.*;
 import org.springframework.stereotype.Service;
 import org.threeten.bp.OffsetDateTime;
 
@@ -36,11 +37,6 @@ import com.amazon.spapi.client.ApiCallback;
 import com.amazon.spapi.client.ApiException;
 import com.amazon.spapi.model.reports.GetReportsResponse;
 import com.amazon.spapi.model.reports.ReportDocument;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.pojo.entity.Marketplace;
 import com.wimoor.amazon.auth.service.IAmazonAuthorityService;
@@ -198,6 +194,9 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 	
 	Date getDateTime(String currency,String date){
 		SimpleDateFormat sdf2 =null;
+		if(StrUtil.isBlank(date)){
+			return null;
+		}
 		if("USD".equals(currency)) {
 			if(date.length()>10) {
 				sdf2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -287,26 +286,30 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 		String settlementId = null;
 		Date beginDate = null;
 		Date endDate = null;
+		Date postDate=null;
 		Boolean invalid=false;
 		Set<String> marketnameset = new HashSet<String>();
 		AmzSettlementAccReport amzSettlementAccReport = new AmzSettlementAccReport();
 		Map<String, Object> param = new HashMap<String, Object>();
 		AmzSettlementReport report = null;
 		List<AmzSettlementReport> settlist=new LinkedList<AmzSettlementReport>();
+		int headerLine = 1;
 		try {
 			while ((line = br.readLine()) != null) {
 				String[] info = line.split("\t");
-				if (lineNumber >= 1) {
+				if (lineNumber >= 1&&info.length>0) {
 					if ("settlement-id".equals(info[0])) {
 						continue;
 					}
 					if (info.length == 1) {
 						continue;
 					}
+					int index=0;
 					report = new AmzSettlementReport();
 					report.setAmazonAuthId(amazonAuthority.getId());
-					report.setSettlementId(GeneralUtil.getIndexString(info, 0));
-					report.setCurrency(GeneralUtil.getIndexString(info, 5));
+					report.setSettlementId(GeneralUtil.getIndexString(info, index));
+					index=index+5;
+					report.setCurrency(GeneralUtil.getIndexString(info, index));
 					if (StrUtil.isNotEmpty(report.getCurrency())) {
 						currency = report.getCurrency();
 					} else {
@@ -316,7 +319,7 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 						settlementId = report.getSettlementId();
 						log += settlementId;
 					}
-					if (lineNumber == 1) {
+					if (lineNumber == headerLine) {
 						amzSettlementAccReport.setAmazonauthid(amazonAuthority.getId());
 						amzSettlementAccReport.setSettlementId(GeneralUtil.getIndexString(info, 0));
 						String startdate=GeneralUtil.getIndexString(info, 1);
@@ -330,6 +333,7 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 						amzSettlementAccReport.setDepositDate(getLocalTime(currency,depositdate));
 						String currency2 = GeneralUtil.getIndexString(info, 5);
 						amzSettlementAccReport.setCurrency(currency2);
+						postDate=AmzDateUtils.getDate(amzSettlementAccReport.getSettlementStartDate());
 						if ("EUR".equals(currency2)) {
 							amzSettlementAccReport.setTotalAmount(GeneralUtil.getIndexEurBigDecimal(info, 4));
 						} else {
@@ -341,15 +345,21 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 						lineNumber++;
 						continue;
 					}
-					report.setTransactionType(GeneralUtil.getIndexString(info, 6));
+					++index;
+					report.setTransactionType(GeneralUtil.getIndexString(info, index));
+					++index;
 					report.setOrderId(GeneralUtil.getIndexString(info, 7));
+					++index;
 					report.setMerchantOrderId(GeneralUtil.getIndexString(info, 8));
+					++index;
 					String adjustmentid=GeneralUtil.getIndexString(info, 9);
 					if(adjustmentid!=null&&adjustmentid.length()>=40) {
 						adjustmentid=adjustmentid.substring(0, 39);
 					}
 					report.setAdjustmentId(adjustmentid);
+					++index;
 					report.setShipmentId(GeneralUtil.getIndexString(info, 10));
+					++index;
 					report.setMarketplaceName(GeneralUtil.getIndexString(info, 11));
 					if (marketname == null && StrUtil.isNotEmpty(report.getMarketplaceName()) && report.getMarketplaceName().contains("Amazon.")) {
 						marketname = report.getMarketplaceName();
@@ -357,39 +367,58 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 					if (StrUtil.isEmpty(report.getMarketplaceName()) && StrUtil.isNotEmpty(marketname)) {
 						report.setMarketplaceName(marketname);
 					}
+					++index;
 					String amounttype=GeneralUtil.getIndexString(info, 12);
+					++index;
+					String amountdesc = GeneralUtil.getIndexString(info, 13);
+					if(StrUtil.isBlank(amounttype)||amountdesc.contains("Item")){
+						amounttype=GeneralUtil.getIndexString(info, index);
+						++index;
+						amountdesc = GeneralUtil.getIndexString(info, index);
+					}
 					if(StrUtil.isNotEmpty(amounttype)){
                        if(amounttype.length()>40){
-						   System.out.println("amounttype:"+amounttype);
 						   amounttype=amounttype.substring(0,40);
 						   report.setAmountType(amounttype);
 					   }else{
 						   report.setAmountType(amounttype);
 					   }
 					}
-					String amountdesc = GeneralUtil.getIndexString(info, 13);
 					if (amountdesc != null && amountdesc.length() > 100) {
 						amountdesc = amountdesc.substring(0, 100);
 					}
 					report.setAmountDescription(amountdesc);
+					++index;
 					if ("EUR".equals(currency)) {
-						report.setAmount(GeneralUtil.getIndexEurBigDecimal(info, 14));
+						report.setAmount(GeneralUtil.getIndexEurBigDecimal(info, index));
 					} else {
-						report.setAmount(GeneralUtil.getIndexBigDecimal(info, 14));
+						report.setAmount(GeneralUtil.getIndexBigDecimal(info, index));
 					}
-					report.setFulfillmentId(GeneralUtil.getIndexString(info, 15));
-					
-					String depositdate=GeneralUtil.getIndexString(info, 16);
-					String depositdatetime=GeneralUtil.getIndexString(info, 17);
+					++index;
+					report.setFulfillmentId(GeneralUtil.getIndexString(info, index));
+					if(report.getFulfillmentId()!=null&&report.getFulfillmentId().length()>=5){
+						report.setFulfillmentId(report.getFulfillmentId().toLowerCase().replace("amazon", ""));
+						if(report.getFulfillmentId()!=null&&report.getFulfillmentId().length()>=5) {
+							report.setFulfillmentId(report.getFulfillmentId().substring(0, 4));
+						}
+					}
+					++index;
+					String depositdate=GeneralUtil.getIndexString(info, index);
+					++index;
+					String depositdatetime=GeneralUtil.getIndexString(info, index);
 					if (depositdate== null) {
-						log += " error:order_id=" + report.getOrderId() + ",PostedDate is null.";
-						lineNumber++;
-						continue;
+						report.setPostedDate(postDate);
+						report.setPostedDateTime(postDate);
 					}else {
 						depositdate=depositdate.replace(" UTC", "");
 						depositdatetime=depositdatetime.replace(" UTC", "");
 						report.setPostedDate(getDateTime(currency,depositdate));
 						report.setPostedDateTime(getDateTime(currency,depositdatetime));
+						if(report.getPostedDate()==null){
+							report.setPostedDate(postDate);
+						}else{
+							postDate=report.getPostedDate();
+						}
 					}
 					if (beginDate == null || report.getPostedDate() != null && beginDate.after(report.getPostedDate())) {
 						beginDate = report.getPostedDate();
@@ -398,22 +427,30 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 						endDate = report.getPostedDate();
 					}
 					//report.setPostedDateTime(GeneralUtil.getIndexDate(info, 17));
-					report.setOrderItemCode(GeneralUtil.getIndexString(info, 18));
-					report.setMerchantOrderItemId(GeneralUtil.getIndexString(info, 19));
-					report.setMerchantAdjustmentItemId(GeneralUtil.getIndexString(info, 20));
+					++index;
+					report.setOrderItemCode(GeneralUtil.getIndexString(info, index));
+					if(report.getOrderItemCode()!=null&&report.getOrderItemCode().length()>=15){
+						report.setOrderItemCode(report.getOrderItemCode().substring(0, 14));
+					}
+					++index;
+					report.setMerchantOrderItemId(GeneralUtil.getIndexString(info, index));
+					++index;
+					report.setMerchantAdjustmentItemId(GeneralUtil.getIndexString(info, index));
 					if(report.getMerchantAdjustmentItemId()!=null&&report.getMerchantAdjustmentItemId().length()>15) {
 						report.setMerchantAdjustmentItemId(report.getMerchantAdjustmentItemId().substring(0, 14));
 					}
-					report.setSku(GeneralUtil.getIndexString(info, 21));
-					report.setQuantityPurchased(GeneralUtil.getInteger(GeneralUtil.getIndexString(info, 22)));
-					report.setQuantityPurchased(GeneralUtil.getInteger(GeneralUtil.getIndexString(info, 22)));
+					++index;
+					report.setSku(GeneralUtil.getIndexString(info, index));
+					++index;
+					report.setQuantityPurchased(GeneralUtil.getInteger(GeneralUtil.getIndexString(info, index)));
 					if(report.getOrderId()!=null&&report.getOrderId().length()>40) {
 						report.setOrderId(report.getOrderId().substring(0,40));
 					}
 					if(report.getShipmentId()!=null&&report.getShipmentId().length()>15) {
 						report.setShipmentId(report.getShipmentId().substring(0,15));
 					}
-					report.setPromotionId(GeneralUtil.getIndexString(info, 23));
+					++index;
+					report.setPromotionId(GeneralUtil.getIndexString(info, index));
 					if(report.getAmountDescription()!=null&&report.getAmountDescription().contains("Transfer of funds unsuccessful")) {
 						invalid=true;
 					}
@@ -426,18 +463,17 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 						settlist.clear();
 					}
 					report=null;
+				}else if(info.length==0){
+					headerLine++;
 				}
 				lineNumber++;
-				
-			
 			}
-		
         if(settlist.size()>1) {
         	amzSettlementReportMapper.insertBatch(settlist);
         }else if(settlist.size()==1) {
-                AmzSettlementReport one = settlist.get(0);
-                one.setId(UUIDUtil.getUUIDshort());
-        	    amzSettlementReportMapper.insert(one);
+			AmzSettlementReport one = settlist.get(0);
+			one.setId(UUIDUtil.getUUIDshort());
+			amzSettlementReportMapper.insert(one);
         	 
         }
     	settlist.clear();
@@ -479,7 +515,7 @@ public class ReportAmzSettlementListServiceImpl extends ReportServiceImpl  {
 		}
 		// 对report表进行汇总
 		// amazonSettlementAnalysisAgentService.confirm(param, marketnameset);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "settlementId:" + settlementId + ",error:"+e.getMessage();

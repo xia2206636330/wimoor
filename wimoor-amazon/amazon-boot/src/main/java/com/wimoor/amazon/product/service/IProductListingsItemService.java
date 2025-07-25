@@ -6,13 +6,13 @@ import java.util.List;
 import com.amazon.spapi.client.ApiException;
 import com.amazon.spapi.model.listings.Item;
 import com.amazon.spapi.model.listings.ListingsItemSubmissionResponse;
-import com.squareup.okhttp.Call;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.service.IRunAmazonService;
 import com.wimoor.amazon.product.pojo.dto.ProductListingItemDTO;
 import com.wimoor.amazon.product.pojo.dto.ProductListingPushDTO;
 import com.wimoor.amazon.product.pojo.entity.AmzProductRefresh;
 import com.wimoor.amazon.product.pojo.entity.ProductInfo;
+import okhttp3.Call;
 
 public interface IProductListingsItemService extends IRunAmazonService{
 

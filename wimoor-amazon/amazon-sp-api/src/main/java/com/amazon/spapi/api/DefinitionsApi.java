@@ -38,6 +38,9 @@ import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.definitions.ProductTypeDefinition;
 import com.amazon.spapi.model.definitions.ProductTypeList;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class DefinitionsApi {
     private ApiClient apiClient;
@@ -73,7 +76,7 @@ public class DefinitionsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getDefinitionsProductTypeCall(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getDefinitionsProductTypeCall(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -112,10 +115,10 @@ public class DefinitionsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -128,7 +131,7 @@ public class DefinitionsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getDefinitionsProductTypeValidateBeforeCall(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getDefinitionsProductTypeValidateBeforeCall(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'productType' is set
         if (productType == null) {
@@ -141,7 +144,7 @@ public class DefinitionsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getDefinitionsProductTypeCall(productType, marketplaceIds, sellerId, productTypeVersion, requirements, requirementsEnforced, locale, progressListener, progressRequestListener);
+        Call call = getDefinitionsProductTypeCall(productType, marketplaceIds, sellerId, productTypeVersion, requirements, requirementsEnforced, locale, progressListener, progressRequestListener);
         return call;
 
     }
@@ -180,7 +183,7 @@ public class DefinitionsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ProductTypeDefinition> getDefinitionsProductTypeWithHttpInfo(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getDefinitionsProductTypeValidateBeforeCall(productType, marketplaceIds, sellerId, productTypeVersion, requirements, requirementsEnforced, locale, null, null);
+        Call call = getDefinitionsProductTypeValidateBeforeCall(productType, marketplaceIds, sellerId, productTypeVersion, requirements, requirementsEnforced, locale, null, null);
         Type localVarReturnType = new TypeToken<ProductTypeDefinition>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -200,7 +203,7 @@ public class DefinitionsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getDefinitionsProductTypeAsync(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale, final ApiCallback<ProductTypeDefinition> callback) throws ApiException, LWAException {
+    public Call getDefinitionsProductTypeAsync(String productType, List<String> marketplaceIds, String sellerId, String productTypeVersion, String requirements, String requirementsEnforced, String locale, final ApiCallback<ProductTypeDefinition> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -221,7 +224,7 @@ public class DefinitionsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getDefinitionsProductTypeValidateBeforeCall(productType, marketplaceIds, sellerId, productTypeVersion, requirements, requirementsEnforced, locale, progressListener, progressRequestListener);
+        Call call = getDefinitionsProductTypeValidateBeforeCall(productType, marketplaceIds, sellerId, productTypeVersion, requirements, requirementsEnforced, locale, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ProductTypeDefinition>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -239,7 +242,7 @@ public class DefinitionsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchDefinitionsProductTypesCall(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call searchDefinitionsProductTypesCall(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -275,10 +278,10 @@ public class DefinitionsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -291,7 +294,7 @@ public class DefinitionsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call searchDefinitionsProductTypesValidateBeforeCall(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call searchDefinitionsProductTypesValidateBeforeCall(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceIds' is set
         if (marketplaceIds == null) {
@@ -299,7 +302,7 @@ public class DefinitionsApi {
         }
         
 
-        com.squareup.okhttp.Call call = searchDefinitionsProductTypesCall(marketplaceIds, keywords, itemName, locale, searchLocale, progressListener, progressRequestListener);
+        Call call = searchDefinitionsProductTypesCall(marketplaceIds, keywords, itemName, locale, searchLocale, progressListener, progressRequestListener);
         return call;
 
     }
@@ -334,7 +337,7 @@ public class DefinitionsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ProductTypeList> searchDefinitionsProductTypesWithHttpInfo(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = searchDefinitionsProductTypesValidateBeforeCall(marketplaceIds, keywords, itemName, locale, searchLocale, null, null);
+        Call call = searchDefinitionsProductTypesValidateBeforeCall(marketplaceIds, keywords, itemName, locale, searchLocale, null, null);
         Type localVarReturnType = new TypeToken<ProductTypeList>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -352,7 +355,7 @@ public class DefinitionsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchDefinitionsProductTypesAsync(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale, final ApiCallback<ProductTypeList> callback) throws ApiException, LWAException {
+    public Call searchDefinitionsProductTypesAsync(List<String> marketplaceIds, List<String> keywords, String itemName, String locale, String searchLocale, final ApiCallback<ProductTypeList> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -373,7 +376,7 @@ public class DefinitionsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = searchDefinitionsProductTypesValidateBeforeCall(marketplaceIds, keywords, itemName, locale, searchLocale, progressListener, progressRequestListener);
+        Call call = searchDefinitionsProductTypesValidateBeforeCall(marketplaceIds, keywords, itemName, locale, searchLocale, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ProductTypeList>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -437,10 +440,10 @@ public class DefinitionsApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new DefinitionsApi(new ApiClient()
+            return new DefinitionsApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

@@ -27,4 +27,7 @@ public interface ShipInboundTransMapper extends BaseMapper<ShipInboundTrans> {
 	IPage<Map<String, Object>> transFeeSharedWeek(Page<?> page,@Param("param") Map<String, Object> param);
 	List<Map<String, Object>> transFeeSharedWeek(@Param("param")Map<String, Object> param);
 	List<Map<String,Object>> findSku_FirstShipment(@Param("param")Map<String, Object> param);
+
+	IPage<Map<String, Object>> transFeeSharedDetailNew(Page<?> page,@Param("param") Map<String, Object> param);
+	List<Map<String, Object>> transFeeSharedDetailNew(@Param("param") Map<String, Object> param);
 }

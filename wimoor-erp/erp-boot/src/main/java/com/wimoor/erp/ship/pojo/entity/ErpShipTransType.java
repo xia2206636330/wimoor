@@ -2,6 +2,7 @@ package com.wimoor.erp.ship.pojo.entity;
 
 import java.util.Date;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.wimoor.erp.common.pojo.entity.BaseEntity;
@@ -27,9 +28,14 @@ public class ErpShipTransType extends BaseEntity{
 
 	@TableField(exist=false)
     private Integer day;
-	
+
 	@TableField(exist=false)
-    private Boolean issystem;
+	private Boolean issystem;
+
+    public Boolean getIssystem(){
+		this.issystem= StrUtil.isBlankOrUndefined(this.shopid);
+		return this.issystem;
+	}
 	
 	@TableField(value= "operator")
     private String operator;

@@ -11,6 +11,7 @@ public class UserInsertDTO {
     String password;
     String name;
     String company;
+    String tel;
     Date losingEffect;
     Boolean disable;
     String deptid;

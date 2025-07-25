@@ -23,4 +23,8 @@ public interface IInventoryRecordService extends IService<InventoryRecord>{
 
 	Map<String, Object> findSkuInvHistory(String materialid, String fromDate, String toDate, String warehouseid, String shopid);
 	public void downloadOutstockformOut(SXSSFWorkbook workbook,Map<String,Object> param);
+
+    List<Map<String, Object>> selectConsumableRecord(Map<String, Object> maps);
+
+	public void setExcelBookInventoryConsumableReport(SXSSFWorkbook workbook, List<Map<String, Object>> list);
 }

@@ -12,6 +12,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
+import com.wimoor.erp.stock.service.IOutwhFormConsumableService;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -65,6 +67,8 @@ public class OutWarehouseFormController {
 	IOutWarehouseFormEntryService outWarehouseFormEntryService;
 	@Resource
 	ISerialNumService serialNumService;
+
+	final IOutwhFormConsumableService iOutwhFormConsumableService;
 	 
 	@PostMapping("/list")
 	public Result<IPage<Map<String, Object>>> getListData(@RequestBody OutWarehouseFormDTO dto){
@@ -379,6 +383,7 @@ public class OutWarehouseFormController {
 		String[] idlist = ids.split(",");
 		for (int i = 0; i < idlist.length; i++) {
 			String id = idlist[i];
+			iOutwhFormConsumableService.deleteByForm(id);
 			outWarehouseFormService.deleteOtherOutInventory(user,id);
 			outWarehouseFormEntryService.deleteByFormid(id);
 			outWarehouseFormService.removeById(id);

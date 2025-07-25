@@ -37,7 +37,7 @@
 		AND p.shopid=#{shopid,jdbcType=CHAR} AND p.warehouseid=#{warehouseid,jdbcType=CHAR}) +
 		(SELECT ifnull(SUM(IFNULL(i2.confirm_quantity,i2.quantity)),0) FROM t_erp_ship_v2_inbounditem i2
 		LEFT JOIN t_erp_ship_v2_inboundplan f ON f.id=i2.formid
-		WHERE f.auditstatus>=2 AND f.auditstatus &lt;=6 AND i2.msku=#{msku,jdbcType=CHAR}
+		WHERE f.auditstatus>=2 AND f.auditstatus &lt;=7 AND i2.msku=#{msku,jdbcType=CHAR}
 		AND f.shopid=#{shopid,jdbcType=CHAR} AND f.warehouseid=#{warehouseid,jdbcType=CHAR} )
 	</select>
 	
@@ -1060,41 +1060,80 @@
 
 	<select id="getShipTimeList" parameterType="com.wimoor.amazon.inbound.pojo.dto.ShipTimeDTO" resultType="java.util.Map">
 		SELECT
-		i.SellerSKU sku,
-		i.QuantityShipped qty,
+		i.sku sku,
+		i.quantity qty,
 		mt.sku msku,
 		mt.name,
 		w.name wname,
 		g.name gname,
 		m.name marketname,
-		p.createdate,
-		s.shipmentid,
-		s.status2date approveDate,
-		s.status3date shipDate,
-		s.status4date boxDate,
-		s.status5date shippedDate,
-		s.start_receive_date receiveDate,
-		s.status6date endDate,
+		p.createtime createdate,
+		s.shipment_confirmation_id shipmentid,
+		p.auditime approveDate,
+		v1.doneDate shipDate,
+		v1.boxDate boxDate,
+		v1.createDate,
+		v1.pickDate,
+		v1.boxDate,
+		v1.placementDate,
+		v1.transportationDate,
+		v1.doneDate,
+		v2.labelDate,
+		v2.traceDate,
+		v2.customsDate,
+		s.shiped_date shippedDate,
+		i.receiveddate receiveDate,
+		s.closed_date endDate,
 		ifnull(pic.location,pic.url) image,
-		datediff(s.status5date,s.status2date) shipdays,
-		datediff(s.status6date,s.status5date) receivedays,
-		datediff(s.status6date,p.createdate) days
-		from t_erp_ship_inboundshipment s
-		LEFT JOIN t_erp_ship_inboundplan p ON p.id=s.inboundplanid
+		datediff(v1.doneDate,p.auditime) shipdays,
+		datediff(s.closed_date,v1.doneDate) receivedays,
+		datediff(s.closed_date,p.createtime) days,
+		de.company company,
+		com.`name` logitics,
+		de.channame  channame,
+		de.subarea   subarea,
+		ch.name  channelname,
+		tt.name transtype
+		from t_erp_ship_v2_inboundshipment s
+		LEFT JOIN t_erp_ship_v2_inboundplan p ON p.id=s.formid
 		LEFT JOIN t_erp_warehouse w ON w.id=p.warehouseid
-		LEFT JOIN t_erp_ship_inbounditem i ON i.ShipmentId=s.ShipmentId
+		LEFT JOIN t_erp_ship_v2_inboundshipment_item i ON i.shipmentid=s.shipmentid
 		LEFT JOIN t_marketplace m ON m.marketplaceId=p.marketplaceid
-		LEFT JOIN t_amazon_auth a ON a.aws_region=m.aws_region AND a.groupid=p.amazongroupid
+		left join t_erp_ship_inboundtrans trans on trans.shipmentid=s.shipment_confirmation_id
+		left join t_erp_ship_transdetail de on de.id=trans.channel
+		left join t_erp_ship_transchannel ch on ch.id=de.channel
+		left join t_erp_transtype tt on tt.id=de.transtype
+		left join t_erp_ship_transcompany com on com.id=de.company
+		LEFT JOIN t_amazon_auth a ON a.aws_region=m.aws_region AND a.groupid=p.groupid
 		LEFT JOIN t_amazon_group g ON g.id=a.groupid
-		LEFT JOIN t_product_info info ON info.amazonAuthId=a.id AND info.sku=i.SellerSKU 	AND info.marketplaceid=p.marketplaceid
+		LEFT JOIN (select formid,
+		MAX(case when r.`status`=1 then r.opttime ELSE NULL END) createDate,
+		MAX(case when r.`status`=3 then r.opttime ELSE NULL END) pickDate,
+		MAX(case when r.`status`=4 OR r.`status`=6 then r.opttime ELSE NULL END) boxDate,
+		MAX(case when r.`status`=5 then r.opttime ELSE NULL END) placementDate,
+		MAX(case when r.`status`=7 then r.opttime ELSE NULL END) transportationDate,
+		MAX(case when r.`status`=8 then r.opttime ELSE NULL END) doneDate
+		from t_erp_ship_v2_inbound_record r
+		where shipmentid='#'
+		group by formid
+		                    ) v1 on v1.formid=p.id
+		LEFT JOIN (select formid,shipmentid,
+		MAX(case when r.`status`=5 then r.opttime ELSE NULL END) labelDate,
+		MAX(case when r.`status`=6 then r.opttime ELSE NULL END) traceDate,
+		MAX(case when r.`status`=7 then r.opttime ELSE NULL END) customsDate
+		from t_erp_ship_v2_inbound_record r
+		where shipmentid!='#'
+		group by formid,shipmentid
+		) v2 on v2.formid=p.id and v2.shipmentid= s.shipment_confirmation_id
+		LEFT JOIN t_product_info info ON info.amazonAuthId=a.id AND info.sku=i.sku 	AND info.marketplaceid=p.marketplaceid
 		LEFT JOIN t_picture pic ON pic.id=info.image
 		LEFT JOIN t_product_in_opt o ON o.pid=info.id
 		LEFT JOIN t_erp_material mt ON mt.shopid=a.shop_id AND mt.sku=IFNULL(o.msku,info.sku) AND mt.isDelete=0
-		WHERE s.`status`=6 AND   a.shop_id=#{param.shopid,jdbcType=CHAR}
-		AND s.status5date>=#{param.startDate,jdbcType=TIMESTAMP}
-		AND s.status5date &lt;=#{param.endDate,jdbcType=TIMESTAMP}
+		WHERE p.`auditstatus`>=7 AND  p.shopid=#{param.shopid,jdbcType=CHAR}
+		AND p.shipping_date>=#{param.startDate,jdbcType=TIMESTAMP}
+		AND p.shipping_date &lt;=#{param.endDate,jdbcType=TIMESTAMP}
 		<if test="param.groupid !=null">
-			and p.amazongroupid=#{param.groupid,jdbcType=CHAR}
+			and p.groupid=#{param.groupid,jdbcType=CHAR}
 		</if>
 		<if test="param.marketplaceid !=null">
 			and p.marketplaceid=#{param.marketplaceid,jdbcType=CHAR}
@@ -1103,7 +1142,7 @@
 			and mt.sku=#{param.msku,jdbcType=CHAR}
 		</if>
 		<if test="param.sku !=null">
-			and i.SellerSKU=#{param.sku,jdbcType=CHAR}
+			and i.sku=#{param.sku,jdbcType=CHAR}
 		</if>
 
 	</select>

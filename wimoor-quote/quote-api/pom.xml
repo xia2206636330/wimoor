@@ -35,6 +35,11 @@
 		    <artifactId>common-entity</artifactId>
 		    <version>${wimoor.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 

@@ -13,4 +13,5 @@ public class WarehouseDTO  extends BasePageQuery{
     String shopid;
     String ftype;
     String parentid;
+    String showhide;
 }

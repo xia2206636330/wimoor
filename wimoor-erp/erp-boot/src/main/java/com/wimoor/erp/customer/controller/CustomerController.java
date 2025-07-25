@@ -164,7 +164,7 @@ public class CustomerController {
 			workbook.close();
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -295,8 +295,6 @@ public class CustomerController {
 				} catch (EncryptedDocumentException e) {
 					e.printStackTrace();
 				} catch (InvalidFormatException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

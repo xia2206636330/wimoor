@@ -26,7 +26,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wimoor.erp.purchase.mapper.*;
 import com.wimoor.erp.purchase.pojo.entity.*;
@@ -62,12 +61,12 @@ import com.wimoor.common.service.ISerialNumService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.common.user.UserInfoContext;
 import com.wimoor.erp.api.AdminClientOneFeignManager;
-import com.wimoor.erp.assembly.pojo.entity.Assembly;
-import com.wimoor.erp.assembly.pojo.entity.AssemblyForm;
-import com.wimoor.erp.assembly.pojo.entity.AssemblyFormEntry;
-import com.wimoor.erp.assembly.service.IAssemblyFormEntryService;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
-import com.wimoor.erp.assembly.service.IAssemblyService;
+import com.wimoor.erp.material.pojo.entity.Assembly;
+import com.wimoor.erp.material.pojo.entity.AssemblyForm;
+import com.wimoor.erp.material.pojo.entity.AssemblyFormEntry;
+import com.wimoor.erp.material.service.IAssemblyFormEntryService;
+import com.wimoor.erp.material.service.IAssemblyFormService;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.common.pojo.entity.ERPBizException;
 import com.wimoor.erp.common.pojo.entity.EnumByFormType;
 import com.wimoor.erp.common.pojo.entity.EnumByInventory;
@@ -924,7 +923,7 @@ public class PurchaseFormServiceImpl extends  ServiceImpl<PurchaseFormMapper,Pur
 
 	public List<Map<String, Object>> getLastFormByMaterial(Object id, int i) {
 		Page<?> page = new Page<Map<String, Object>>(0,i);
-		return this.baseMapper.findeLastByMaterialid(page,id.toString().trim());
+		return this.baseMapper.findeLastByMaterialid(page,id.toString().trim(),null);
 	}
 
 	public Map<String, Object> getLastOneFormByMaterial(Object id) {
@@ -932,7 +931,22 @@ public class PurchaseFormServiceImpl extends  ServiceImpl<PurchaseFormMapper,Pur
 			return null;
 		} else {
 			Page<?> page = new Page<Map<String, Object>>(0,1);
-			List<Map<String, Object>> list = this.baseMapper.findeLastByMaterialid(page,id.toString().trim());
+			List<Map<String, Object>> list = this.baseMapper.findeLastByMaterialid(page,id.toString().trim(),null);
+			if (list != null && list.size() == 1) {
+				return list.get(0);
+			} else {
+				return null;
+			}
+		}
+	}
+
+	@Override
+	public Map<String, Object> getLastOneFormByMaterial(Object id, String warehouseid) {
+		if (id == null) {
+			return null;
+		} else {
+			Page<?> page = new Page<Map<String, Object>>(0,1);
+			List<Map<String, Object>> list = this.baseMapper.findeLastByMaterialid(page,id.toString().trim(),warehouseid);
 			if (list != null && list.size() == 1) {
 				return list.get(0);
 			} else {

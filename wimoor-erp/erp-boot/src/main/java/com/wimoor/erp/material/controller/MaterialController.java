@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wimoor.common.service.impl.SystemControllerLog;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -52,9 +53,9 @@ import com.wimoor.common.user.UserInfo;
 import com.wimoor.common.user.UserInfoContext;
 import com.wimoor.common.user.UserLimitDataType;
 import com.wimoor.erp.api.AdminClientOneFeignManager;
-import com.wimoor.erp.assembly.pojo.entity.Assembly;
+import com.wimoor.erp.material.pojo.entity.Assembly;
 import com.wimoor.erp.assembly.pojo.vo.AssemblyVO;
-import com.wimoor.erp.assembly.service.IAssemblyService;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.common.pojo.entity.Status;
 import com.wimoor.erp.common.service.IExcelDownLoadService;
 import com.wimoor.erp.inventory.pojo.entity.Inventory;
@@ -100,6 +101,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "产品接口")
 @RestController
 @RequestMapping("/api/v1/material")
+@SystemControllerLog("产品信息")
 @Slf4j
 @RequiredArgsConstructor
 public class MaterialController {
@@ -146,7 +148,7 @@ public class MaterialController {
 	    @ApiImplicitParam(name = "id", value = "id", required = true, paramType = "path", dataType = "String")
 	    @GetMapping("/id/{id}")
 	    public Result<Map<String, Object>> getInfoBySku(@PathVariable String id) {
-	    	//Map<String, Object> data = iMaterialService.findMaterialById(id);
+	    	// Map<String, Object> data = iMaterialService.findMaterialById(id);
 	    	log.debug(id+"获取所有信息---时间："+new Date());
 	        return Result.success(null);
 	    }
@@ -950,8 +952,9 @@ public class MaterialController {
 				return Result.success(null);
 			}
 		}
-	    
-	    @PostMapping(value="/saveData",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+
+		@SystemControllerLog("产品信息修改")
+		@PostMapping(value="/saveData",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	    @Transactional
 	    public Result<Map<String, Object>> saveAction(String infostr,@RequestParam(value="file",required=false)MultipartFile file){
 	    	UserInfo userinfo = UserInfoContext.get();

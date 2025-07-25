@@ -53,6 +53,8 @@ public interface IPurchaseFormService extends IService<PurchaseForm> {
 	
 	Map<String, Object> getLastOneFormByMaterial(Object id);
 
+	Map<String, Object> getLastOneFormByMaterial(Object id,String warehouseid);
+
 	List<Map<String,Object>> getPurchaseRecSumReport(  Map<String, Object> param);
 
 	List<Map<String, Object>> purchaseFormReport(Map<String, Object> param);

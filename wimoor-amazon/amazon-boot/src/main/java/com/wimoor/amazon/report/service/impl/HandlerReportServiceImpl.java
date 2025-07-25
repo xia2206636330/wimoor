@@ -118,53 +118,32 @@ public class HandlerReportServiceImpl implements IHandlerReportService,IAwsSQSMe
 		if(reporttype==null) {
 				List<ReportRequestRecord> reportRequestRecordList = reportRequestRecordMapper.selectNeedProcessRequest(null,null);
                 if(reportRequestRecordList!=null&&reportRequestRecordList.size()>0) {
-                	runnables.addAll(processReportListRunnable(reportRequestRecordList));
+					processReportList(reportRequestRecordList);
                 }
                 if(reportRequestRecordList==null||reportRequestRecordList.size()<100){
                 	List<ReportRequestRecord> reportSettRequestRecordList = reportRequestRecordMapper.selectNeedProcessRequest(ReportType.SettlementReport,null);
-    	            if(reportSettRequestRecordList!=null&&reportSettRequestRecordList.size()>0) {
-    	            	runnables.addAll(processReportListRunnable(reportSettRequestRecordList));
+					if (reportSettRequestRecordList != null && reportSettRequestRecordList.size() > 0) {
+    	            	processReportList(reportSettRequestRecordList);
     	            }
                 }
 		}else {
 			List<ReportRequestRecord> reportRequestRecordList = reportRequestRecordMapper.selectNeedProcessRequest(reporttype,null);
-			runnables.addAll(processReportListRunnable(reportRequestRecordList));
+			processReportList(reportRequestRecordList);
 		}
-		 amazonAuthorityService.executThread(runnables,"refreshProcessReportList");
 
 	}
 	
-	public List<Runnable> processReportListRunnable(List<ReportRequestRecord> reportRequestRecordList) {
-		List<Runnable> runnables=new ArrayList<Runnable>();
+	public void processReportList(List<ReportRequestRecord> reportRequestRecordList) {
 		Set<String> set = ReportType.getSingleReport();
 		for(ReportRequestRecord item:reportRequestRecordList) {
-            if(!set.contains(item.getReporttype())) {
             	ReportRequestType type = iReportRequestTypeService.findByTypeCode(item.getReporttype());
 				IReportService reportService=SpringUtil.getBean(type.getBean());
-				Runnable runnable = new Runnable() {
-					public void run() {
-				              reportService.downloadProcessReport(item);
-					}
-				};
-				runnables.add(runnable);
-            }
-		}
-		
-		for(String type:set) {
-			Runnable runnable = new Runnable() {
-				public void run() {
-					for(ReportRequestRecord item:reportRequestRecordList) {
-	                    if(item.getReporttype().equals(type)) {
-	                    	ReportRequestType type = iReportRequestTypeService.findByTypeCode(item.getReporttype());
-	    					IReportService reportService=SpringUtil.getBean(type.getBean());
-	    					reportService.downloadProcessReport(item);
-	                    }
-					}
+				try{
+					reportService.downloadProcessReport(item);
+				}catch(Exception e) {
+					e.printStackTrace();
 				}
-			};
-			runnables.add(runnable);
 		}
-	  return runnables;
 	}
 	
 	public Runnable getReportListRunnable(final String reporttype, final List<Marketplace> region) {

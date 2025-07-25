@@ -17,5 +17,4 @@ public interface IAmzSettlementAccReportService  extends IService<AmzSettlementA
 	Map<String, Object> findSettlementAccSum(Map<String, Object> map);
  	public AmzSettlementAccReport findSettlementByKey(String settlement_id, String amazonauthid, String marketplace_name);
 	List<Map<String, Object>> findDateByAuth(Map<String, Object> map);
-
 }

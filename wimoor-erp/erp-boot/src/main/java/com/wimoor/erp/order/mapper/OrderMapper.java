@@ -26,6 +26,8 @@ public interface OrderMapper extends BaseMapper<Order> {
    List<Map<String,Object>>  findOrderByCondition(@Param("param") Map<String,String> param);
    IPage<Map<String, Object>> findMaterialByCondition(Page<?> page,@Param("param")Map<String, String> map);
    List<Map<String, Object>> findMaterialByCondition(@Param("param")Map<String, String> map);
+   void summary();
+    List<Map<String, Object>> listByDate(@Param("param")Map<String, Object> param);
 }
 
 

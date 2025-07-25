@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 import org.threeten.bp.OffsetDateTime;
 
 import com.amazon.spapi.SellingPartnerAPIAA.LWAAccessTokenCache;
@@ -72,7 +75,7 @@ public class FinancesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventGroupsCall(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call listFinancialEventGroupsCall(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -106,10 +109,10 @@ public class FinancesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -122,10 +125,10 @@ public class FinancesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call listFinancialEventGroupsValidateBeforeCall(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call listFinancialEventGroupsValidateBeforeCall(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
 
-        com.squareup.okhttp.Call call = listFinancialEventGroupsCall(maxResultsPerPage, financialEventGroupStartedBefore, financialEventGroupStartedAfter, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventGroupsCall(maxResultsPerPage, financialEventGroupStartedBefore, financialEventGroupStartedAfter, nextToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -158,7 +161,7 @@ public class FinancesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ListFinancialEventGroupsResponse> listFinancialEventGroupsWithHttpInfo(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = listFinancialEventGroupsValidateBeforeCall(maxResultsPerPage, financialEventGroupStartedBefore, financialEventGroupStartedAfter, nextToken, null, null);
+        Call call = listFinancialEventGroupsValidateBeforeCall(maxResultsPerPage, financialEventGroupStartedBefore, financialEventGroupStartedAfter, nextToken, null, null);
         Type localVarReturnType = new TypeToken<ListFinancialEventGroupsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -175,7 +178,7 @@ public class FinancesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventGroupsAsync(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken, final ApiCallback<ListFinancialEventGroupsResponse> callback) throws ApiException, LWAException {
+    public Call listFinancialEventGroupsAsync(Integer maxResultsPerPage, OffsetDateTime financialEventGroupStartedBefore, OffsetDateTime financialEventGroupStartedAfter, String nextToken, final ApiCallback<ListFinancialEventGroupsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -196,7 +199,7 @@ public class FinancesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = listFinancialEventGroupsValidateBeforeCall(maxResultsPerPage, financialEventGroupStartedBefore, financialEventGroupStartedAfter, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventGroupsValidateBeforeCall(maxResultsPerPage, financialEventGroupStartedBefore, financialEventGroupStartedAfter, nextToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ListFinancialEventGroupsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -213,7 +216,7 @@ public class FinancesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventsCall(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call listFinancialEventsCall(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -247,10 +250,10 @@ public class FinancesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -263,10 +266,10 @@ public class FinancesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call listFinancialEventsValidateBeforeCall(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call listFinancialEventsValidateBeforeCall(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
 
-        com.squareup.okhttp.Call call = listFinancialEventsCall(maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventsCall(maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -299,7 +302,7 @@ public class FinancesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ListFinancialEventsResponse> listFinancialEventsWithHttpInfo(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = listFinancialEventsValidateBeforeCall(maxResultsPerPage, postedAfter, postedBefore, nextToken, null, null);
+        Call call = listFinancialEventsValidateBeforeCall(maxResultsPerPage, postedAfter, postedBefore, nextToken, null, null);
         Type localVarReturnType = new TypeToken<ListFinancialEventsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -316,7 +319,7 @@ public class FinancesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventsAsync(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ApiCallback<ListFinancialEventsResponse> callback) throws ApiException, LWAException {
+    public Call listFinancialEventsAsync(Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ApiCallback<ListFinancialEventsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -337,7 +340,7 @@ public class FinancesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = listFinancialEventsValidateBeforeCall(maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventsValidateBeforeCall(maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ListFinancialEventsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -355,7 +358,7 @@ public class FinancesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventsByGroupIdCall(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call listFinancialEventsByGroupIdCall(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -390,10 +393,10 @@ public class FinancesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -406,7 +409,7 @@ public class FinancesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call listFinancialEventsByGroupIdValidateBeforeCall(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call listFinancialEventsByGroupIdValidateBeforeCall(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'eventGroupId' is set
         if (eventGroupId == null) {
@@ -414,7 +417,7 @@ public class FinancesApi {
         }
         
 
-        com.squareup.okhttp.Call call = listFinancialEventsByGroupIdCall(eventGroupId, maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventsByGroupIdCall(eventGroupId, maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -449,7 +452,7 @@ public class FinancesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ListFinancialEventsResponse> listFinancialEventsByGroupIdWithHttpInfo(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = listFinancialEventsByGroupIdValidateBeforeCall(eventGroupId, maxResultsPerPage, postedAfter, postedBefore, nextToken, null, null);
+        Call call = listFinancialEventsByGroupIdValidateBeforeCall(eventGroupId, maxResultsPerPage, postedAfter, postedBefore, nextToken, null, null);
         Type localVarReturnType = new TypeToken<ListFinancialEventsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -467,7 +470,7 @@ public class FinancesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventsByGroupIdAsync(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ApiCallback<ListFinancialEventsResponse> callback) throws ApiException, LWAException {
+    public Call listFinancialEventsByGroupIdAsync(String eventGroupId, Integer maxResultsPerPage, OffsetDateTime postedAfter, OffsetDateTime postedBefore, String nextToken, final ApiCallback<ListFinancialEventsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -488,7 +491,7 @@ public class FinancesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = listFinancialEventsByGroupIdValidateBeforeCall(eventGroupId, maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventsByGroupIdValidateBeforeCall(eventGroupId, maxResultsPerPage, postedAfter, postedBefore, nextToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ListFinancialEventsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -504,7 +507,7 @@ public class FinancesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventsByOrderIdCall(String orderId, Integer maxResultsPerPage, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call listFinancialEventsByOrderIdCall(String orderId, Integer maxResultsPerPage, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -535,10 +538,10 @@ public class FinancesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -551,7 +554,7 @@ public class FinancesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call listFinancialEventsByOrderIdValidateBeforeCall(String orderId, Integer maxResultsPerPage, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call listFinancialEventsByOrderIdValidateBeforeCall(String orderId, Integer maxResultsPerPage, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'orderId' is set
         if (orderId == null) {
@@ -559,7 +562,7 @@ public class FinancesApi {
         }
         
 
-        com.squareup.okhttp.Call call = listFinancialEventsByOrderIdCall(orderId, maxResultsPerPage, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventsByOrderIdCall(orderId, maxResultsPerPage, nextToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -590,7 +593,7 @@ public class FinancesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ListFinancialEventsResponse> listFinancialEventsByOrderIdWithHttpInfo(String orderId, Integer maxResultsPerPage, String nextToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = listFinancialEventsByOrderIdValidateBeforeCall(orderId, maxResultsPerPage, nextToken, null, null);
+        Call call = listFinancialEventsByOrderIdValidateBeforeCall(orderId, maxResultsPerPage, nextToken, null, null);
         Type localVarReturnType = new TypeToken<ListFinancialEventsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -606,7 +609,7 @@ public class FinancesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listFinancialEventsByOrderIdAsync(String orderId, Integer maxResultsPerPage, String nextToken, final ApiCallback<ListFinancialEventsResponse> callback) throws ApiException, LWAException {
+    public Call listFinancialEventsByOrderIdAsync(String orderId, Integer maxResultsPerPage, String nextToken, final ApiCallback<ListFinancialEventsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -627,7 +630,7 @@ public class FinancesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = listFinancialEventsByOrderIdValidateBeforeCall(orderId, maxResultsPerPage, nextToken, progressListener, progressRequestListener);
+        Call call = listFinancialEventsByOrderIdValidateBeforeCall(orderId, maxResultsPerPage, nextToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ListFinancialEventsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -691,10 +694,9 @@ public class FinancesApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new FinancesApi(new ApiClient()
+            return new FinancesApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
-                .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                .setBasePath(endpoint));
         }
     }
 }

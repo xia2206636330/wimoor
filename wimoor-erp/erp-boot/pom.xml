@@ -66,7 +66,12 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.28</version>
         </dependency>
- 
+        <!--表达式计算 https://mvnrepository.com/artifact/com.googlecode.aviator/aviator -->
+        <dependency>
+            <groupId>com.googlecode.aviator</groupId>
+            <artifactId>aviator</artifactId>
+            <version>3.0.0</version>
+        </dependency>
         <!--gson-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -102,19 +107,11 @@
      		<artifactId>itext-asian</artifactId>
     		<version>5.2.0</version>
 		 </dependency>
-        <dependency>
-            <groupId>biz-sources</groupId>
-            <artifactId>biz-sources</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/lib/ocean.client.java.biz-sources.jar</systemPath>
-       </dependency>
           <dependency>
             <groupId>com.biz</groupId>
             <artifactId>biz</artifactId>
             <version>1.0</version>
           </dependency>
-     
             <dependency>
 				    <groupId>net.lingala.zip4j</groupId>
 				    <artifactId>zip4j</artifactId>
@@ -158,11 +155,10 @@
 		    <artifactId>admin-api</artifactId>
 		    <version>${wimoor.version}</version>
 		 </dependency>
-	</dependencies>
+    </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -171,52 +167,51 @@
                     <fork>true</fork>
                 </configuration>
             </plugin>
-             <plugin>				
-                 <groupId>org.apache.maven.plugins</groupId>				
-                 <artifactId>maven-install-plugin</artifactId>							
-                 <executions>					
-                     <execution>						
-                         <id>install-jar</id>          	
-                         <!-- 阶段：设定在 mvn clean 时执行安装,如果设定为 validate，那么就是在 mvn validate 时才安装 -->						
-                         <phase>clean</phase>						
-                         <configuration>              
-                         <!-- 路径：这就是刚才添加的 jar 路径 -->							
-                            <file>${project.basedir}/src/main/resources/lib/ocean.client.java.biz.jar</file>							
-                            <!-- 属性：下面的这三个属性，就是后面我们添加依赖时的值 -->              
-                            <groupId>com.biz</groupId>							
-                            <artifactId>biz</artifactId>							
-                            <version>1.0</version>							
-                            <packaging>jar</packaging>							
-                            <generatePom>true</generatePom>						
-                            </configuration>						
-                            <goals>              
-                            <!-- 目标：安装外部的 jar 文件到 maven 本地仓库 -->							
-                            <goal>install-file</goal>						
-                            </goals>					
-                       </execution>	
-                       <execution>						
-                         <id>install-AlibabaMessage</id>          	
-                         <!-- 阶段：设定在 mvn clean 时执行安装,如果设定为 validate，那么就是在 mvn validate 时才安装 -->						
-                         <phase>clean</phase>						
-                         <configuration>              
-                         <!-- 路径：这就是刚才添加的 jar 路径 -->							
-                            <file>${project.basedir}/src/main/resources/lib/aop-sdk-message-0.9.0.jar</file>							
-                            <!-- 属性：下面的这三个属性，就是后面我们添加依赖时的值 -->              
-                            <groupId>alibaba.message</groupId>							
-                            <artifactId>alibaba.message</artifactId>							
-                            <version>0.9.0</version>							
-                            <packaging>jar</packaging>							
-                            <generatePom>true</generatePom>						
-                            </configuration>						
-                            <goals>              
-                            <!-- 目标：安装外部的 jar 文件到 maven 本地仓库 -->							
-                            <goal>install-file</goal>						
-                            </goals>					
-                       </execution>	
-                       						
-                 </executions>			
-             </plugin>
-            
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>install-jar</id>
+						<!-- 阶段：设定在 mvn clean 时执行安装,如果设定为 validate，那么就是在 mvn validate 时才安装 -->
+						<phase>clean</phase>
+						<configuration>
+							<!-- 路径：这就是刚才添加的 jar 路径 -->
+							<file>${project.basedir}/src/main/resources/lib/ocean.client.java.biz.jar</file>
+							<!-- 属性：下面的这三个属性，就是后面我们添加依赖时的值 -->
+							<groupId>com.biz</groupId>
+							<artifactId>biz</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<!-- 目标：安装外部的 jar 文件到 maven 本地仓库 -->
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install-AlibabaMessage</id>
+						<!-- 阶段：设定在 mvn clean 时执行安装,如果设定为 validate，那么就是在 mvn validate 时才安装 -->
+						<phase>clean</phase>
+						<configuration>
+							<!-- 路径：这就是刚才添加的 jar 路径 -->
+							<file>${project.basedir}/src/main/resources/lib/aop-sdk-message-0.9.0.jar</file>
+							<!-- 属性：下面的这三个属性，就是后面我们添加依赖时的值 -->
+							<groupId>alibaba.message</groupId>
+							<artifactId>alibaba.message</artifactId>
+							<version>0.9.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<!-- 目标：安装外部的 jar 文件到 maven 本地仓库 -->
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+
+				</executions>
+			</plugin>
         </plugins>
     </build>
 

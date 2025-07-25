@@ -37,7 +37,7 @@ import com.wimoor.common.result.Result;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AmazonClientOneFeignManager;
 import com.wimoor.erp.assembly.pojo.vo.AssemblyVO;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
+import com.wimoor.erp.material.service.IAssemblyFormService;
 import com.wimoor.erp.common.pojo.entity.EnumByInventory;
 import com.wimoor.erp.inventory.pojo.entity.InventoryParameter;
 import com.wimoor.erp.inventory.service.IInventoryFormAgentService;

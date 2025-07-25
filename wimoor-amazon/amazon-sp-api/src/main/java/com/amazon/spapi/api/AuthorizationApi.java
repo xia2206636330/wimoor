@@ -37,6 +37,9 @@ import com.amazon.spapi.client.ProgressResponseBody;
 import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.authorization.GetAuthorizationCodeResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class AuthorizationApi {
     private ApiClient apiClient;
@@ -68,7 +71,7 @@ public class AuthorizationApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAuthorizationCodeCall(String sellingPartnerId, String developerId, String mwsAuthToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getAuthorizationCodeCall(String sellingPartnerId, String developerId, String mwsAuthToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -100,10 +103,10 @@ public class AuthorizationApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -116,7 +119,7 @@ public class AuthorizationApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getAuthorizationCodeValidateBeforeCall(String sellingPartnerId, String developerId, String mwsAuthToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getAuthorizationCodeValidateBeforeCall(String sellingPartnerId, String developerId, String mwsAuthToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'sellingPartnerId' is set
         if (sellingPartnerId == null) {
@@ -134,7 +137,7 @@ public class AuthorizationApi {
         }
         
 
-        com.squareup.okhttp.Call call = getAuthorizationCodeCall(sellingPartnerId, developerId, mwsAuthToken, progressListener, progressRequestListener);
+        Call call = getAuthorizationCodeCall(sellingPartnerId, developerId, mwsAuthToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -165,7 +168,7 @@ public class AuthorizationApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetAuthorizationCodeResponse> getAuthorizationCodeWithHttpInfo(String sellingPartnerId, String developerId, String mwsAuthToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getAuthorizationCodeValidateBeforeCall(sellingPartnerId, developerId, mwsAuthToken, null, null);
+        Call call = getAuthorizationCodeValidateBeforeCall(sellingPartnerId, developerId, mwsAuthToken, null, null);
         Type localVarReturnType = new TypeToken<GetAuthorizationCodeResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -181,7 +184,7 @@ public class AuthorizationApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAuthorizationCodeAsync(String sellingPartnerId, String developerId, String mwsAuthToken, final ApiCallback<GetAuthorizationCodeResponse> callback) throws ApiException, LWAException {
+    public Call getAuthorizationCodeAsync(String sellingPartnerId, String developerId, String mwsAuthToken, final ApiCallback<GetAuthorizationCodeResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -202,7 +205,7 @@ public class AuthorizationApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getAuthorizationCodeValidateBeforeCall(sellingPartnerId, developerId, mwsAuthToken, progressListener, progressRequestListener);
+        Call call = getAuthorizationCodeValidateBeforeCall(sellingPartnerId, developerId, mwsAuthToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetAuthorizationCodeResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -266,10 +269,10 @@ public class AuthorizationApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new AuthorizationApi(new ApiClient()
+            return new AuthorizationApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

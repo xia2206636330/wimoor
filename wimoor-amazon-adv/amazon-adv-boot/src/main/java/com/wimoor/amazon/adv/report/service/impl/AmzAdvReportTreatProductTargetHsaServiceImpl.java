@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.wimoor.amazon.adv.sb.pojo.*;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -18,11 +19,6 @@ import com.wimoor.amazon.adv.report.pojo.AmzAdvRequest;
 import com.wimoor.amazon.adv.report.service.IAmzAdvReportTreatService;
 import com.wimoor.amazon.adv.sb.dao.AmzAdvProductTargeHsaMapper;
 import com.wimoor.amazon.adv.sb.dao.AmzAdvReportProductTargeHsaMapper;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvProductTargeHsa;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportProductTargetsHsa;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportProductTargetsHsaAttributed;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportProductTargetsHsaBrand;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportProductTargetsHsaVideo;
 import com.wimoor.common.GeneralUtil;
 
 import cn.hutool.core.util.StrUtil;
@@ -84,7 +80,7 @@ public class AmzAdvReportTreatProductTargetHsaServiceImpl extends AmzAdvReportTr
 	public synchronized void treatReport(AmzAdvProfile profile,AmzAdvRequest request, JSONReader jsonReader) {
 		// TODO Auto-generated method stub
 			final List<AmzAdvReportProductTargetsHsa> list = new LinkedList<AmzAdvReportProductTargetsHsa>();
-			final List<AmzAdvReportProductTargetsHsaAttributed> listAttributed = new LinkedList<AmzAdvReportProductTargetsHsaAttributed>();
+			final List<AmzAdvReportProductTargetsHsaAttributedAll> listAttributed = new LinkedList<AmzAdvReportProductTargetsHsaAttributedAll>();
 
 			final List<AmzAdvReportProductTargetsHsaBrand> listBrand = new LinkedList<AmzAdvReportProductTargetsHsaBrand>();
 			final List<AmzAdvReportProductTargetsHsaVideo> listVideo = new LinkedList<AmzAdvReportProductTargetsHsaVideo>();
@@ -96,10 +92,10 @@ public class AmzAdvReportTreatProductTargetHsaServiceImpl extends AmzAdvReportTr
 					AmzAdvReportProductTargetsHsa amzAdvReportProductTargeHsa = new AmzAdvReportProductTargetsHsa();
 					AmzAdvReportProductTargetsHsaBrand amzAdvReportProductTargetsHsaBrand=new AmzAdvReportProductTargetsHsaBrand();
 					AmzAdvReportProductTargetsHsaVideo amzAdvReportProductTargetsHsaVideo=new AmzAdvReportProductTargetsHsaVideo();
-					AmzAdvReportProductTargetsHsaAttributed amzAdvReportProductTargeHsaAttributed=new AmzAdvReportProductTargetsHsaAttributed();
+					AmzAdvReportProductTargetsHsaAttributedAll amzAdvReportProductTargeHsaAttributed=new AmzAdvReportProductTargetsHsaAttributedAll();
 					amzAdvReportProductTargeHsa.setCampaignid(item.getBigInteger("campaignId"));
 					amzAdvReportProductTargeHsa.setAdgroupid(item.getBigInteger("adGroupId"));
-					amzAdvReportProductTargeHsa.setTargetid(item.getBigInteger("targetId"));
+					amzAdvReportProductTargeHsa.setTargetid(item.getBigInteger("targetingId"));
 					 if(request.getLog()!=null&&request.getLog().equals("hasName")) {
 		            	     AmzAdvProductTargeHsa target = amzAdvProductTargeHsaMapper.selectByPrimaryKey(amzAdvReportProductTargeHsa.getTargetid());
 		            	   if(target==null) {
@@ -127,11 +123,49 @@ public class AmzAdvReportTreatProductTargetHsaServiceImpl extends AmzAdvReportTr
 					amzAdvReportProductTargeHsa.setCost(item.getBigDecimal("cost"));
 					amzAdvReportProductTargeHsa.setOpttime(new Date());
 					amzAdvReportProductTargeHsaAttributed.setBydate(amzAdvReportProductTargeHsa.getBydate());
-					amzAdvReportProductTargeHsaAttributed.setTargetid(amzAdvReportProductTargeHsa.getTargetid());
-					amzAdvReportProductTargeHsaAttributed.setAttributedsales14d(item.getBigDecimal("attributedSales14d"));
-					amzAdvReportProductTargeHsaAttributed.setAttributedsales14dsamesku(item.getBigDecimal("attributedSales14dSameSKU"));
-					amzAdvReportProductTargeHsaAttributed.setAttributedconversions14d(item.getInteger("attributedConversions14d"));
-					amzAdvReportProductTargeHsaAttributed.setAttributedconversions14dsamesku(item.getInteger("attributedConversions14dSameSKU"));
+					amzAdvReportProductTargeHsaAttributed.setTargetingId(amzAdvReportProductTargeHsa.getTargetid().toString());
+					amzAdvReportProductTargeHsaAttributed.setAddToCart(item.getInteger("addToCart"));
+					amzAdvReportProductTargeHsaAttributed.setAddToCartClicks(item.getInteger("addToCartClicks"));
+					amzAdvReportProductTargeHsaAttributed.setAddToCartRate(item.getBigDecimal("addToCartRate"));
+					amzAdvReportProductTargeHsaAttributed.setAddToList(item.getInteger("addToList"));
+					amzAdvReportProductTargeHsaAttributed.setAddToListFromClicks(item.getInteger("addToListFromClicks"));
+					amzAdvReportProductTargeHsaAttributed.setQualifiedBorrows(item.getInteger("qualifiedBorrows"));
+					amzAdvReportProductTargeHsaAttributed.setQualifiedBorrowsFromClicks(item.getInteger("qualifiedBorrowsFromClicks"));
+					amzAdvReportProductTargeHsaAttributed.setRoyaltyQualifiedBorrows(item.getInteger("royaltyQualifiedBorrows"));
+					amzAdvReportProductTargeHsaAttributed.setRoyaltyQualifiedBorrowsFromClicks(item.getInteger("royaltyQualifiedBorrowsFromClicks"));
+					amzAdvReportProductTargeHsaAttributed.setBrandedSearches(item.getInteger("brandedSearches"));
+					amzAdvReportProductTargeHsaAttributed.setBrandedSearchesClicks(item.getInteger("brandedSearchesClicks"));
+					amzAdvReportProductTargeHsaAttributed.setCampaignBudgetAmount(item.getBigDecimal("campaignBudgetAmount"));
+					amzAdvReportProductTargeHsaAttributed.setCampaignBudgetCurrencyCode(item.getString("campaignBudgetCurrencyCode"));
+					amzAdvReportProductTargeHsaAttributed.setDetailPageViews(item.getInteger("detailPageViews"));
+					amzAdvReportProductTargeHsaAttributed.setDetailPageViewsClicks(item.getInteger("detailPageViewsClicks"));
+					amzAdvReportProductTargeHsaAttributed.setECPAddToCart(item.getBigDecimal("eCPAddToCart"));
+					amzAdvReportProductTargeHsaAttributed.setMatchType(item.getString("matchType"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandDetailPageViewRate(item.getBigDecimal("newToBrandDetailPageViewRate"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandDetailPageViews(item.getInteger("newToBrandDetailPageViews"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandDetailPageViewsClicks(item.getInteger("newToBrandDetailPageViewsClicks"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandECPDetailPageView(item.getBigDecimal("newToBrandECPDetailPageView"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandPurchases(item.getInteger("newToBrandPurchases"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandPurchasesClicks(item.getInteger("newToBrandPurchasesClicks"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandPurchasesPercentage(item.getBigDecimal("newToBrandPurchasesPercentage"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandPurchasesRate(item.getBigDecimal("newToBrandPurchasesRate"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandSales(item.getBigDecimal("newToBrandSales"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandSalesClicks(item.getInteger("newToBrandSalesClicks"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandSalesPercentage(item.getBigDecimal("newToBrandSalesPercentage"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandUnitsSold(item.getInteger("newToBrandUnitsSold"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandUnitsSoldClicks(item.getInteger("newToBrandUnitsSoldClicks"));
+					amzAdvReportProductTargeHsaAttributed.setNewToBrandUnitsSoldPercentage(item.getBigDecimal("newToBrandUnitsSoldPercentage"));
+					amzAdvReportProductTargeHsaAttributed.setPurchases(item.getInteger("purchases"));
+					amzAdvReportProductTargeHsaAttributed.setPurchasesClicks(item.getInteger("purchasesClicks"));
+					amzAdvReportProductTargeHsaAttributed.setPurchasesPromoted(item.getInteger("purchasesPromoted"));
+					amzAdvReportProductTargeHsaAttributed.setSales(item.getBigDecimal("sales"));
+					amzAdvReportProductTargeHsaAttributed.setSalesClicks(item.getInteger("salesClicks"));
+					amzAdvReportProductTargeHsaAttributed.setSalesPromoted(item.getBigDecimal("salesPromoted"));
+					amzAdvReportProductTargeHsaAttributed.setTopOfSearchImpressionShare(item.getBigDecimal("topOfSearchImpressionShare"));
+					amzAdvReportProductTargeHsaAttributed.setUnitsSold(item.getInteger("unitsSold"));
+					amzAdvReportProductTargeHsaAttributed.setOpttime(new Date());
+
+
 
 					 if(request.getCreativeType()!=null&&"video".equals(request.getCreativeType())) {
 						 amzAdvReportProductTargetsHsaVideo=	new AmzAdvReportProductTargetsHsaVideo();

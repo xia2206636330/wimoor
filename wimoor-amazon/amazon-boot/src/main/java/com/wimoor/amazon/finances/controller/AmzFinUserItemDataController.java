@@ -108,7 +108,11 @@ public class AmzFinUserItemDataController {
 		params.put("fromDate", fromDate.trim());
 		params.put("shopid", user.getCompanyid());
 		params.put("endDate", endDate.trim());
-		params.put("month", "");
+		if(dto.getFtype()!=null&&dto.getFtype().equals("other")){
+			params.remove("month");
+		}else{
+			params.put("month", "");
+		}
 		return  Result.success(amzFinUserItemDataService.getFinDataList(dto.getPage(),user, params));
 	}
 

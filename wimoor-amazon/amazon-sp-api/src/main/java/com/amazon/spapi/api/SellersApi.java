@@ -37,6 +37,9 @@ import com.amazon.spapi.client.ProgressResponseBody;
 import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.sellers.GetMarketplaceParticipationsResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class SellersApi {
     private ApiClient apiClient;
@@ -65,7 +68,7 @@ public class SellersApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMarketplaceParticipationsCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getMarketplaceParticipationsCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -91,10 +94,10 @@ public class SellersApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -107,10 +110,10 @@ public class SellersApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getMarketplaceParticipationsValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getMarketplaceParticipationsValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
 
-        com.squareup.okhttp.Call call = getMarketplaceParticipationsCall(progressListener, progressRequestListener);
+        Call call = getMarketplaceParticipationsCall(progressListener, progressRequestListener);
         return call;
 
     }
@@ -135,7 +138,7 @@ public class SellersApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetMarketplaceParticipationsResponse> getMarketplaceParticipationsWithHttpInfo() throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getMarketplaceParticipationsValidateBeforeCall(null, null);
+        Call call = getMarketplaceParticipationsValidateBeforeCall(null, null);
         Type localVarReturnType = new TypeToken<GetMarketplaceParticipationsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -148,7 +151,7 @@ public class SellersApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getMarketplaceParticipationsAsync(final ApiCallback<GetMarketplaceParticipationsResponse> callback) throws ApiException, LWAException {
+    public Call getMarketplaceParticipationsAsync(final ApiCallback<GetMarketplaceParticipationsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -169,7 +172,7 @@ public class SellersApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getMarketplaceParticipationsValidateBeforeCall(progressListener, progressRequestListener);
+        Call call = getMarketplaceParticipationsValidateBeforeCall(progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetMarketplaceParticipationsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -233,10 +236,10 @@ public class SellersApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new SellersApi(new ApiClient()
+            return new SellersApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

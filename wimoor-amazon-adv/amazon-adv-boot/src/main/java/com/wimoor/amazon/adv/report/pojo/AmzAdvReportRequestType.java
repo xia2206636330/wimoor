@@ -41,5 +41,9 @@ public class AmzAdvReportRequestType {
 
 	@Column(name="disablevendor")
     private Boolean disablevendor;
+
+	@Column(name="disabled")
+	private Boolean disabled;
+
  
 }

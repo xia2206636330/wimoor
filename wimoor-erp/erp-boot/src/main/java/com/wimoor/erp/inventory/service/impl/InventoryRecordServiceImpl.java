@@ -48,6 +48,42 @@ public class InventoryRecordServiceImpl extends ServiceImpl<InventoryRecordMappe
 	}
 
 	@Override
+	public void setExcelBookInventoryConsumableReport(SXSSFWorkbook workbook, List<Map<String, Object>> list) {
+		Map<String, Object> titlemap = new LinkedHashMap<String, Object>();
+		titlemap.put("sku", "辅料SKU");
+		titlemap.put("mainsku", "主SKU");
+		titlemap.put("shipqty", "发货量");
+		titlemap.put("units", "单位量");
+		titlemap.put("subout", "耗材出库量");
+		titlemap.put("price", "耗材成本单价");
+		titlemap.put("number", "出库单据");
+		titlemap.put("warehouse", "操作仓库");
+		titlemap.put("opttime", "操作时间");
+		titlemap.put("operator", "操作人");
+		Sheet sheet = workbook.createSheet("sheet1");
+		// 在索引0的位置创建行（最顶端的行）
+		Row trow = sheet.createRow(0);
+		Object[] titlearray = titlemap.keySet().toArray();
+		for (int i = 0; i < titlearray.length; i++) {
+			Cell cell = trow.createCell(i); // 在索引0的位置创建单元格(左上端)
+			Object value = titlemap.get(titlearray[i].toString());
+			cell.setCellValue(value.toString());
+		}
+		for (int i = 0; i < list.size(); i++) {
+			Row row = sheet.createRow(i + 1);
+			Map<String, Object> map = list.get(i);
+			for (int j = 0; j < titlearray.length; j++) {
+				Cell cell = row.createCell(j); // 在索引0的位置创建单元格(左上端)
+				Object value = map.get(titlearray[j].toString());
+				if (value != null) {
+					cell.setCellValue(value.toString());
+				}
+			}
+		}
+
+	}
+
+	@Override
 	public void setExcelBookInventoryRecReport(SXSSFWorkbook workbook, List<Map<String, Object>> list) {
 		Map<String, Object> titlemap = new LinkedHashMap<String, Object>();
 		titlemap.put("sku", "SKU");
@@ -174,5 +210,10 @@ public class InventoryRecordServiceImpl extends ServiceImpl<InventoryRecordMappe
 			 
 		 }
 
+	}
+
+	@Override
+	public List<Map<String, Object>> selectConsumableRecord(Map<String, Object> maps) {
+		return this.baseMapper.selectConsumableRecord(maps);
 	}
 }

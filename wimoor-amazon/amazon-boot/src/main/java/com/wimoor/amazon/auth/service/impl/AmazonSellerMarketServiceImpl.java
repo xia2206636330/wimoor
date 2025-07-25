@@ -83,7 +83,6 @@ public class AmazonSellerMarketServiceImpl extends ServiceImpl<AmazonSellerMarke
 			LambdaQueryWrapper<AmazonSellerMarket> query=new LambdaQueryWrapper<AmazonSellerMarket>()
 		              .eq(AmazonSellerMarket::getSellerid, amazonAuthority.getSellerid());
 			this.baseMapper.delete(query);
-		        
 		}
 		 for(MarketplaceParticipation marketplaceParticipation:list) {
 			 Marketplace market = marketplaceParticipation.getMarketplace();

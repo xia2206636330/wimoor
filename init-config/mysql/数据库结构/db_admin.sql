@@ -1,4 +1,9 @@
-
+-- --------------------------------------------------------
+-- 主机:                           wimoor.rwlb.rds.aliyuncs.com
+-- 服务器版本:                        8.0.36 - Source distribution
+-- 服务器操作系统:                      Linux
+-- HeidiSQL 版本:                  12.6.0.6765
+-- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -8,11 +13,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
--- 导出 db_admin 的数据库结构
-CREATE DATABASE IF NOT EXISTS `db_admin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db_admin`;
 
 -- 导出  表 db_admin.t_authority 结构
 CREATE TABLE IF NOT EXISTS `t_authority` (
@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `t_role` (
 CREATE TABLE IF NOT EXISTS `t_role_adv_group` (
   `roleid` bigint unsigned NOT NULL,
   `groupid` bigint unsigned NOT NULL,
-  `group_name` varchar(500) DEFAULT NULL,
+  `group_name` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   PRIMARY KEY (`roleid`,`groupid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `t_role_authority` (
 CREATE TABLE IF NOT EXISTS `t_role_group` (
   `roleid` bigint unsigned NOT NULL,
   `groupid` bigint unsigned NOT NULL,
-  `group_name` varchar(500) DEFAULT NULL,
+  `group_name` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   PRIMARY KEY (`roleid`,`groupid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
@@ -224,14 +224,14 @@ CREATE TABLE IF NOT EXISTS `t_shop` (
 -- 导出  表 db_admin.t_sys_app_store_company 结构
 CREATE TABLE IF NOT EXISTS `t_sys_app_store_company` (
   `id` bigint unsigned NOT NULL,
-  `name` varchar(50) DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `image` bigint unsigned DEFAULT NULL,
-  `telphone` varchar(25) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `QQ` varchar(25) DEFAULT NULL,
-  `website` varchar(100) DEFAULT NULL COMMENT '网址',
-  `work` varchar(100) DEFAULT NULL COMMENT '业务范围',
-  `address` varchar(255) DEFAULT NULL COMMENT '地址',
+  `telphone` varchar(25) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `QQ` varchar(25) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `website` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '网址',
+  `work` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '业务范围',
+  `address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '地址',
   `iscompany` bit(1) DEFAULT b'1' COMMENT '是否企业',
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -244,14 +244,14 @@ CREATE TABLE IF NOT EXISTS `t_sys_app_store_detail` (
   `id` int NOT NULL AUTO_INCREMENT,
   `appgroupid` bigint unsigned DEFAULT NULL,
   `appcompanyid` bigint unsigned DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL COMMENT '服务名称',
-  `description` varchar(500) DEFAULT NULL COMMENT '服务描述',
+  `title` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '服务名称',
+  `description` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '服务描述',
   `image` bigint unsigned DEFAULT NULL,
   `price_original` decimal(15,2) DEFAULT NULL COMMENT '原价',
   `price` decimal(15,2) DEFAULT NULL COMMENT '现在售价',
   `recommend_score` float(5,2) DEFAULT NULL COMMENT '推荐指数',
-  `recommend_reason` varchar(255) DEFAULT NULL COMMENT '推荐理由',
-  `customer_feedback` varchar(500) DEFAULT NULL COMMENT '客户反馈',
+  `recommend_reason` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '推荐理由',
+  `customer_feedback` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '客户反馈',
   `customer_pageview` int DEFAULT '0' COMMENT '用户浏览量',
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -263,9 +263,9 @@ CREATE TABLE IF NOT EXISTS `t_sys_app_store_detail` (
 -- 导出  表 db_admin.t_sys_app_store_group 结构
 CREATE TABLE IF NOT EXISTS `t_sys_app_store_group` (
   `id` bigint unsigned NOT NULL,
-  `name` varchar(50) DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `image` bigint unsigned DEFAULT NULL,
-  `description` varchar(500) DEFAULT NULL,
+  `description` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `createdate` timestamp NULL DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
   `opttime` timestamp NULL DEFAULT NULL,
@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `t_sys_app_store_group` (
 CREATE TABLE IF NOT EXISTS `t_sys_app_store_service_detail` (
   `id` int NOT NULL AUTO_INCREMENT,
   `detailid` int DEFAULT NULL,
-  `content` longtext COMMENT '服务详情',
+  `content` longtext CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci COMMENT '服务详情',
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `detailid` (`detailid`)
@@ -290,8 +290,8 @@ CREATE TABLE IF NOT EXISTS `t_sys_app_store_service_detail` (
 -- 导出  表 db_admin.t_sys_channel_salesperson_key 结构
 CREATE TABLE IF NOT EXISTS `t_sys_channel_salesperson_key` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `salesperson` char(50) NOT NULL DEFAULT '0',
-  `fkey` char(50) NOT NULL DEFAULT '0',
+  `salesperson` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
+  `fkey` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
@@ -336,18 +336,18 @@ CREATE TABLE IF NOT EXISTS `t_sys_customer_invoice` (
   `id` bigint unsigned NOT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
   `orderid` bigint unsigned DEFAULT NULL,
-  `company` varchar(100) DEFAULT NULL,
-  `invoice` varchar(50) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `bank` varchar(255) DEFAULT NULL,
-  `cardNo` char(50) DEFAULT NULL,
-  `ftype` char(20) DEFAULT NULL,
-  `sendAddress` char(255) DEFAULT NULL,
-  `sendPhone` char(20) DEFAULT NULL,
-  `sendName` char(10) DEFAULT NULL,
+  `company` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `invoice` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `bank` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `cardNo` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ftype` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `sendAddress` char(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `sendPhone` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `sendName` char(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `isSend` bit(1) DEFAULT b'0',
-  `ivctype` char(50) DEFAULT 'normal',
+  `ivctype` char(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'normal',
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
@@ -396,9 +396,9 @@ CREATE TABLE IF NOT EXISTS `t_sys_customer_order_refund` (
 -- 导出  表 db_admin.t_sys_dept 结构
 CREATE TABLE IF NOT EXISTS `t_sys_dept` (
   `id` bigint unsigned NOT NULL,
-  `name` char(100) DEFAULT NULL,
+  `name` char(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `parent_id` bigint unsigned DEFAULT NULL,
-  `tree_path` char(100) DEFAULT NULL,
+  `tree_path` char(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `sort` int DEFAULT NULL,
   `status` int DEFAULT NULL,
   `deleted` int DEFAULT NULL,
@@ -459,15 +459,15 @@ CREATE TABLE IF NOT EXISTS `t_sys_feishu_auth` (
 
 -- 导出  表 db_admin.t_sys_feishu_leave_calendar 结构
 CREATE TABLE IF NOT EXISTS `t_sys_feishu_leave_calendar` (
-  `timeoff_event_id` char(60) NOT NULL,
-  `uuid` char(36) NOT NULL,
-  `userid` char(36) DEFAULT NULL,
-  `appid` char(36) NOT NULL,
-  `event_content_type` char(20) DEFAULT NULL,
+  `timeoff_event_id` char(60) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `uuid` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `userid` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `appid` char(36) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `event_content_type` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `start_date` datetime DEFAULT NULL,
   `end_date` datetime DEFAULT NULL,
   `isdelete` bit(1) DEFAULT NULL,
-  `logs` varchar(2000) DEFAULT NULL,
+  `logs` varchar(2000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `opttime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`timeoff_event_id`),
   KEY `appid` (`appid`),
@@ -543,23 +543,23 @@ CREATE TABLE IF NOT EXISTS `t_sys_local_holiday` (
   `createtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `operator` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '更新者',
   `opttime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `shopid_year_month_day` (`shopid`,`year`,`month`,`day`),
-  KEY `shopid` (`shopid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1882361149880598583 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='节假日表';
+  KEY `shopid` (`shopid`)
+) ENGINE=InnoDB AUTO_INCREMENT=1945757654443974752 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='节假日表';
 
 -- 数据导出被取消选择。
 
 -- 导出  表 db_admin.t_sys_mailsender 结构
 CREATE TABLE IF NOT EXISTS `t_sys_mailsender` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `mailServerHost` varchar(50) DEFAULT NULL,
-  `mailServerPort` char(10) DEFAULT NULL,
-  `fromAddress` varchar(50) DEFAULT NULL,
-  `serverAccount` varchar(50) DEFAULT NULL,
-  `userName` varchar(50) DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
-  `iwallHost` varchar(50) DEFAULT NULL,
+  `mailServerHost` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `mailServerPort` char(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `fromAddress` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `serverAccount` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `userName` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `password` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `iwallHost` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `validate` bit(1) DEFAULT NULL,
   `starttls` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -570,10 +570,10 @@ CREATE TABLE IF NOT EXISTS `t_sys_mailsender` (
 -- 导出  表 db_admin.t_sys_mail_template 结构
 CREATE TABLE IF NOT EXISTS `t_sys_mail_template` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `mail_subject` varchar(50) DEFAULT NULL,
+  `mail_subject` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `ftype` tinyint unsigned DEFAULT NULL COMMENT '0、系统废弃模板，1、系统通知邮件 ，2、公司通知邮件，3、买家订单回复，4、买家邀请',
   `shopid` bigint unsigned DEFAULT NULL,
-  `content` text,
+  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
@@ -599,7 +599,7 @@ CREATE TABLE IF NOT EXISTS `t_sys_menu` (
   `oldid` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1012162 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='菜单管理';
+) ENGINE=InnoDB AUTO_INCREMENT=1012171 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='菜单管理';
 
 -- 数据导出被取消选择。
 
@@ -630,7 +630,7 @@ CREATE TABLE IF NOT EXISTS `t_sys_message_template` (
 
 -- 导出  表 db_admin.t_sys_notify 结构
 CREATE TABLE IF NOT EXISTS `t_sys_notify` (
-  `id` bigint unsigned NOT NULL DEFAULT '0',
+  `id` bigint unsigned NOT NULL,
   `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '0',
   `content` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `ftype` int NOT NULL COMMENT '消息的类型，1: 公告 Announce，2: 提醒 Remind，3：信息 Message',
@@ -687,11 +687,11 @@ CREATE TABLE IF NOT EXISTS `t_sys_permission` (
 -- 导出  表 db_admin.t_sys_potential_customer 结构
 CREATE TABLE IF NOT EXISTS `t_sys_potential_customer` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `company` varchar(2000) DEFAULT NULL,
-  `user_name` varchar(1000) DEFAULT NULL,
-  `address` varchar(2000) DEFAULT NULL,
-  `telphone` char(20) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
+  `company` varchar(2000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `user_name` varchar(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `address` varchar(2000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `telphone` char(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `email` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `sendtime` timestamp NULL DEFAULT NULL,
   `disable` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`),
@@ -703,20 +703,21 @@ CREATE TABLE IF NOT EXISTS `t_sys_potential_customer` (
 -- 导出  表 db_admin.t_sys_quartz_task 结构
 CREATE TABLE IF NOT EXISTS `t_sys_quartz_task` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
-  `fgroup` varchar(50) DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `fgroup` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `priority` int DEFAULT '5',
-  `description` varchar(50) DEFAULT NULL,
-  `cron` varchar(100) DEFAULT NULL,
-  `server` varchar(20) DEFAULT NULL,
-  `bean` varchar(50) DEFAULT NULL,
-  `method` varchar(50) DEFAULT NULL,
-  `parameter` varchar(200) DEFAULT NULL,
-  `path` varchar(200) DEFAULT NULL,
+  `description` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `cron` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `server` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `bean` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `method` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `parameter` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `path` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `isdelete` bit(1) DEFAULT b'0',
   `createdate` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=231 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_fgroup` (`name`,`fgroup`)
+) ENGINE=InnoDB AUTO_INCREMENT=233 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -750,7 +751,7 @@ CREATE TABLE IF NOT EXISTS `t_sys_query_user_version` (
   `createtime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `userid` (`userid`,`fquery`)
-) ENGINE=InnoDB AUTO_INCREMENT=123457041 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=123457051 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -901,7 +902,7 @@ CREATE TABLE IF NOT EXISTS `t_sys_tariff_packages` (
 -- 导出  表 db_admin.t_sys_tariff_packages_append 结构
 CREATE TABLE IF NOT EXISTS `t_sys_tariff_packages_append` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `ftype` char(20) DEFAULT NULL,
+  `ftype` char(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `name` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `units` int DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
@@ -1013,9 +1014,9 @@ CREATE TABLE IF NOT EXISTS `t_sys_user_ip_city` (
 -- 导出  表 db_admin.t_sys_video 结构
 CREATE TABLE IF NOT EXISTS `t_sys_video` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `menuid` char(36) DEFAULT NULL,
-  `video_url` varchar(100) DEFAULT NULL,
-  `video_name` varchar(50) DEFAULT NULL,
+  `menuid` char(36) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `video_url` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `video_name` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
@@ -1097,7 +1098,7 @@ CREATE TABLE IF NOT EXISTS `t_user_oldpassword` (
   `userid` int DEFAULT NULL,
   `oldpassword` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `oldsale` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1157,13 +1158,13 @@ CREATE TABLE IF NOT EXISTS `t_user_wechat_mp` (
 CREATE TABLE IF NOT EXISTS `undo_log` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `branch_id` bigint NOT NULL,
-  `xid` varchar(100) NOT NULL,
-  `context` varchar(128) NOT NULL,
+  `xid` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `context` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `rollback_info` longblob NOT NULL,
   `log_status` int NOT NULL,
   `log_created` datetime NOT NULL,
   `log_modified` datetime NOT NULL,
-  `ext` varchar(100) DEFAULT NULL,
+  `ext` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;

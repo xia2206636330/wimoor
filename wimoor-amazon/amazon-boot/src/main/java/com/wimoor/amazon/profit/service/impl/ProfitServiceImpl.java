@@ -539,7 +539,9 @@ public class ProfitServiceImpl implements IProfitService{
 			list.add(inputDimension.getLength().getValue());
 			list.add(inputDimension.getWidth().getValue());
 			list.add(inputDimension.getHeight().getValue());
-			Collections.sort(list);
+			if(list!=null && list.size()>0){
+				Collections.sort(list);
+			}
 			inputDimension.setLength(new ItemMeasure(list.get(2), inputDimension.getLength().getUnits()));
 			inputDimension.setWidth(new ItemMeasure(list.get(1), inputDimension.getWidth().getUnits()));
 			inputDimension.setHeight(new ItemMeasure(list.get(0), inputDimension.getHeight().getUnits()));
@@ -873,11 +875,11 @@ public class ProfitServiceImpl implements IProfitService{
 		}
 		if(shipment!=null &&shipment.floatValue()>0.0001) {//profitcfg.getShipmentstyle().equals("manually")如果手动输入了运费，shipment用户页面输入的运费 
 			shipment = this.exchangeRateHandlerService.changeCurrencyByLocal(currency, to, shipment); 
-		} else if (profitcfg.getShipmentstyle().equals("weight")) {//按重量计算,RMB/kg
+		} else if (profitcfg.getShipmentstyle()!=null &&  profitcfg.getShipmentstyle().equals("weight")) {//按重量计算,RMB/kg
 			shipment =inputDimension.getWeight()!=null&&profitConfigX.getConstantw()!=null?
 					inputDimension.getWeight(InputDimensions.unit_kg).getValue().multiply(profitConfigX.getConstantw()):new BigDecimal("0");
 			shipment = this.exchangeRateHandlerService.changeCurrencyByLocal("RMB", to, shipment);
-		} else if (profitcfg.getShipmentstyle().equals("dim_weight")) {//按重量与材积大者计算,RMB/kg
+		} else if (profitcfg.getShipmentstyle()!=null && profitcfg.getShipmentstyle().equals("dim_weight")) {//按重量与材积大者计算,RMB/kg
 			BigDecimal volum = inputDimension.getVolume(InputDimensions.unit_cm).getValue();
 			if (volum==null) {
 				return null;

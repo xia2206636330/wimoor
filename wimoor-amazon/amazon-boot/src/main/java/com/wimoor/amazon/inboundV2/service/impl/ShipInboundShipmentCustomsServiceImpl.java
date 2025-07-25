@@ -292,6 +292,10 @@ public class ShipInboundShipmentCustomsServiceImpl extends ServiceImpl<ShipInbou
                     }
                     if(StrUtil.isNotEmpty(cellValue)) {
                         cell.setCellType(CellType.STRING);
+                        if(cellValue.contains("服务")){
+                            Cell service = sheetRow.getCell(cellnum+1);
+                            service.setCellValue(param.get("{服务}").toString());
+                        }
                         if(param.get(cellValue)!=null) {
                             cell.setCellValue(param.get(cellValue).toString());
                         }else {
@@ -418,7 +422,7 @@ public class ShipInboundShipmentCustomsServiceImpl extends ServiceImpl<ShipInbou
         List<Map<String, Object>> boxobjlist = shipInboundBoxService.findShipInboundBox(shipmentid);
         List<ShipInboundShipmentCustoms> customsList = this.baseMapper.listByShipmentid(shipmentid);
         LambdaQueryWrapper<ShipInboundTrans> query = new LambdaQueryWrapper<ShipInboundTrans>();
-        query.eq(ShipInboundTrans::getShipmentid, shipmentid);
+        query.eq(ShipInboundTrans::getShipmentid, shipment.getShipmentConfirmationId());
         List<ShipInboundTrans> tranlist=shipInboundTransService.list(query);
         ShipInboundTrans trans = null;
         Map<String, Object> transdetal=null;
@@ -448,6 +452,7 @@ public class ShipInboundShipmentCustomsServiceImpl extends ServiceImpl<ShipInbou
         mainparam.put("{货件ReferenceID}", shipment.getReferenceid());
         mainparam.put("{币种编码}", marketplace.getCurrency());
         mainparam.put("{币种符号}", GeneralUtil.formatCurrency(marketplace.getCurrency()));
+        mainparam.put("{服务}",transdetal!=null?transdetal.get("channame"):null);
         Map<String, Object> fromaddressMap = getFromeAddress(fromaddress);
         if(fromaddressMap!=null) {
             mainparam.putAll(fromaddressMap);

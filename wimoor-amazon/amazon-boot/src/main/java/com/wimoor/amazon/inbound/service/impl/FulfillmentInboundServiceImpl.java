@@ -135,9 +135,7 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 	@Lazy
 	@Autowired
 	IShipInboundItemService iShipInboundItemService;
-    @Value("${spring.profiles.active}")
-    String profile;
- 
+
 	public GetInboundGuidanceResult getInboundGuidance(AmazonAuthority auth,String marketplaceId,List<String> sellerSKUList){
 		 FbaInboundApi api = apiBuildService.getInboundApi(auth); 
 		 GetInboundGuidanceResponse result;
@@ -380,7 +378,6 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 		if (inboundplan == null) {
 			return null;// 此处要加入异常逻辑
 		}
-		if(!"prod".equals(this.profile)){return shipment.getShipmentid();}
 		amazonAuthority.setUseApi("createInboundShipment");
 		FbaInboundApi api = apiBuildService.getInboundApi(amazonAuthority);
 		ShipAddress localAddress = shipAddressService.getById(inboundplan.getShipfromaddressid());
@@ -486,7 +483,6 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 
 	
 	public String updateInboundShipment(AmazonAuthority amazonAuthority,Marketplace marketplace,ShipInboundPlan inboundplan ,ShipInboundShipment shipment)  {
-		   if(!"prod".equals(this.profile)){return shipment.getShipmentid();}
 		    FbaInboundApi api = apiBuildService.getInboundApi(amazonAuthority);
 			ShipAddress localAddress = shipAddressService.getById(inboundplan.getShipfromaddressid());
 			InboundShipmentRequest body=new InboundShipmentRequest();
@@ -619,6 +615,7 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 	     try {
 			   GetShipmentsResponse response = api.getShipments("SHIPMENT", market.getMarketplaceid(), null, shipmentIdsList,
 					   null, null, null);
+			   this.iShipInboundShipmentService.handlerResult(auth,market,response);
 			   if(response==null)return null;
 			   GetShipmentsResult result = response.getPayload();
 			   if(result==null)return null;
@@ -639,7 +636,6 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 	public String putTransportDetailsRequest(AmazonAuthority amazonAuthority, Marketplace marketplace,ShipInboundPlan inboundplan ,
 			ShipInboundShipment shipment) {
 		 // TODO Auto-generated method stub
-		 if(!"prod".equals(this.profile)){return  null;}
 		 FbaInboundApi api = apiBuildService.getInboundApi(amazonAuthority);
 		 PutTransportDetailsRequest body=new PutTransportDetailsRequest();
 		 body.setIsPartnered(false);
@@ -711,7 +707,6 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 			ShipInboundPlan inboundplan ,
 			ShipInboundShipment shipment) {
 		 // TODO Auto-generated method stub
-		 if(!"prod".equals(this.profile)){return  null;}
 		 FbaInboundApi api = apiBuildService.getInboundApi(amazonAuthority);
 		 try {
 			EstimateTransportResponse response = api.estimateTransport(shipment.getShipmentid());
@@ -735,7 +730,6 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 			ShipInboundPlan inboundplan ,
 			ShipInboundShipment shipment) {
 		 // TODO Auto-generated method stub
-		 if(!"prod".equals(this.profile)){return  null;}
 		 FbaInboundApi api = apiBuildService.getInboundApi(amazonAuthority);
 		 try {
 			ConfirmTransportResponse  response = api.confirmTransport(shipment.getShipmentid());
@@ -842,6 +836,7 @@ public class FulfillmentInboundServiceImpl implements IFulfillmentInboundService
 			 GetShipmentItemsResponse response = api.getShipmentItemsByShipmentId(shipment.getShipmentid(),market.getMarketplaceid());
 			 if(response!=null&&response.getPayload()!=null) {
 				 GetShipmentItemsResult shipmentItemsResult = response.getPayload();
+				 this.iShipInboundItemService.handlerItemResult(amazonAuthority,market,response,shipment.getShipmentid(),true);
 				 return handlerItemResultData(amazonAuthority,shipmentItemsResult,shipment,true);
 			 }
 		  } catch (ApiException e) {

@@ -6,16 +6,19 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wimoor.amazon.api.AdminClientOneFeignManager;
+import com.wimoor.amazon.common.service.IExchangeRateHandlerService;
 import com.wimoor.amazon.inbound.pojo.entity.ShipInboundTrans;
 import com.wimoor.amazon.inboundV2.mapper.ShipInboundShipmentBoxMapper;
 import com.wimoor.amazon.inboundV2.pojo.dto.*;
 import com.wimoor.amazon.inboundV2.service.*;
 import com.wimoor.amazon.util.LockCheckUtils;
+import com.wimoor.common.GeneralUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +89,7 @@ public class ShipInboundPlanPlacementV2Controller {
 	final ShipInboundShipmentBoxMapper shipInboundShipmentBoxMapper;
 	final IShipInboundTransportationService iShipInboundTransportationService;
 	final AdminClientOneFeignManager adminClientOneFeign;
+	final IExchangeRateHandlerService iExchangeRateHandlerService;
 	@ApiOperation(value = "不同收货地址数方案列表")
 	@PostMapping("/listPlacementOptions")
 	@Transactional
@@ -201,12 +205,55 @@ public class ShipInboundPlanPlacementV2Controller {
 		map.put("toAddress", toAddress);
 		map.put("fromAddress", fromAddress);
 		map.put("shipmentAll",data);
-		if((plan.getSubmitbox()==null||plan.getSubmitbox()==false)&&ship.getStatus()==3) {
-			this.getEditBoxDetialAction(map, ship, plan);
-		}else {
-			getBoxDetialAction(map,ship,plan);
+		if(plan.getAreCasesRequired()!=null&&plan.getAreCasesRequired()==true){
+			if((plan.getSubmitbox()==null||plan.getSubmitbox()==false)&&ship.getStatus()==3) {
+				this.getEditBoxDetialCaseAction(map, ship, plan);
+			}else {
+				getBoxDetialCaseAction(map,ship,plan);
+			}
+		}else{
+			if((plan.getSubmitbox()==null||plan.getSubmitbox()==false)&&ship.getStatus()==3) {
+				this.getEditBoxDetialAction(map, ship, plan);
+			}else {
+				getBoxDetialAction(map,ship,plan);
+			}
 		}
+
 		getShipAmazonInfoAction(map,ship);
+		return Result.success(map);
+	}
+
+	private Result<Map<String, Object>> getEditBoxDetialCaseAction(Map<String, Object> map, ShipInboundShipment ship, ShipInboundPlan plan) {
+		Map<String, String> pkgpaper = shipInboundShipmentV2Service.getPkgPaper("SP");
+		map.put("pkgpaper", pkgpaper);
+		Map<String, String> pkgpaperltl = shipInboundShipmentV2Service.getPkgPaper("LTL");
+		map.put("pkgpaperltl", pkgpaperltl);
+		List<Map<String,Object>> listbox = shipInboundBoxV2Service.findListAllByShipmentid(plan.getId(),ship.getShipmentid());
+		List<Map<String, Object>> itemlist = (List<Map<String, Object>>) map.get("itemlist");
+		TreeMap<Integer, Integer> boxsum = new TreeMap<Integer, Integer>();
+		int sumtotal = 0;
+		BigDecimal totalweight = new BigDecimal("0");
+		Map<BigDecimal, Object> dem = new HashMap<BigDecimal, Object>();
+		Integer totalBoxNum=0;
+		BigDecimal totalBoxSize=new BigDecimal("0");
+		for(Entry<BigDecimal, Object> entry:dem.entrySet()) {
+			HashMap<String, Object> value = (HashMap<String, Object>)entry.getValue();
+			totalBoxNum=totalBoxNum+  Integer.parseInt(value.get("boxsum").toString());
+			totalBoxSize=totalBoxSize.add(entry.getKey().multiply(new BigDecimal(value.get("boxsum").toString())).divide(new BigDecimal("1000000"), 2,RoundingMode.HALF_UP));
+		}
+		dem.remove(new BigDecimal("0"));
+		map.put("dem", dem);
+		map.put("demsize", dem.size());
+		map.put("totalweight", totalweight);
+		map.put("listbox", listbox);
+		map.put("sumtotal", sumtotal);
+		map.put("arecasesrequired", false);
+		map.put("shipment", ship);
+		map.put("totalBoxNum", listbox.size()) ;
+		map.put("totalBoxSize", totalBoxSize);
+		if(plan!=null && plan.getMarketplaceid()!=null) {
+			map.put("market",marketplaceService.getById(plan.getMarketplaceid()).getMarket());
+		}
 		return Result.success(map);
 	}
 
@@ -241,10 +288,22 @@ public class ShipInboundPlanPlacementV2Controller {
 			map.put("toAddress", toAddress);
 			map.put("fromAddress", fromAddress);
 			map.put("shipmentAll",data);
-			if((plan.getSubmitbox()==null||plan.getSubmitbox()==false)&&ship.getStatus()==3) {
-				this.getEditBoxDetialAction(map, ship, plan);
-			}else {
-				getBoxDetialAction(map,ship,plan);
+			if(plan.getAreCasesRequired()!=null&&plan.getAreCasesRequired()==true){
+				if((plan.getSubmitbox()==null||plan.getSubmitbox()==false)&&ship.getStatus()==3) {
+					this.getEditBoxDetialCaseAction(map, ship, plan);
+				}else {
+					getBoxDetialCaseAction(map,ship,plan);
+				}
+			}else{
+				if((plan.getSubmitbox()==null||plan.getSubmitbox()==false)&&ship.getStatus()==3) {
+					this.getEditBoxDetialAction(map, ship, plan);
+				}else {
+					getBoxDetialAction(map,ship,plan);
+				}
+			}
+			Result<Map<String, Object>> dimResult = this.getShipCartAction(ship.getShipmentid(), null);
+			if(dimResult!=null && dimResult.getData()!=null){
+				map.put("totalvolume",dimResult.getData().get("totalvolume"));
 			}
 			getShipAmazonInfoAction(map,ship);
 			result.add(map);
@@ -295,7 +354,6 @@ public class ShipInboundPlanPlacementV2Controller {
 		Map<String, String> pkgpaperltl = shipInboundShipmentV2Service.getPkgPaper("LTL");
 		map.put("pkgpaperltl", pkgpaperltl);
 		List<ShipInboundBox> listbox = shipInboundBoxV2Service.findListByShipmentid(plan.getId(),shipment.getShipmentid());
-		
 		List<Map<String, Object>> itemlist = (List<Map<String, Object>>) map.get("itemlist");
 		TreeMap<Integer, Integer> boxsum = new TreeMap<Integer, Integer>();
 		int sumtotal = 0;
@@ -402,7 +460,30 @@ public class ShipInboundPlanPlacementV2Controller {
 		}
 		return Result.success(map);
 	}
-	
+	public Result<Map<String, Object>> getBoxDetialCaseAction(Map<String, Object> map,ShipInboundShipment shipment ,ShipInboundPlan plan)  {
+		Map<String, String> pkgpaper = shipInboundShipmentV2Service.getPkgPaper("SP");
+		map.put("pkgpaper", pkgpaper);
+		Map<String, String> pkgpaperltl = shipInboundShipmentV2Service.getPkgPaper("LTL");
+		map.put("pkgpaperltl", pkgpaperltl);
+		List<Map<String,Object>> listbox = shipInboundBoxV2Service.findListAllByShipmentid(plan.getId(),shipment.getShipmentid());
+		List<Map<String, Object>> itemlist = (List<Map<String, Object>>) map.get("itemlist");
+		TreeMap<Integer, Integer> boxsum = new TreeMap<Integer, Integer>();
+		BigDecimal totalweight = new BigDecimal("0");
+		Map<BigDecimal, Object> dem = new HashMap<BigDecimal, Object>();
+		dem.remove(new BigDecimal("0"));
+		map.put("dem", dem);
+		map.put("demsize", dem.size());
+		map.put("totalweight", totalweight);
+		map.put("listbox", listbox);
+		map.put("arecasesrequired", false);
+		map.put("shipment", shipment);
+		map.put("totalBoxNum", listbox.size()) ;
+		if(plan!=null && plan.getMarketplaceid()!=null) {
+			map.put("market",marketplaceService.getById(plan.getMarketplaceid()).getMarket());
+		}
+		return Result.success(map);
+	}
+
 	@SuppressWarnings("unchecked")
 	public Result<Map<String, Object>> getBoxDetialAction(Map<String, Object> map,ShipInboundShipment shipment ,ShipInboundPlan plan)  {
 		Map<String, String> pkgpaper = shipInboundShipmentV2Service.getPkgPaper("SP");
@@ -546,6 +627,12 @@ public class ShipInboundPlanPlacementV2Controller {
 			if (tempmap.get("Quantity") != null) {
 				quantity = Integer.parseInt(tempmap.get("Quantity").toString());
 			}
+			if(tempmap.get("unitcost")!=null){
+				if(tempmap.get("currency")!=null){
+					BigDecimal new_unitcost = iExchangeRateHandlerService.changeCurrencyByLocal("CNY", tempmap.get("currency").toString(), new BigDecimal(tempmap.get("unitcost").toString()), 2);
+					tempmap.put("new_unitcost", new_unitcost);
+				}
+			}
 			Integer quantityShipped = 0;
 			if (tempmap.get("QuantityShipped") != null) {
 				quantityShipped = Integer.parseInt(tempmap.get("QuantityShipped").toString());
@@ -678,7 +765,30 @@ public class ShipInboundPlanPlacementV2Controller {
 						 shipmentIds.add(item.getShipmentId());
 					 }
 				 }
-				 String placementOptionId=shipInboundShipmentV2Service.saveShipment(plan,shipmentIds);
+				 new Thread(()->{
+					 String placementOptionId=shipInboundShipmentV2Service.saveShipment(plan,shipmentIds);
+					 if(StrUtil.isNotBlank(placementOptionId)){
+						 plan.setPlacementOptionId(placementOptionId);
+						 shipInboundPlanV2Service.updateById(plan);
+					 }
+					 if(dto!=null&& !dto.isEmpty()){
+						 for (ShipmentDTO item:dto){
+							 ShipInboundShipment shipment = shipInboundShipmentV2Service.getById(item.getShipmentId());
+							 if(shipment!=null){
+								 ShipInboundTrans ship = new ShipInboundTrans();
+								 ship.setCompany(item.getCompanyid());
+								 if(StrUtil.isNotBlank(item.getTranstype())) {
+									 ship.setTranstype(new BigInteger(item.getTranstype()));
+								 }
+								 ship.setChannel(item.getChannelid());
+								 ship.setShipmentid(shipment.getShipmentConfirmationId());
+								 ship.setOperator(user.getId());
+								 ship.setOpttime(new Date());
+								 iShipInboundTransportationService.saveSelfTransData(user, ship,shipment,null);
+							 }
+						 }
+					 }
+				 });
 				 if(plan.getAuditstatus()==4&&shipInboundBoxV2Service.hasSubmitPackage(plan)) {
 					 plan.setAuditstatus(6);
 				 }else  if(plan.getAuditstatus()==4) {
@@ -686,26 +796,7 @@ public class ShipInboundPlanPlacementV2Controller {
 				 }else {
 					 throw new BizException("计划状态不匹配，请操作其他步骤后发货");
 				 }
-				if(dto!=null&& !dto.isEmpty()){
-					for (ShipmentDTO item:dto){
-						ShipInboundShipment shipment = shipInboundShipmentV2Service.getById(item.getShipmentId());
-						if(shipment!=null){
-							ShipInboundTrans ship = new ShipInboundTrans();
-							ship.setCompany(item.getCompanyid());
-							if(StrUtil.isNotBlank(item.getTranstype())) {
-								ship.setTranstype(new BigInteger(item.getTranstype()));
-							}
-							ship.setChannel(item.getChannelid());
-							ship.setShipmentid(shipment.getShipmentConfirmationId());
-							ship.setOperator(user.getId());
-							ship.setOpttime(new Date());
-						    iShipInboundTransportationService.saveSelfTransData(user, ship,shipment,null);
-						}
-					}
-				}
-                 if(StrUtil.isNotBlank(placementOptionId)){
-					 plan.setPlacementOptionId(placementOptionId);
-				 }
+				 plan.setShipments(shipmentIds.stream().collect(Collectors.joining(",")));
 				 plan.setOpttime(new Date());
 				 plan.setOperator(user.getId());
 				 shipInboundPlanV2Service.updateById(plan);
@@ -755,7 +846,8 @@ public class ShipInboundPlanPlacementV2Controller {
 	public  Result<?> getShipmentItemsAction(@RequestBody ShipmentItemsDTO dto){
 		 try {
 			 ListShipmentItemsResponse shipmentitems = shipInboundShipmentV2Service.getshipmentItems(dto);
-			 return Result.success(shipmentitems);
+			 dto.setItems(shipmentitems);
+			 return Result.success(dto);
 		 }catch(FeignException e) {
 			 throw new BizException("获取货件的SKU列表失败" +e.getMessage());
 		 }catch(Exception e) {
@@ -768,7 +860,8 @@ public class ShipInboundPlanPlacementV2Controller {
 	public  Result<?> listShipmentBoxesAction(@RequestBody ShipmentItemsDTO dto){
 		 try {
 			   ListShipmentBoxesResponse shipmentitems = shipInboundShipmentV2Service.listShipmentBoxes(dto);
-			 return Result.success(shipmentitems);
+			   dto.setBox(shipmentitems);
+			 return Result.success(dto);
 		 }catch(FeignException e) {
 			 throw new BizException("获取货件的箱子信息失败" +e.getMessage());
 		 }catch(Exception e) {
@@ -816,7 +909,7 @@ public class ShipInboundPlanPlacementV2Controller {
 				BigDecimal width = (BigDecimal) entry.get("width");
 				BigDecimal height = (BigDecimal) entry.get("height");
 				InputDimensions dim = new InputDimensions(length, width, height, InputDimensions.unit_cm);
-				BigDecimal baseDim = new BigDecimal("5000");
+				BigDecimal baseDim = new BigDecimal("6000");
 				if(transinfo!=null && transinfo.get("drate")!=null) {
 					baseDim = new BigDecimal(transinfo.get("drate").toString());
 				}
@@ -833,6 +926,7 @@ public class ShipInboundPlanPlacementV2Controller {
 		}
 		map.put("cart", cartlist);
 		map.put("shipment", ship);
+		map.put("totalvolume", volume);
 		return Result.success(map);
 	}
 	
@@ -970,6 +1064,14 @@ public class ShipInboundPlanPlacementV2Controller {
 		}
 	}
 
+	@ApiOperation(value = "货件忽略异常")
+	@GetMapping("/ignoreShipment")
+	public Result<String> ignoreShipmentAction(String shipmentid) {
+		UserInfo user=UserInfoContext.get();
+		shipInboundShipmentV2Service.ignoreShipment(user,shipmentid);
+		return Result.success();
+	}
+
 
 	@ApiOperation(value = "货件")
 	@PostMapping("/saveshipments/{formid}")
@@ -979,6 +1081,8 @@ public class ShipInboundPlanPlacementV2Controller {
 		ShipInboundPlan inplan=shipInboundPlanV2Service.getById(formid);
 		try {
 			shipInboundShipmentV2Service.saveShipment(inplan, shipmentids);
+			inplan.setShipments(shipmentids.stream().collect(Collectors.joining(",")));
+			shipInboundPlanV2Service.updateById(inplan);
 			return Result.success(inplan.getId());
 		}catch(FeignException e) {
 			throw new BizException("提交失败" +e.getMessage());

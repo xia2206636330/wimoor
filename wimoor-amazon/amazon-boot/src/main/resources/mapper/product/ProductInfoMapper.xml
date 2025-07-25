@@ -156,23 +156,25 @@
 	<select id="findByCondition" resultType="com.wimoor.amazon.product.pojo.vo.ProductInfoListVo" parameterType="com.wimoor.amazon.product.pojo.dto.ProductListDTO">
 		select * from (select i.sku sku,i.asin asin,
 			IFNULL(p.location,p.url) image,i.price itemprice,
+			m.MOQ,m.isDelete isDelete,c.name supplier, m.issfg issfg,
+			m.remark remark,u.name operator,m.supplier supplierid,m.opttime opttime,
+			m.delivery_cycle, m.effectivedate createdate,m.purchaseUrl,
+			m.color color,m.name name,m.shopid shopid,m.sku msku ,m.upc upc,m.id,
+			m.brand brand,m.price price,ifnull(m.boxnum,0) boxnum,
 			<if test="param.ftype == 'shipment'">
 			    ifnull(inv2.quantity,0) willfulfillable,
-			    m.MOQ,m.isDelete isDelete,c.name supplier, m.issfg issfg,
-			    m.remark remark,u.name operator,m.supplier supplierid,m.opttime opttime,
-			    m.delivery_cycle, m.effectivedate createdate,m.purchaseUrl,
-			    m.color color,m.name name,m.shopid shopid,m.sku msku ,m.upc upc,m.id,
-			    m.brand brand,m.price price,ifnull(m.boxnum,0) boxnum,	ifnull(inv.quantity,0) fulfillable,
+			   	ifnull(inv.quantity,0) fulfillable,
 			 </if>
 		    i.id pid,
 			ifnull(i.fnsku,o.fnsku) fnsku,i.name pname,i.marketplaceid
 		from t_product_info i
 		Left join t_product_in_opt o on o.pid=i.id
 		left join t_picture p on p.id=i.image
-	   <if test="param.ftype == 'shipment'">
-	    Left join t_erp_material m on m.sku=ifnull(o.msku,i.sku) and m.shopid=#{param.shopid,jdbcType=CHAR} and m.isDelete = 0
+		Left join t_erp_material m on m.sku=ifnull(o.msku,i.sku) and m.shopid=#{param.shopid,jdbcType=CHAR} and m.isDelete = 0
 		left join t_erp_customer c on c.id=m.supplier
-		left join t_erp_inventory inv on inv.materialid=m.id 
+		left join t_userinfo u on u.id=m.operator
+		<if test="param.ftype == 'shipment'">
+		left join t_erp_inventory inv on inv.materialid=m.id
 										and inv.status='fulfillable' 
 										and inv.warehouseid = #{param.warehouseid,jdbcType=CHAR}
 										and inv.shopid=#{param.shopid,jdbcType=CHAR}
@@ -185,9 +187,8 @@
 							</if>
 					group by shopid,a.mainmid
 		     ) inv2 on inv2.materialid=m.id and m.issfg=1
-		     	left join t_userinfo u on u.id=m.operator 
+
 		 </if>
-	
 		where i.amazonAuthId=#{param.amazonauthid,jdbcType=CHAR}
 		     and ifnull(o.disable,false)=false
 		     and i.invalid=0 and i.isparent=0
@@ -229,7 +230,7 @@
 		   select * from (
 		</if>
 		select
-		    op.profitid,t.id,ifnull(op.msku,t.sku) msku,t.invalid, em.id mid,t.asin, t.sku,t.marketplaceid,a.sellerid, m.point_name, t.name,t.parentAsin,
+		    op.profitid,t.id,ifnull(op.msku,t.sku) msku,t.invalid, em.id mid,em.price mprice,t.asin, t.sku,t.marketplaceid,a.sellerid, m.point_name, t.name,t.parentAsin,
 			em.color skucolor,date_format( openDate,'%Y-%m-%d') opendate, fulfillchannel, binding,a.region region,m.region mregion,
 			(select min(`rank`) `rank` from t_product_rank  where product_id = t.id 
 			and byday &gt;= DATE_FORMAT(DATE_SUB(now(),INTERVAL 7 DAY),'%Y-%m-%d')) `rank`,
@@ -293,7 +294,9 @@
 			when  (review1.refreshtime is not null and review2.refreshtime is null) then review1.refreshtime
 			when  (review1.refreshtime is null and review2.refreshtime is not null) then review2.refreshtime
 			else  case when(review1.refreshtime > review2.refreshtime) then review1.refreshtime else review2.refreshtime end end revrefreshtime,
-			profit.margin newprorate,op.status optstatus,sd.name optstatusname,sd.color optstatuscolor,m.findex marketindex,op.priceremark
+			profit.margin newprorate,
+		    profit.costDetail costDetail,
+			op.status optstatus,sd.name optstatusname,sd.color optstatuscolor,m.findex marketindex,op.priceremark
 			,lo.endtime lockedtime,case when NOW()&lt;lo.endtime then 1 ELSE 0 END haslocked,m.market country,
 			(SELECT GROUP_CONCAT(tagid) FROM t_product_in_tags WHERE  pid=t.id) tagids,
 			t.inSnl,

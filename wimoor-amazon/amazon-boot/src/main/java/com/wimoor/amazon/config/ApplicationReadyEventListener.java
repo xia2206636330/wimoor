@@ -30,7 +30,7 @@ public class ApplicationReadyEventListener implements ApplicationListener<Applic
     @Override
     public void onApplicationEvent(ApplicationReadyEvent contextReadyEvent) {
         logger.info("程序已启动");
-        if(!"prod".equals(awsSQSService.getProfiles())) {
+        if(awsSQSService.getProfiles()!=null&& awsSQSService.getProfiles().contains("dev")) {
     			return;
     		}
     	 awsSQSService.runTask();

@@ -39,5 +39,6 @@ public class ErpDispatchOverseaForm extends  ErpBaseForm {
     @TableField("arrivalTime")
     private Date arrivalTime;
 
-
+    @TableField(value= "boxnum")
+    private Integer boxnum;
 }

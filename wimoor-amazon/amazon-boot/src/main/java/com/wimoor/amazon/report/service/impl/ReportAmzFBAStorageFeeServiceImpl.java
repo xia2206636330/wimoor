@@ -152,6 +152,9 @@ public class ReportAmzFBAStorageFeeServiceImpl extends ReportServiceImpl{
 					fBAStorageFee.setUtilizationSurchargeRate(getBigDecimalValue(info,titleList,"utilization_surcharge_rate"));
 					fBAStorageFee.setEstimatedMonthlyStorageFee(getBigDecimalValue(info,titleList,"estimated_monthly_storage_fee"));
 					fBAStorageFee.setDangerousGoodsStorageType(getStrValue(info,titleList,"dangerous_goods_storage_type"));
+					if(fBAStorageFee.getDangerousGoodsStorageType()!=null&&fBAStorageFee.getDangerousGoodsStorageType().length()>=9){
+						fBAStorageFee.setDangerousGoodsStorageType(fBAStorageFee.getDangerousGoodsStorageType().substring(0,9));
+					}
 					fBAStorageFee.setTotalIncentiveFeeAmount(getBigDecimalValue(info,titleList,"total_incentive_fee_amount"));
 					fBAStorageFee.setBreakdownIncentiveFeeAmount(getStrValue(info,titleList,"breakdown_incentive_fee_amount"));
 					fBAStorageFee.setAverageQuantityCustomerOrders(getBigDecimalValue(info,titleList,"average_quantity_customer_orders"));

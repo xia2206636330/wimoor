@@ -214,10 +214,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		setUserInfoMap(m_user);
 		return m_user;
 	}
-
+  public Boolean  validationChecking(SysUser m_user){
+		if(m_user==null) {
+			return false;
+		}
+		if(m_user.getLosingeffect()!=null&&m_user.getLosingeffect().before(new Date())) {
+			return false;
+		}
+		if(m_user.getDisable()!=null&&m_user.getDisable()){
+			return false;
+		}
+		if(m_user.getLogicDelete()!=null&&m_user.getLogicDelete()){
+			return false;
+		}
+		return true;
+	}
 	public SysUser getUserAllById(String id) {
 		SysUser m_user = this.baseMapper.selectById(id);
-		if(m_user==null) {
+		if(!validationChecking(m_user)){
 			return null;
 		}
 		String shopid = getUserShopByUser(m_user);
@@ -541,6 +555,26 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		// TODO Auto-generated method stub
 		return findUserByOpenid(openid,appType);
 	}
+    public void addList(List<SysUser> userlist,SysUser useritem,SysUserWechatMP item){
+		if(useritem!=null){
+			useritem.setPassword("***");
+			useritem.setSalt("***");
+			useritem.setLastloginsession(item.getOpenid());
+			useritem.setLastloginip(item.getFtype());
+			userlist.add(useritem);
+		}
+
+	}
+	public void addList(List<SysUser> userlist,SysUser useritem,SysUserBind item){
+		if(useritem!=null){
+			useritem.setPassword("***");
+			useritem.setSalt("***");
+			useritem.setLastloginsession(item.getBindid().toString());
+			useritem.setLastloginip("website");
+			userlist.add(useritem);
+		}
+
+	}
 
 	public List<UserInfo> getAllBind(String userid){
 		Map<String,UserInfo> map=new HashMap<String,UserInfo>();
@@ -557,17 +591,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		if(mp2!=null){
 			for(SysUserWechatMP item:mp2){
 				SysUser useritem = this.getUserAllById(item.getUserid());
-				useritem.setLastloginsession(item.getOpenid());
-				useritem.setLastloginip(item.getFtype());
-				userlist.add(useritem);
+				addList(userlist, useritem, item);
 			}
 		}
 		if(bindusers!=null){
 			for(SysUserBind item:bindusers){
 				SysUser useritem = this.getUserAllById(item.getUserid().toString());
-				useritem.setLastloginsession(item.getBindid().toString());
-				useritem.setLastloginip("website");
-				userlist.add(useritem);
+				addList(userlist, useritem, item);
 			}
 		}
 		for(SysUser user:userlist) {
@@ -576,6 +606,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			List<SysUser> subList = findBindList(info);
 			for(SysUser item:subList){
 				if(map.containsKey(item.getId())) {continue;}
+				if(!validationChecking(item)){ continue; }
 				UserInfo subinfo = convertToUserInfo(item);
 				map.put(subinfo.getId(), subinfo);
 			}
@@ -586,10 +617,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 				for(SysUserWechatMP item:sublist2){
 					if(map.containsKey(item.getUserid())) {continue;}
 					SysUser useritem = this.getUserAllById(item.getUserid());
-					useritem.setLastloginsession(item.getOpenid());
-					useritem.setLastloginip(item.getFtype());
-					UserInfo subinfo=convertToUserInfo(useritem);
-					map.put(subinfo.getId(),subinfo);
+					if(useritem!=null){
+						useritem.setLastloginsession(item.getOpenid());
+						useritem.setLastloginip(item.getFtype());
+						UserInfo subinfo=convertToUserInfo(useritem);
+						map.put(subinfo.getId(),subinfo);
+					}
 				}
 			}
 		}
@@ -686,6 +719,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		    int result=0;
 			SysUserInfo userinfo=sysUserInfoMapper.selectById(operatorUserInfo.getId());
 	    	userinfo.setName(userDTO.getName());
+			userinfo.setTel(userDTO.getTel());
 	    	result=sysUserInfoMapper.updateById(userinfo);
 			if(operatorUserInfo.getUsertype()!=null&&operatorUserInfo.getUsertype().equals("manager")) {
 				if(StrUtil.isNotEmpty(userDTO.getCompany())) {
@@ -694,9 +728,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 						 throw new BizException("账户异常，请联系管理员");
 					}else {
 						comp.setName(userDTO.getCompany());
-						 sysCompanyMapper.updateById(comp);
+						sysCompanyMapper.updateById(comp);
 					}
-					
 				}
 			}
 			return result>0;

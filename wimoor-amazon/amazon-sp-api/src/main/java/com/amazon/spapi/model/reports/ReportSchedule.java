@@ -10,25 +10,26 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
+import java.util.Objects;
+import java.util.Arrays;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import org.threeten.bp.OffsetDateTime;
-
-import com.google.gson.annotations.SerializedName;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * Detailed information about a report schedule.
  */
-@ApiModel(description = "Detailed information about a report schedule.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "Detailed information about a report schedule.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class ReportSchedule {
   @SerializedName("reportScheduleId")
   private String reportScheduleId = null;
@@ -57,7 +58,7 @@ public class ReportSchedule {
    * The identifier for the report schedule. This identifier is unique only in combination with a seller ID.
    * @return reportScheduleId
   **/
-  @ApiModelProperty(required = true, value = "The identifier for the report schedule. This identifier is unique only in combination with a seller ID.")
+  @Schema(required = true, description = "The identifier for the report schedule. This identifier is unique only in combination with a seller ID.")
   public String getReportScheduleId() {
     return reportScheduleId;
   }
@@ -75,7 +76,7 @@ public class ReportSchedule {
    * The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.
    * @return reportType
   **/
-  @ApiModelProperty(required = true, value = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
+  @Schema(required = true, description = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
   public String getReportType() {
     return reportType;
   }
@@ -98,10 +99,10 @@ public class ReportSchedule {
   }
 
    /**
-   * A list of marketplace identifiers. The report document&#39;s contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.
+   * A list of marketplace identifiers. The report document&#x27;s contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.
    * @return marketplaceIds
   **/
-  @ApiModelProperty(value = "A list of marketplace identifiers. The report document's contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.")
+  @Schema(description = "A list of marketplace identifiers. The report document's contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.")
   public List<String> getMarketplaceIds() {
     return marketplaceIds;
   }
@@ -119,7 +120,7 @@ public class ReportSchedule {
    * Get reportOptions
    * @return reportOptions
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public ReportOptions getReportOptions() {
     return reportOptions;
   }
@@ -134,10 +135,10 @@ public class ReportSchedule {
   }
 
    /**
-   * An ISO 8601 period value that indicates how often a report should be created.
+   * An &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; period value that indicates how often a report should be created.
    * @return period
   **/
-  @ApiModelProperty(required = true, value = "An ISO 8601 period value that indicates how often a report should be created.")
+  @Schema(required = true, description = "An <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> period value that indicates how often a report should be created.")
   public String getPeriod() {
     return period;
   }
@@ -152,10 +153,10 @@ public class ReportSchedule {
   }
 
    /**
-   * The date and time when the schedule will create its next report, in ISO 8601 date time format.
+   * The date and time when the schedule will create its next report, in &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; date time format.
    * @return nextReportCreationTime
   **/
-  @ApiModelProperty(value = "The date and time when the schedule will create its next report, in ISO 8601 date time format.")
+  @Schema(description = "The date and time when the schedule will create its next report, in <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> date time format.")
   public OffsetDateTime getNextReportCreationTime() {
     return nextReportCreationTime;
   }
@@ -215,4 +216,3 @@ public class ReportSchedule {
   }
 
 }
-

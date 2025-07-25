@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Resource;
+
+import com.wimoor.amazon.adv.sb.pojo.*;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONReader;
@@ -13,11 +15,6 @@ import com.wimoor.amazon.adv.report.pojo.AmzAdvRequest;
 import com.wimoor.amazon.adv.report.service.IAmzAdvReportTreatService;
 import com.wimoor.amazon.adv.sb.dao.AmzAdvAdsHsaMapper;
 import com.wimoor.amazon.adv.sb.dao.AmzAdvReportAdsHsaMapper;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvAdsHsa;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportAdsHsa;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportAdsHsaAttributed;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportAdsHsaBrand;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportAdsHsaVideo;
 import com.wimoor.common.GeneralUtil;
 
 import cn.hutool.core.util.StrUtil;
@@ -60,7 +57,7 @@ public class AmzAdvReportTreatAdsHsaServiceImpl extends AmzAdvReportTreatService
 	public synchronized void treatReport(AmzAdvProfile profile,AmzAdvRequest request, JSONReader jsonReader) {
 		// TODO Auto-generated method stub
 			final List<AmzAdvReportAdsHsa> list = new LinkedList<AmzAdvReportAdsHsa>();
-			final List<AmzAdvReportAdsHsaAttributed> listAttributed = new LinkedList<AmzAdvReportAdsHsaAttributed>();
+			final List<AmzAdvReportAdsHsaAttributedAll> listAttributed = new LinkedList<AmzAdvReportAdsHsaAttributedAll>();
 			final List<AmzAdvReportAdsHsaBrand> listBrand = new LinkedList<AmzAdvReportAdsHsaBrand>();
 			final List<AmzAdvReportAdsHsaVideo> listVideo = new LinkedList<AmzAdvReportAdsHsaVideo>();
 			try {
@@ -76,7 +73,7 @@ public class AmzAdvReportTreatAdsHsaServiceImpl extends AmzAdvReportTreatService
 					String elem = jsonReader.readString();
 					JSONObject item = GeneralUtil.getJsonObject(elem);
 					AmzAdvReportAdsHsa amzAdvReportHas = new AmzAdvReportAdsHsa();
-					AmzAdvReportAdsHsaAttributed amzAdvReportAdgroupsHsaAttributed=new AmzAdvReportAdsHsaAttributed();
+					AmzAdvReportAdsHsaAttributedAll amzAdvReportAdsHsaAttributed=new AmzAdvReportAdsHsaAttributedAll();
 					AmzAdvReportAdsHsaVideo amzAdvReportHasVideo = null;
 					AmzAdvReportAdsHsaBrand amzAdvReportHasBrand = null;
 					amzAdvReportHas.setAdid(item.getBigInteger("adId"));
@@ -113,15 +110,87 @@ public class AmzAdvReportTreatAdsHsaServiceImpl extends AmzAdvReportTreatService
 					amzAdvReportHas.setImpressions(item.getInteger("impressions"));
 					amzAdvReportHas.setCost(item.getBigDecimal("cost"));
 
-					amzAdvReportAdgroupsHsaAttributed.setAttributedsales14d(item.getBigDecimal("attributedSales14d"));
-					amzAdvReportAdgroupsHsaAttributed.setAttributedsales14dsamesku(item.getBigDecimal("attributedSales14dSameSKU"));
-					amzAdvReportAdgroupsHsaAttributed.setAttributedconversions14d(item.getInteger("attributedConversions14d"));
-					amzAdvReportAdgroupsHsaAttributed.setAttributedconversions14dsamesku(item.getInteger("attributedConversions14dSameSKU"));
-					amzAdvReportAdgroupsHsaAttributed.setAdid(amzAdvReportHas.getAdid());
-					amzAdvReportAdgroupsHsaAttributed.setBydate(amzAdvReportHas.getBydate());
-					
-					if(!amzAdvReportAdgroupsHsaAttributed.isZero()) {
-						listAttributed.add(amzAdvReportAdgroupsHsaAttributed);
+					amzAdvReportAdsHsaAttributed.setAdId(amzAdvReportHas.getAdid().toString());
+					amzAdvReportAdsHsaAttributed.setBydate(amzAdvReportHas.getBydate());
+					// 购物车相关字段
+					amzAdvReportAdsHsaAttributed.setAddToCart(item.getInteger("addToCart"));
+					amzAdvReportAdsHsaAttributed.setAddToCartClicks(item.getInteger("addToCartClicks"));
+					amzAdvReportAdsHsaAttributed.setAddToCartRate(item.getBigDecimal("addToCartRate"));
+					amzAdvReportAdsHsaAttributed.setAddToList(item.getInteger("addToList"));
+					amzAdvReportAdsHsaAttributed.setAddToListFromClicks(item.getInteger("addToListFromClicks"));
+
+// 借阅相关字段
+					amzAdvReportAdsHsaAttributed.setQualifiedBorrows(item.getInteger("qualifiedBorrows"));
+					amzAdvReportAdsHsaAttributed.setQualifiedBorrowsFromClicks(item.getInteger("qualifiedBorrowsFromClicks"));
+					amzAdvReportAdsHsaAttributed.setRoyaltyQualifiedBorrows(item.getInteger("royaltyQualifiedBorrows"));
+					amzAdvReportAdsHsaAttributed.setRoyaltyQualifiedBorrowsFromClicks(item.getInteger("royaltyQualifiedBorrowsFromClicks"));
+
+// 品牌搜索相关字段
+					amzAdvReportAdsHsaAttributed.setBrandedSearches(item.getInteger("brandedSearches"));
+					amzAdvReportAdsHsaAttributed.setBrandedSearchesClicks(item.getInteger("brandedSearchesClicks"));
+
+// 预算相关字段
+					amzAdvReportAdsHsaAttributed.setCampaignBudgetAmount(item.getBigDecimal("campaignBudgetAmount"));
+					amzAdvReportAdsHsaAttributed.setCampaignBudgetCurrencyCode(item.getString("campaignBudgetCurrencyCode"));
+
+// 详情页相关字段
+					amzAdvReportAdsHsaAttributed.setDetailPageViews(item.getInteger("detailPageViews"));
+					amzAdvReportAdsHsaAttributed.setDetailPageViewsClicks(item.getInteger("detailPageViewsClicks"));
+					amzAdvReportAdsHsaAttributed.setECPAddToCart(item.getBigDecimal("eCPAddToCart"));
+
+// 新品牌相关-详情页
+					amzAdvReportAdsHsaAttributed.setNewToBrandDetailPageViewRate(item.getBigDecimal("newToBrandDetailPageViewRate"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandDetailPageViews(item.getInteger("newToBrandDetailPageViews"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandDetailPageViewsClicks(item.getInteger("newToBrandDetailPageViewsClicks"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandECPDetailPageView(item.getBigDecimal("newToBrandECPDetailPageView"));
+
+// 新品牌相关-购买
+					amzAdvReportAdsHsaAttributed.setNewToBrandPurchases(item.getInteger("newToBrandPurchases"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandPurchasesClicks(item.getInteger("newToBrandPurchasesClicks"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandPurchasesPercentage(item.getBigDecimal("newToBrandPurchasesPercentage"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandPurchasesRate(item.getBigDecimal("newToBrandPurchasesRate"));
+
+// 新品牌相关-销售
+					amzAdvReportAdsHsaAttributed.setNewToBrandSales(item.getBigDecimal("newToBrandSales"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandSalesClicks(item.getInteger("newToBrandSalesClicks"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandSalesPercentage(item.getBigDecimal("newToBrandSalesPercentage"));
+
+// 新品牌相关-销售单位
+					amzAdvReportAdsHsaAttributed.setNewToBrandUnitsSold(item.getInteger("newToBrandUnitsSold"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandUnitsSoldClicks(item.getInteger("newToBrandUnitsSoldClicks"));
+					amzAdvReportAdsHsaAttributed.setNewToBrandUnitsSoldPercentage(item.getBigDecimal("newToBrandUnitsSoldPercentage"));
+
+// 购买相关字段
+					amzAdvReportAdsHsaAttributed.setPurchases(item.getInteger("purchases"));
+					amzAdvReportAdsHsaAttributed.setPurchasesClicks(item.getInteger("purchasesClicks"));
+					amzAdvReportAdsHsaAttributed.setPurchasesPromoted(item.getInteger("purchasesPromoted"));
+
+// 销售相关字段
+					amzAdvReportAdsHsaAttributed.setSales(item.getBigDecimal("sales"));
+					amzAdvReportAdsHsaAttributed.setSalesClicks(item.getInteger("salesClicks"));
+					amzAdvReportAdsHsaAttributed.setSalesPromoted(item.getBigDecimal("salesPromoted"));
+
+// 销售单位相关字段
+					amzAdvReportAdsHsaAttributed.setUnitsSold(item.getInteger("unitsSold"));
+					amzAdvReportAdsHsaAttributed.setUnitsSoldClicks(item.getInteger("unitsSoldClicks"));
+
+// 视频相关字段
+					amzAdvReportAdsHsaAttributed.setVideo5SecondViewRate(item.getBigDecimal("video5SecondViewRate"));
+					amzAdvReportAdsHsaAttributed.setVideo5SecondViews(item.getInteger("video5SecondViews"));
+					amzAdvReportAdsHsaAttributed.setVideoCompleteViews(item.getInteger("videoCompleteViews"));
+					amzAdvReportAdsHsaAttributed.setVideoFirstQuartileViews(item.getInteger("videoFirstQuartileViews"));
+					amzAdvReportAdsHsaAttributed.setVideoMidpointViews(item.getInteger("videoMidpointViews"));
+					amzAdvReportAdsHsaAttributed.setVideoThirdQuartileViews(item.getInteger("videoThirdQuartileViews"));
+					amzAdvReportAdsHsaAttributed.setVideoUnmutes(item.getInteger("videoUnmutes"));
+
+// 可视性相关字段
+					amzAdvReportAdsHsaAttributed.setViewabilityRate(item.getBigDecimal("viewabilityRate"));
+					amzAdvReportAdsHsaAttributed.setViewableImpressions(item.getInteger("viewableImpressions"));
+
+// 操作时间
+					amzAdvReportAdsHsaAttributed.setOpttime(new Date());
+					if(!amzAdvReportAdsHsaAttributed.isZero()) {
+						listAttributed.add(amzAdvReportAdsHsaAttributed);
 	            	}
 			 
                 	amzAdvReportHasVideo=	new AmzAdvReportAdsHsaVideo();
@@ -169,16 +238,16 @@ public class AmzAdvReportTreatAdsHsaServiceImpl extends AmzAdvReportTreatService
 						currency = profile.getCurrencycode();
 					}
 					impressions = impressions + amzAdvReportHas.getImpressions();
-					if(amzAdvReportAdgroupsHsaAttributed.getAttributedsales14d() != null) {
-						attributedsales = attributedsales.add(amzAdvReportAdgroupsHsaAttributed.getAttributedsales14d());
+					if(amzAdvReportAdsHsaAttributed.getSales() != null) {
+						attributedsales = attributedsales.add(amzAdvReportAdsHsaAttributed.getSales());
 					}
-					if(amzAdvReportAdgroupsHsaAttributed.getAttributedsales14d() != null) {
+					if(amzAdvReportAdsHsaAttributed.getSales() != null) {
 						attributedunitsordered = attributedunitsordered + 
-								(amzAdvReportAdgroupsHsaAttributed.getAttributedsales14d()!=null?amzAdvReportAdgroupsHsaAttributed.getAttributedsales14d().intValue():0);
+								(amzAdvReportAdsHsaAttributed.getSales()!=null?amzAdvReportAdsHsaAttributed.getSales().intValue():0);
 					}
-					if (amzAdvReportAdgroupsHsaAttributed.getAttributedconversions14d() != null) {
+					if (amzAdvReportAdsHsaAttributed.getPurchases() != null) {
 						attributedConversions = attributedConversions +
-								(amzAdvReportAdgroupsHsaAttributed.getAttributedconversions14d()!=null?amzAdvReportAdgroupsHsaAttributed.getAttributedconversions14d().intValue():0);
+								(amzAdvReportAdsHsaAttributed.getPurchases()!=null?amzAdvReportAdsHsaAttributed.getPurchases().intValue():0);
 					}
 					if (list.size() >= 2000) {
 						amzAdvReportAdsHsaMapper.insertBatch(list);

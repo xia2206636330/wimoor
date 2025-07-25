@@ -197,30 +197,61 @@ public class ProductInOptController {
     @GetMapping("/updateOptStatus")
    	public Result<String> getOptStatusByIdAction(String pid,String status) {
     	UserInfo user = UserInfoContext.get();
-    	ProductInOpt opt = iProductInOptService.getById(pid);
-    	if(opt!=null) {
-    		if("delete".equals(status)) {
-    			opt.setStatus(null);
-    		}else {
-    			opt.setStatus(Integer.parseInt(status));
-    		}
-    		opt.setLastupdate(new Date());
-    		opt.setOperator(new BigInteger(user.getId()));
-    		iProductInOptService.updateById(opt);
-    		return Result.success("ok");
-    	}else {
-    		opt=new ProductInOpt();
-    		opt.setPid(new BigInteger(pid));
-    		if("delete".equals(status)) {
-    			opt.setStatus(null);
-    		}else {
-    			opt.setStatus(Integer.parseInt(status));
-    		}
-    		opt.setLastupdate(new Date());
-    		opt.setOperator(new BigInteger(user.getId()));
-    		iProductInOptService.save(opt);
-    		return Result.success("ok");
-    	}
+		if(pid.contains(",")){
+			List<String> pids=Arrays.asList(pid.split(","));
+			for(String nowpid:pids) {
+				if(StrUtil.isNotBlank(nowpid)){
+					ProductInOpt opt = iProductInOptService.getById(nowpid);
+					if(opt!=null) {
+						if("delete".equals(status)) {
+							opt.setStatus(null);
+						}else {
+							opt.setStatus(Integer.parseInt(status));
+						}
+						opt.setLastupdate(new Date());
+						opt.setOperator(new BigInteger(user.getId()));
+						iProductInOptService.updateById(opt);
+					}else {
+						opt=new ProductInOpt();
+						opt.setPid(new BigInteger(nowpid));
+						if("delete".equals(status)) {
+							opt.setStatus(null);
+						}else {
+							opt.setStatus(Integer.parseInt(status));
+						}
+						opt.setLastupdate(new Date());
+						opt.setOperator(new BigInteger(user.getId()));
+						iProductInOptService.save(opt);
+					}
+				}
+			}
+			return Result.success("ok");
+		}else{
+			ProductInOpt opt = iProductInOptService.getById(pid);
+			if(opt!=null) {
+				if("delete".equals(status)) {
+					opt.setStatus(null);
+				}else {
+					opt.setStatus(Integer.parseInt(status));
+				}
+				opt.setLastupdate(new Date());
+				opt.setOperator(new BigInteger(user.getId()));
+				iProductInOptService.updateById(opt);
+				return Result.success("ok");
+			}else {
+				opt=new ProductInOpt();
+				opt.setPid(new BigInteger(pid));
+				if("delete".equals(status)) {
+					opt.setStatus(null);
+				}else {
+					opt.setStatus(Integer.parseInt(status));
+				}
+				opt.setLastupdate(new Date());
+				opt.setOperator(new BigInteger(user.getId()));
+				iProductInOptService.save(opt);
+				return Result.success("ok");
+			}
+		}
    	}
     
     @SystemControllerLog("商品负责人修改")
@@ -345,8 +376,6 @@ public class ProductInOptController {
 				} catch (EncryptedDocumentException e) {
 					e.printStackTrace();
 				} catch (InvalidFormatException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.wimoor.amazon.adv.sd.dao.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -86,6 +87,15 @@ public class AmzAdvReportServiceImpl implements IAmzAdvReportService {
     AmzAdvAuthMapper amzAdvAuthMapper;
     @Resource
     IAmzAdvAuthService amzAdvAuthService;
+	@Resource
+	AmzAdvReportCampaignsSDMapper amzAdvReportCampaignsSDMapper;
+	@Resource
+	AmzAdvProductTargeSDMapper amzAdvProductTargeSDMapper;
+	@Resource
+	AmzAdvReportProductAdsSDMapper amzAdvReportProductAdsSDMapper;
+	@Resource
+	AmzAdvReportAsinsSDMapper amzAdvReportAsinsSDMapper;
+
     
 	public static final class DownloadReport {
 		public static final String Campaign = "Campaign";
@@ -98,6 +108,7 @@ public class AmzAdvReportServiceImpl implements IAmzAdvReportService {
 		public static final String Target_query = "Search term-ProductTarget";
 		public static final String Sponsored_Products = "Sponsored Products";
 		public static final String Sponsored_Brands = "Sponsored Brands";
+		public static final String Sponsored_Display = "Sponsored Display";
 	}
 
 	public String parGetName(String fieldName) {
@@ -168,6 +179,16 @@ public class AmzAdvReportServiceImpl implements IAmzAdvReportService {
 				list = amzAdvProductTargeMapper.getTargetReport(param);
 			} else if (DownloadReport.Target_query.equals(reporttype)) {
 				list = amzAdvReportTargetQueryMapper.getTargetQueryReport(param);
+			}
+		}else if(DownloadReport.Sponsored_Display.equals(campaigntype)){
+			if (DownloadReport.Campaign.equals(reporttype)) {
+				list= amzAdvReportCampaignsSDMapper.getCampaigns(param);
+			}  else if (DownloadReport.Target.equals(reporttype)) {
+				list = amzAdvProductTargeSDMapper.getTargetReport(param);
+			} else if (DownloadReport.productAd.equals(reporttype)) {
+				list = amzAdvReportProductAdsSDMapper.getProductAds(param);
+			} else if (DownloadReport.Asins.equals(reporttype)) {
+				list = amzAdvReportAsinsSDMapper.getAsins(param);
 			}
 		} else {
 			if (DownloadReport.Campaign.equals(reporttype)) {

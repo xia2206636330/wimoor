@@ -1,4 +1,9 @@
-
+-- --------------------------------------------------------
+-- 主机:                           wimoor.rwlb.rds.aliyuncs.com
+-- 服务器版本:                        8.0.36 - Source distribution
+-- 服务器操作系统:                      Linux
+-- HeidiSQL 版本:                  12.6.0.6765
+-- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -8,11 +13,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
--- 导出 db_amazon_adv 的数据库结构
-CREATE DATABASE IF NOT EXISTS `db_amazon_adv` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db_amazon_adv`;
 
 -- 导出  事件 db_amazon_adv.db_timeout_process_kill 结构
 DELIMITER //
@@ -65,113 +65,6 @@ DELETE FROM t_amz_adv_snapshot WHERE requesttime<DATE_SUB(NOW(),INTERVAL 2 DAY);
 
 DELETE FROM t_amz_adv_sumalltype WHERE byday<DATE_SUB(NOW(),INTERVAL 7 DAY);
 
-#----------------------------------------------------------------------------
-DELETE d,a,b,v FROM t_amz_adv_rpt2_hsa_adgroups d 
-LEFT JOIN t_amz_adv_rpt2_hsa_adgroups_attributed a ON a.adGroupId=d.adGroupId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_adgroups_brand b ON b.adGroupId=d.adGroupId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_adgroups_video v ON v.adGroupId=d.adGroupId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,v FROM t_amz_adv_rpt2_hsa_campaigns d 
-LEFT JOIN t_amz_adv_rpt2_hsa_campaigns_attributed a ON a.campaignId=d.campaignId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_campaigns_brand b ON b.campaignId=d.campaignId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_campaigns_video v ON v.campaignId=d.campaignId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-
-DELETE d,a,b,v FROM t_amz_adv_rpt2_hsa_campaigns_place d 
-LEFT JOIN t_amz_adv_rpt2_hsa_campaigns_place_attributed a ON a.campaignId=d.campaignId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_campaigns_place_brand b ON b.campaignId=d.campaignId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_campaigns_place_video v ON v.campaignId=d.campaignId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,v,q FROM t_amz_adv_rpt2_hsa_keywords d 
-LEFT JOIN t_amz_adv_rpt2_hsa_keywords_attributed a ON a.keywordId=d.keywordId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_keywords_brand b ON b.keywordId=d.keywordId AND b.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_keywords_video v ON v.keywordId=d.keywordId AND v.bydate=d.bydate
-left join t_amz_adv_rpt2_hsa_keywords_query q ON q.keywordId=d.keywordId AND q.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,v FROM t_amz_adv_rpt2_hsa_product_targets d 
-LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_attributed a ON a.targetId=d.targetId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_brand b ON b.targetId=d.targetId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_video v ON v.targetId=d.targetId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,s,v FROM t_amz_adv_rpt2_sd_adgroups d 
-LEFT JOIN t_amz_adv_rpt2_sd_adgroups_attributed a ON a.adGroupId=d.adGroupId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_adgroups_attributed_new b ON b.adGroupId=d.adGroupId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_adgroups_attributed_same s ON s.adGroupId=d.adGroupId AND s.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_adgroups_attributed_view v ON v.adGroupId=d.adGroupId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,s,v FROM t_amz_adv_rpt2_sd_campaigns d 
-LEFT JOIN t_amz_adv_rpt2_sd_campaigns_attributed a ON a.campaignId=d.campaignId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_campaigns_attributed_new b ON b.campaignId=d.campaignId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_campaigns_attributed_same s ON s.campaignId=d.campaignId AND s.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_campaigns_attributed_view v ON v.campaignId=d.campaignId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE a from t_amz_adv_rpt2_sd_asins a WHERE a.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE t from t_amz_adv_rpt2_sd_campaigns_t00001 t WHERE t.bydate =DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,s,v FROM t_amz_adv_rpt2_sd_productads d 
-LEFT JOIN t_amz_adv_rpt2_sd_productads_attributed a ON a.adId=d.adId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_productads_attributed_new b ON b.adId=d.adId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_productads_attributed_same s ON s.adId=d.adId AND s.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_productads_attributed_view v ON v.adId=d.adId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b,s,v FROM t_amz_adv_rpt2_sd_product_targets d 
-LEFT JOIN t_amz_adv_rpt2_sd_product_targets_attributed a ON a.targetId=d.targetId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_product_targets_attributed_new b ON b.targetId=d.targetId AND b.bydate=a.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_product_targets_attributed_same s ON s.targetId=d.targetId AND s.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sd_product_targets_attributed_view v ON v.targetId=d.targetId AND v.bydate=d.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_adgroups d 
-LEFT JOIN t_amz_adv_rpt2_sp_adgroups_attributed a ON a.adGroupId=d.adGroupId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_adgroups_attributed_same b ON b.adGroupId=d.adGroupId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE a from t_amz_adv_rpt2_sp_asins a WHERE a.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_compaigns d 
-LEFT JOIN t_amz_adv_rpt2_sp_compaigns_attributed a ON a.campaignId=d.campaignId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_compaigns_attributed_same b ON b.campaignId=d.campaignId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_compaigns_place d 
-LEFT JOIN t_amz_adv_rpt2_sp_compaigns_place_attributed a ON a.campaignId=d.campaignId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_compaigns_place_attributed_same b ON b.campaignId=d.campaignId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_keywords d 
-LEFT JOIN t_amz_adv_rpt2_sp_keywords_attributed a ON a.keywordId=d.keywordId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_keywords_attributed_same b ON b.keywordId=d.keywordId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_keywords_query d 
-LEFT JOIN t_amz_adv_rpt2_sp_keywords_query_attributed a ON a.keywordId=d.keywordId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_keywords_query_attributed_same b ON b.keywordId=d.keywordId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_productads d 
-LEFT JOIN t_amz_adv_rpt2_sp_productads_attributed a ON a.adId=d.adId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_productads_attributed_same b ON b.adId=d.adId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_product_targets d 
-LEFT JOIN t_amz_adv_rpt2_sp_product_targets_attributed a ON a.targetId=d.targetId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_product_targets_attributed_same b ON b.targetId=d.targetId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
-DELETE d,a,b FROM t_amz_adv_rpt2_sp_product_targets_query d 
-LEFT JOIN t_amz_adv_rpt2_sp_product_targets_query_attributed a ON a.targetId=d.targetId AND a.bydate=d.bydate
-LEFT JOIN t_amz_adv_rpt2_sp_product_targets_query_attributed_same b ON b.targetId=d.targetId AND b.bydate=a.bydate
-WHERE  d.bydate=DATE_SUB(NOW(),INTERVAL 365 DAY);
-
 END//
 DELIMITER ;
 
@@ -198,6 +91,11 @@ WHERE a.`disable`=0  AND v.advauthid IS NULL;
 replace into db_amazon_adv.t_amazon_group
 SELECT * FROM db_amazon.t_amazon_group ;
  
+ replace into db_amazon_adv.t_exchangerate
+SELECT * FROM db_amazon.t_exchangerate;
+replace into db_amazon_adv.t_exchangerate_customer
+SELECT * FROM db_amazon.t_exchangerate_customer;
+
 END//
 DELIMITER ;
 
@@ -417,9 +315,9 @@ CREATE TABLE IF NOT EXISTS `t_amz_advert_invoices` (
   `downloadable_documents` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `profileid_invoice_id_fromDate` (`profileid`,`invoice_id`,`fromDate`) USING BTREE,
+  UNIQUE KEY `profileid_invoice_id_fromDate` (`profileid`,`invoice_id`,`fromDate`),
   KEY `profileid` (`profileid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='广告发票数据表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='广告发票数据表';
 
 -- 数据导出被取消选择。
 
@@ -977,7 +875,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_operate_log` (
   KEY `campaignId` (`campaignId`),
   KEY `profileid` (`profileid`,`opttime`),
   KEY `adGroupId` (`adGroupId`)
-) ENGINE=InnoDB AUTO_INCREMENT=512938 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=520353 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1254,6 +1152,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_report_request_type` (
   `reponsetype` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `nomarket` char(245) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `disablevendor` bit(1) DEFAULT b'0',
+  `disabled` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `campaigntype_reporttype_segment_activeType` (`campaigntype`,`reporttype`,`segment`,`activeType`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
@@ -1286,6 +1185,63 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_adgroups_attributed` (
   `attributedConversions14dSameSKU` decimal(12,2) unsigned NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`bydate`,`adGroupId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_adgroups_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_adgroups_attributed_all` (
+  `adGroupId` bigint NOT NULL COMMENT '广告组ID',
+  `bydate` date NOT NULL COMMENT '日期',
+  `addToCart` int DEFAULT NULL COMMENT '加入购物车次数',
+  `addToCartClicks` int DEFAULT NULL COMMENT '加入购物车点击次数',
+  `addToCartRate` decimal(10,4) DEFAULT NULL COMMENT '加入购物车率',
+  `addToList` int DEFAULT NULL COMMENT '加入列表次数',
+  `addToListFromClicks` int DEFAULT NULL COMMENT '从点击加入列表次数',
+  `qualifiedBorrows` int DEFAULT NULL COMMENT '合格借阅次数',
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击合格借阅次数',
+  `royaltyQualifiedBorrows` int DEFAULT NULL COMMENT '版税合格借阅次数',
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击版税合格借阅次数',
+  `brandedSearches` int DEFAULT NULL COMMENT '品牌搜索次数',
+  `brandedSearchesClicks` int DEFAULT NULL COMMENT '品牌搜索点击次数',
+  `campaignBudgetAmount` decimal(12,2) DEFAULT NULL COMMENT '广告活动预算金额',
+  `campaignBudgetCurrencyCode` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '广告活动预算货币代码',
+  `detailPageViews` int DEFAULT NULL COMMENT '详情页浏览量',
+  `detailPageViewsClicks` int DEFAULT NULL COMMENT '详情页浏览点击次数',
+  `eCPAddToCart` decimal(10,2) DEFAULT NULL COMMENT '加入购物车平均成本',
+  `newToBrandDetailPageViewRate` decimal(10,4) DEFAULT NULL COMMENT '新品牌详情页浏览率',
+  `newToBrandDetailPageViews` int DEFAULT NULL COMMENT '新品牌详情页浏览量',
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL COMMENT '新品牌详情页浏览点击次数',
+  `newToBrandECPDetailPageView` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览平均成本',
+  `newToBrandPurchases` int DEFAULT NULL COMMENT '新品牌购买次数',
+  `newToBrandPurchasesClicks` int DEFAULT NULL COMMENT '新品牌购买点击次数',
+  `newToBrandPurchasesPercentage` decimal(10,4) DEFAULT NULL COMMENT '新品牌购买百分比',
+  `newToBrandPurchasesRate` decimal(10,4) DEFAULT NULL COMMENT '新品牌购买率',
+  `newToBrandSales` decimal(12,2) DEFAULT NULL COMMENT '新品牌销售额',
+  `newToBrandSalesClicks` int DEFAULT NULL COMMENT '新品牌销售点击次数',
+  `newToBrandSalesPercentage` decimal(10,4) DEFAULT NULL COMMENT '新品牌销售百分比',
+  `newToBrandUnitsSold` int DEFAULT NULL COMMENT '新品牌销售单位数',
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL COMMENT '新品牌销售单位点击次数',
+  `newToBrandUnitsSoldPercentage` decimal(10,4) DEFAULT NULL COMMENT '新品牌销售单位百分比',
+  `purchases` int DEFAULT NULL COMMENT '购买次数',
+  `purchasesClicks` int DEFAULT NULL COMMENT '购买点击次数',
+  `purchasesPromoted` int DEFAULT NULL COMMENT '促销购买次数',
+  `sales` decimal(12,2) DEFAULT NULL COMMENT '销售额',
+  `salesClicks` int DEFAULT NULL COMMENT '销售点击次数',
+  `salesPromoted` decimal(12,2) DEFAULT NULL COMMENT '促销销售额',
+  `unitsSold` int DEFAULT NULL COMMENT '销售单位数',
+  `unitsSoldClicks` int DEFAULT NULL COMMENT '销售单位点击次数',
+  `video5SecondViewRate` decimal(10,4) DEFAULT NULL COMMENT '5秒视频观看率',
+  `video5SecondViews` int DEFAULT NULL COMMENT '5秒视频观看次数',
+  `videoCompleteViews` int DEFAULT NULL COMMENT '完整视频观看次数',
+  `videoFirstQuartileViews` int DEFAULT NULL COMMENT '视频第一四分位观看次数',
+  `videoMidpointViews` int DEFAULT NULL COMMENT '视频中点观看次数',
+  `videoThirdQuartileViews` int DEFAULT NULL COMMENT '视频第三四分位观看次数',
+  `videoUnmutes` int DEFAULT NULL COMMENT '视频取消静音次数',
+  `viewabilityRate` decimal(10,4) DEFAULT NULL COMMENT '可视率',
+  `opttime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`adGroupId`,`bydate`),
+  KEY `idx_bydate` (`bydate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='亚马逊广告HSA广告组归因报告';
 
 -- 数据导出被取消选择。
 
@@ -1362,6 +1318,64 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_ads_attributed` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_ads_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_ads_attributed_all` (
+  `adId` bigint unsigned NOT NULL COMMENT '广告ID',
+  `bydate` date NOT NULL COMMENT '日期',
+  `addToCart` int DEFAULT NULL COMMENT '加入购物车次数',
+  `addToCartClicks` int DEFAULT NULL COMMENT '加入购物车点击次数',
+  `addToCartRate` decimal(10,2) DEFAULT NULL COMMENT '加入购物车率',
+  `addToList` int DEFAULT NULL COMMENT '加入列表次数',
+  `qualifiedBorrows` int DEFAULT NULL COMMENT '合格借阅次数',
+  `royaltyQualifiedBorrows` int DEFAULT NULL COMMENT '版税合格借阅次数',
+  `addToListFromClicks` int DEFAULT NULL COMMENT '从点击加入列表次数',
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击合格借阅次数',
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击版税合格借阅次数',
+  `brandedSearches` int DEFAULT NULL COMMENT '品牌搜索次数',
+  `brandedSearchesClicks` int DEFAULT NULL COMMENT '品牌搜索点击次数',
+  `campaignBudgetAmount` decimal(10,2) DEFAULT NULL COMMENT '广告活动预算金额',
+  `campaignBudgetCurrencyCode` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '广告活动预算货币代码',
+  `detailPageViews` int DEFAULT NULL COMMENT '详情页浏览量',
+  `detailPageViewsClicks` int DEFAULT NULL COMMENT '详情页浏览点击次数',
+  `eCPAddToCart` decimal(10,2) DEFAULT NULL COMMENT '加入购物车平均成本',
+  `newToBrandDetailPageViewRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览率',
+  `newToBrandDetailPageViews` int DEFAULT NULL COMMENT '新品牌详情页浏览量',
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL COMMENT '新品牌详情页浏览点击次数',
+  `newToBrandECPDetailPageView` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览平均成本',
+  `newToBrandPurchases` int DEFAULT NULL COMMENT '新品牌购买次数',
+  `newToBrandPurchasesClicks` int DEFAULT NULL COMMENT '新品牌购买点击次数',
+  `newToBrandPurchasesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买百分比',
+  `newToBrandPurchasesRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买率',
+  `newToBrandSales` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售额',
+  `newToBrandSalesClicks` int DEFAULT NULL COMMENT '新品牌销售点击次数',
+  `newToBrandSalesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售百分比',
+  `newToBrandUnitsSold` int DEFAULT NULL COMMENT '新品牌销售单位数',
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL COMMENT '新品牌销售单位点击次数',
+  `newToBrandUnitsSoldPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售单位百分比',
+  `purchases` int DEFAULT NULL COMMENT '购买次数',
+  `purchasesClicks` int DEFAULT NULL COMMENT '购买点击次数',
+  `purchasesPromoted` int DEFAULT NULL COMMENT '促销购买次数',
+  `sales` decimal(10,2) DEFAULT NULL COMMENT '销售额',
+  `salesClicks` int DEFAULT NULL COMMENT '销售点击次数',
+  `salesPromoted` decimal(10,2) DEFAULT NULL COMMENT '促销销售额',
+  `unitsSold` int DEFAULT NULL COMMENT '销售单位数',
+  `unitsSoldClicks` int DEFAULT NULL COMMENT '销售单位点击次数',
+  `video5SecondViewRate` decimal(10,2) DEFAULT NULL COMMENT '5秒视频观看率',
+  `video5SecondViews` int DEFAULT NULL COMMENT '5秒视频观看次数',
+  `videoCompleteViews` int DEFAULT NULL COMMENT '完整视频观看次数',
+  `videoFirstQuartileViews` int DEFAULT NULL COMMENT '视频第一四分位观看次数',
+  `videoMidpointViews` int DEFAULT NULL COMMENT '视频中点观看次数',
+  `videoThirdQuartileViews` int DEFAULT NULL COMMENT '视频第三四分位观看次数',
+  `videoUnmutes` int DEFAULT NULL COMMENT '视频取消静音次数',
+  `viewabilityRate` decimal(10,2) DEFAULT NULL COMMENT '可视率',
+  `viewableImpressions` int DEFAULT NULL COMMENT '可视展示次数',
+  `opttime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`adId`,`bydate`),
+  KEY `idx_bydate` (`bydate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='亚马逊广告HSA广告归因报告';
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_ads_brand 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_ads_brand` (
   `adId` bigint unsigned NOT NULL,
@@ -1435,6 +1449,66 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_campaigns_attributed` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_campaigns_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_campaigns_attributed_all` (
+  `campaignId` bigint unsigned NOT NULL COMMENT '广告活动ID',
+  `bydate` date NOT NULL COMMENT '日期',
+  `addToCart` int DEFAULT NULL COMMENT '加入购物车次数',
+  `addToCartClicks` int DEFAULT NULL COMMENT '加入购物车点击次数',
+  `addToCartRate` decimal(10,4) DEFAULT NULL COMMENT '加入购物车率',
+  `addToList` int DEFAULT NULL COMMENT '加入列表次数',
+  `addToListFromClicks` int DEFAULT NULL COMMENT '从点击加入列表次数',
+  `qualifiedBorrows` int DEFAULT NULL COMMENT '合格借阅次数',
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击合格借阅次数',
+  `royaltyQualifiedBorrows` int DEFAULT NULL COMMENT '版税合格借阅次数',
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击版税合格借阅次数',
+  `brandedSearches` int DEFAULT NULL COMMENT '品牌搜索次数',
+  `brandedSearchesClicks` int DEFAULT NULL COMMENT '品牌搜索点击次数',
+  `campaignBudgetAmount` decimal(12,2) DEFAULT NULL COMMENT '广告活动预算金额',
+  `campaignBudgetCurrencyCode` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '广告活动预算货币代码',
+  `detailPageViews` int DEFAULT NULL COMMENT '详情页浏览量',
+  `detailPageViewsClicks` int DEFAULT NULL COMMENT '详情页浏览点击次数',
+  `eCPAddToCart` decimal(10,2) DEFAULT NULL COMMENT '加入购物车平均成本',
+  `newToBrandDetailPageViewRate` decimal(10,4) DEFAULT NULL COMMENT '新品牌详情页浏览率',
+  `newToBrandDetailPageViews` int DEFAULT NULL COMMENT '新品牌详情页浏览量',
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL COMMENT '新品牌详情页浏览点击次数',
+  `newToBrandECPDetailPageView` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览平均成本',
+  `newToBrandPurchases` int DEFAULT NULL COMMENT '新品牌购买次数',
+  `newToBrandPurchasesClicks` int DEFAULT NULL COMMENT '新品牌购买点击次数',
+  `newToBrandPurchasesPercentage` decimal(10,4) DEFAULT NULL COMMENT '新品牌购买百分比',
+  `newToBrandPurchasesRate` decimal(10,4) DEFAULT NULL COMMENT '新品牌购买率',
+  `newToBrandSales` decimal(12,2) DEFAULT NULL COMMENT '新品牌销售额',
+  `newToBrandSalesClicks` int DEFAULT NULL COMMENT '新品牌销售点击次数',
+  `newToBrandSalesPercentage` decimal(10,4) DEFAULT NULL COMMENT '新品牌销售百分比',
+  `newToBrandUnitsSold` int DEFAULT NULL COMMENT '新品牌销售单位数',
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL COMMENT '新品牌销售单位点击次数',
+  `newToBrandUnitsSoldPercentage` decimal(10,4) DEFAULT NULL COMMENT '新品牌销售单位百分比',
+  `purchases` int DEFAULT NULL COMMENT '购买次数',
+  `purchasesClicks` int DEFAULT NULL COMMENT '购买点击次数',
+  `purchasesPromoted` int DEFAULT NULL COMMENT '促销购买次数',
+  `sales` decimal(12,2) DEFAULT NULL COMMENT '销售额',
+  `salesClicks` int DEFAULT NULL COMMENT '销售点击次数',
+  `salesPromoted` decimal(12,2) DEFAULT NULL COMMENT '促销销售额',
+  `topOfSearchImpressionShare` decimal(10,4) DEFAULT NULL COMMENT '搜索顶部展示份额',
+  `unitsSold` int DEFAULT NULL COMMENT '销售单位数',
+  `unitsSoldClicks` int DEFAULT NULL COMMENT '销售单位点击次数',
+  `video5SecondViewRate` decimal(10,4) DEFAULT NULL COMMENT '5秒视频观看率',
+  `video5SecondViews` int DEFAULT NULL COMMENT '5秒视频观看次数',
+  `videoCompleteViews` int DEFAULT NULL COMMENT '完整视频观看次数',
+  `videoFirstQuartileViews` int DEFAULT NULL COMMENT '视频第一四分位观看次数',
+  `videoMidpointViews` int DEFAULT NULL COMMENT '视频中点观看次数',
+  `videoThirdQuartileViews` int DEFAULT NULL COMMENT '视频第三四分位观看次数',
+  `videoUnmutes` int DEFAULT NULL COMMENT '视频取消静音次数',
+  `viewabilityRate` decimal(10,4) DEFAULT NULL COMMENT '可视率',
+  `viewableImpressions` int DEFAULT NULL COMMENT '可视展示次数',
+  `viewClickThroughRate` decimal(10,4) DEFAULT NULL COMMENT '可视点击通过率',
+  `oipttime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`campaignId`,`bydate`),
+  KEY `idx_bydate` (`bydate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='亚马逊广告HSA广告活动归因报告';
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_campaigns_brand 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_campaigns_brand` (
   `campaignId` bigint unsigned NOT NULL,
@@ -1484,6 +1558,66 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_campaigns_place_attributed` (
   `attributedConversions14dSameSKU` decimal(12,2) DEFAULT '0.00',
   PRIMARY KEY (`bydate`,`campaignId`,`placementid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_campaigns_place_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_campaigns_place_attributed_all` (
+  `campaignId` bigint unsigned NOT NULL COMMENT '广告活动ID',
+  `bydate` date NOT NULL COMMENT '日期',
+  `placementid` int unsigned NOT NULL,
+  `addToCart` int DEFAULT NULL COMMENT '加入购物车次数',
+  `addToCartClicks` int DEFAULT NULL COMMENT '加入购物车点击次数',
+  `addToCartRate` decimal(10,2) DEFAULT NULL COMMENT '加入购物车率',
+  `addToList` int DEFAULT NULL COMMENT '加入列表次数',
+  `addToListFromClicks` int DEFAULT NULL COMMENT '从点击加入列表次数',
+  `qualifiedBorrows` int DEFAULT NULL COMMENT '合格借阅次数',
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击合格借阅次数',
+  `royaltyQualifiedBorrows` int DEFAULT NULL COMMENT '版税合格借阅次数',
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击版税合格借阅次数',
+  `brandedSearches` int DEFAULT NULL COMMENT '品牌搜索次数',
+  `brandedSearchesClicks` int DEFAULT NULL COMMENT '品牌搜索点击次数',
+  `campaignBudgetAmount` decimal(10,2) DEFAULT NULL COMMENT '广告活动预算金额',
+  `campaignBudgetCurrencyCode` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '广告活动预算货币代码',
+  `detailPageViews` int DEFAULT NULL COMMENT '详情页浏览量',
+  `detailPageViewsClicks` int DEFAULT NULL COMMENT '详情页浏览点击次数',
+  `eCPAddToCart` decimal(10,2) DEFAULT NULL COMMENT '加入购物车平均成本',
+  `newToBrandDetailPageViewRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览率',
+  `newToBrandDetailPageViews` int DEFAULT NULL COMMENT '新品牌详情页浏览量',
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL COMMENT '新品牌详情页浏览点击次数',
+  `newToBrandECPDetailPageView` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览平均成本',
+  `newToBrandPurchases` int DEFAULT NULL COMMENT '新品牌购买次数',
+  `newToBrandPurchasesClicks` int DEFAULT NULL COMMENT '新品牌购买点击次数',
+  `newToBrandPurchasesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买百分比',
+  `newToBrandPurchasesRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买率',
+  `newToBrandSales` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售额',
+  `newToBrandSalesClicks` int DEFAULT NULL COMMENT '新品牌销售点击次数',
+  `newToBrandSalesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售百分比',
+  `newToBrandUnitsSold` int DEFAULT NULL COMMENT '新品牌销售单位数',
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL COMMENT '新品牌销售单位点击次数',
+  `newToBrandUnitsSoldPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售单位百分比',
+  `purchases` int DEFAULT NULL COMMENT '购买次数',
+  `purchasesClicks` int DEFAULT NULL COMMENT '购买点击次数',
+  `purchasesPromoted` int DEFAULT NULL COMMENT '促销购买次数',
+  `sales` decimal(10,2) DEFAULT NULL COMMENT '销售额',
+  `salesClicks` int DEFAULT NULL COMMENT '销售点击次数',
+  `salesPromoted` decimal(10,2) DEFAULT NULL COMMENT '促销销售额',
+  `unitsSold` int DEFAULT NULL COMMENT '销售单位数',
+  `unitsSoldClicks` int DEFAULT NULL COMMENT '销售单位点击次数',
+  `video5SecondViewRate` decimal(10,2) DEFAULT NULL COMMENT '5秒视频观看率',
+  `video5SecondViews` int DEFAULT NULL COMMENT '5秒视频观看次数',
+  `videoCompleteViews` int DEFAULT NULL COMMENT '完整视频观看次数',
+  `videoFirstQuartileViews` int DEFAULT NULL COMMENT '视频第一四分位观看次数',
+  `videoMidpointViews` int DEFAULT NULL COMMENT '视频中点观看次数',
+  `videoThirdQuartileViews` int DEFAULT NULL COMMENT '视频第三四分位观看次数',
+  `videoUnmutes` int DEFAULT NULL COMMENT '视频取消静音次数',
+  `viewabilityRate` decimal(10,2) DEFAULT NULL COMMENT '可视率',
+  `viewableImpressions` int DEFAULT NULL COMMENT '可视展示次数',
+  `viewClickThroughRate` decimal(10,2) DEFAULT NULL COMMENT '可视点击通过率',
+  `opttime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`campaignId`,`bydate`),
+  KEY `idx_bydate` (`bydate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='亚马逊广告HSA广告活动位置归因报告';
 
 -- 数据导出被取消选择。
 
@@ -1582,6 +1716,56 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_keywords_attributed` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_keywords_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_keywords_attributed_all` (
+  `keywordId` bigint unsigned NOT NULL COMMENT '关键词ID',
+  `bydate` date NOT NULL COMMENT '日期',
+  `addToCart` int DEFAULT NULL COMMENT '加入购物车次数',
+  `addToCartClicks` int DEFAULT NULL COMMENT '加入购物车点击次数',
+  `addToCartRate` decimal(10,2) DEFAULT NULL COMMENT '加入购物车率',
+  `addToList` int DEFAULT NULL COMMENT '加入列表次数',
+  `addToListFromClicks` int DEFAULT NULL COMMENT '从点击加入列表次数',
+  `qualifiedBorrows` int DEFAULT NULL COMMENT '合格借阅次数',
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击合格借阅次数',
+  `royaltyQualifiedBorrows` int DEFAULT NULL COMMENT '版税合格借阅次数',
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击版税合格借阅次数',
+  `brandedSearches` int DEFAULT NULL COMMENT '品牌搜索次数',
+  `brandedSearchesClicks` int DEFAULT NULL COMMENT '品牌搜索点击次数',
+  `campaignBudgetAmount` decimal(10,2) DEFAULT NULL COMMENT '广告活动预算金额',
+  `campaignBudgetCurrencyCode` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '广告活动预算货币代码',
+  `detailPageViews` int DEFAULT NULL COMMENT '详情页浏览量',
+  `detailPageViewsClicks` int DEFAULT NULL COMMENT '详情页浏览点击次数',
+  `eCPAddToCart` decimal(10,2) DEFAULT NULL COMMENT '加入购物车平均成本',
+  `keywordBid` decimal(10,2) DEFAULT NULL COMMENT '关键词出价',
+  `newToBrandDetailPageViewRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览率',
+  `newToBrandDetailPageViews` int DEFAULT NULL COMMENT '新品牌详情页浏览量',
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL COMMENT '新品牌详情页浏览点击次数',
+  `newToBrandECPDetailPageView` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览平均成本',
+  `newToBrandPurchases` int DEFAULT NULL COMMENT '新品牌购买次数',
+  `newToBrandPurchasesClicks` int DEFAULT NULL COMMENT '新品牌购买点击次数',
+  `newToBrandPurchasesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买百分比',
+  `newToBrandPurchasesRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买率',
+  `newToBrandSales` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售额',
+  `newToBrandSalesClicks` int DEFAULT NULL COMMENT '新品牌销售点击次数',
+  `newToBrandSalesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售百分比',
+  `newToBrandUnitsSold` int DEFAULT NULL COMMENT '新品牌销售单位数',
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL COMMENT '新品牌销售单位点击次数',
+  `newToBrandUnitsSoldPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售单位百分比',
+  `purchases` int DEFAULT NULL COMMENT '购买次数',
+  `purchasesClicks` int DEFAULT NULL COMMENT '购买点击次数',
+  `purchasesPromoted` int DEFAULT NULL COMMENT '促销购买次数',
+  `sales` decimal(10,2) DEFAULT NULL COMMENT '销售额',
+  `salesClicks` int DEFAULT NULL COMMENT '销售点击次数',
+  `salesPromoted` decimal(10,2) DEFAULT NULL COMMENT '促销销售额',
+  `topOfSearchImpressionShare` decimal(10,2) DEFAULT NULL COMMENT '搜索顶部展示份额',
+  `unitsSold` int DEFAULT NULL COMMENT '销售单位数',
+  `opttime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`keywordId`,`bydate`),
+  KEY `idx_bydate` (`bydate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='亚马逊广告HSA关键词归因报告';
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_keywords_brand 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_keywords_brand` (
   `keywordId` bigint unsigned NOT NULL,
@@ -1674,6 +1858,57 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_product_targets_attributed` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_product_targets_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_product_targets_attributed_all` (
+  `targetingId` bigint unsigned NOT NULL COMMENT '商品定位ID',
+  `bydate` date NOT NULL COMMENT '日期',
+  `addToCart` int DEFAULT NULL COMMENT '加入购物车次数',
+  `addToCartClicks` int DEFAULT NULL COMMENT '加入购物车点击次数',
+  `addToCartRate` decimal(10,2) DEFAULT NULL COMMENT '加入购物车率',
+  `addToList` int DEFAULT NULL COMMENT '加入列表次数',
+  `addToListFromClicks` int DEFAULT NULL COMMENT '从点击加入列表次数',
+  `qualifiedBorrows` int DEFAULT NULL COMMENT '合格借阅次数',
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击合格借阅次数',
+  `royaltyQualifiedBorrows` int DEFAULT NULL COMMENT '版税合格借阅次数',
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL COMMENT '从点击版税合格借阅次数',
+  `brandedSearches` int DEFAULT NULL COMMENT '品牌搜索次数',
+  `brandedSearchesClicks` int DEFAULT NULL COMMENT '品牌搜索点击次数',
+  `campaignBudgetAmount` decimal(10,2) DEFAULT NULL COMMENT '广告活动预算金额',
+  `campaignBudgetCurrencyCode` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '广告活动预算货币代码',
+  `detailPageViews` int DEFAULT NULL COMMENT '详情页浏览量',
+  `detailPageViewsClicks` int DEFAULT NULL COMMENT '详情页浏览点击次数',
+  `eCPAddToCart` decimal(10,2) DEFAULT NULL COMMENT '加入购物车平均成本',
+  `matchType` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '匹配类型',
+  `newToBrandDetailPageViewRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览率',
+  `newToBrandDetailPageViews` int DEFAULT NULL COMMENT '新品牌详情页浏览量',
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL COMMENT '新品牌详情页浏览点击次数',
+  `newToBrandECPDetailPageView` decimal(10,2) DEFAULT NULL COMMENT '新品牌详情页浏览平均成本',
+  `newToBrandPurchases` int DEFAULT NULL COMMENT '新品牌购买次数',
+  `newToBrandPurchasesClicks` int DEFAULT NULL COMMENT '新品牌购买点击次数',
+  `newToBrandPurchasesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买百分比',
+  `newToBrandPurchasesRate` decimal(10,2) DEFAULT NULL COMMENT '新品牌购买率',
+  `newToBrandSales` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售额',
+  `newToBrandSalesClicks` int DEFAULT NULL COMMENT '新品牌销售点击次数',
+  `newToBrandSalesPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售百分比',
+  `newToBrandUnitsSold` int DEFAULT NULL COMMENT '新品牌销售单位数',
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL COMMENT '新品牌销售单位点击次数',
+  `newToBrandUnitsSoldPercentage` decimal(10,2) DEFAULT NULL COMMENT '新品牌销售单位百分比',
+  `purchases` int DEFAULT NULL COMMENT '购买次数',
+  `purchasesClicks` int DEFAULT NULL COMMENT '购买点击次数',
+  `purchasesPromoted` int DEFAULT NULL COMMENT '促销购买次数',
+  `sales` decimal(10,2) DEFAULT NULL COMMENT '销售额',
+  `salesClicks` int DEFAULT NULL COMMENT '销售点击次数',
+  `salesPromoted` decimal(10,2) DEFAULT NULL COMMENT '促销销售额',
+  `topOfSearchImpressionShare` decimal(10,2) DEFAULT NULL COMMENT '搜索顶部展示份额',
+  `unitsSold` int DEFAULT NULL COMMENT '销售单位数',
+  `opttime` datetime DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`targetingId`,`bydate`),
+  KEY `idx_bydate` (`bydate`),
+  KEY `idx_matchType` (`matchType`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='亚马逊广告HSA商品定位归因报告(全量)';
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt2_hsa_product_targets_brand 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_hsa_product_targets_brand` (
   `targetId` bigint unsigned NOT NULL,
@@ -1748,6 +1983,61 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_adgroups_attributed` (
   `attributedSales14d` decimal(12,2) DEFAULT NULL,
   `attributedSales30d` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`bydate`,`adGroupId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_sd_adgroups_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_adgroups_attributed_all` (
+  `adGroupId` bigint unsigned NOT NULL,
+  `bydate` date NOT NULL,
+  `addToCart` int DEFAULT NULL,
+  `addToCartClicks` int DEFAULT NULL,
+  `addToCartRate` decimal(20,6) DEFAULT NULL,
+  `addToCartViews` int DEFAULT NULL,
+  `addToList` int DEFAULT NULL,
+  `addToListFromClicks` int DEFAULT NULL,
+  `addToListFromViews` int DEFAULT NULL,
+  `qualifiedBorrows` int DEFAULT NULL,
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `qualifiedBorrowsFromViews` int DEFAULT NULL,
+  `royaltyQualifiedBorrows` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromViews` int DEFAULT NULL,
+  `bidOptimization` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `brandedSearches` int DEFAULT NULL,
+  `brandedSearchesClicks` int DEFAULT NULL,
+  `brandedSearchesViews` int DEFAULT NULL,
+  `brandedSearchRate` decimal(20,6) DEFAULT NULL,
+  `campaignBudgetCurrencyCode` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `detailPageViews` int DEFAULT NULL,
+  `detailPageViewsClicks` int DEFAULT NULL,
+  `eCPAddToCart` decimal(20,6) DEFAULT NULL,
+  `eCPBrandSearch` decimal(20,6) DEFAULT NULL,
+  `impressionsViews` int DEFAULT NULL,
+  `newToBrandPurchases` int DEFAULT NULL,
+  `newToBrandPurchasesClicks` int DEFAULT NULL,
+  `newToBrandSales` decimal(20,6) DEFAULT NULL,
+  `newToBrandSalesClicks` int DEFAULT NULL,
+  `newToBrandUnitsSold` int DEFAULT NULL,
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL,
+  `purchases` int DEFAULT NULL COMMENT 'attributedConversions14d',
+  `purchasesClicks` int DEFAULT NULL,
+  `purchasesPromotedClicks` int DEFAULT NULL,
+  `sales` decimal(20,6) DEFAULT NULL COMMENT 'attributedSales14d',
+  `salesClicks` decimal(20,6) DEFAULT NULL,
+  `salesPromotedClicks` decimal(20,6) DEFAULT NULL,
+  `unitsSold` int DEFAULT NULL COMMENT 'attributedUnitsOrdered1d',
+  `unitsSoldClicks` int DEFAULT NULL,
+  `videoCompleteViews` int DEFAULT NULL,
+  `videoFirstQuartileViews` int DEFAULT NULL,
+  `videoMidpointViews` int DEFAULT NULL,
+  `videoThirdQuartileViews` int DEFAULT NULL,
+  `videoUnmutes` int DEFAULT NULL,
+  `viewabilityRate` decimal(20,6) DEFAULT NULL,
+  `viewClickThroughRate` decimal(20,6) DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`adGroupId`,`bydate`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -1858,6 +2148,61 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_campaigns_attributed` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_sd_campaigns_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_campaigns_attributed_all` (
+  `campaignId` bigint unsigned NOT NULL,
+  `bydate` date NOT NULL,
+  `addToCart` int DEFAULT NULL,
+  `addToCartClicks` int DEFAULT NULL,
+  `addToCartRate` decimal(20,6) DEFAULT NULL,
+  `addToCartViews` int DEFAULT NULL,
+  `addToList` int DEFAULT NULL,
+  `addToListFromClicks` int DEFAULT NULL,
+  `addToListFromViews` int DEFAULT NULL,
+  `qualifiedBorrows` int DEFAULT NULL,
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `qualifiedBorrowsFromViews` int DEFAULT NULL,
+  `royaltyQualifiedBorrows` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromViews` int DEFAULT NULL,
+  `brandedSearches` int DEFAULT NULL,
+  `brandedSearchesClicks` int DEFAULT NULL,
+  `brandedSearchesViews` int DEFAULT NULL,
+  `clickThroughRate` decimal(20,6) DEFAULT NULL,
+  `campaignBudgetCurrencyCode` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `detailPageViews` int DEFAULT NULL,
+  `detailPageViewsClicks` int DEFAULT NULL,
+  `eCPAddToCart` decimal(20,6) DEFAULT NULL,
+  `eCPBrandSearch` decimal(20,6) DEFAULT NULL,
+  `impressionsViews` int DEFAULT NULL,
+  `newToBrandPurchases` int DEFAULT NULL,
+  `newToBrandPurchasesClicks` int DEFAULT NULL,
+  `newToBrandSalesClicks` int DEFAULT NULL,
+  `newToBrandUnitsSold` int DEFAULT NULL,
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL,
+  `purchases` int DEFAULT NULL COMMENT 'attributedConversions14d',
+  `purchasesClicks` int DEFAULT NULL,
+  `purchasesPromotedClicks` int DEFAULT NULL,
+  `purchasesViews` int DEFAULT NULL,
+  `sales` decimal(20,6) DEFAULT NULL COMMENT 'attributedSales14d',
+  `salesClicks` decimal(20,6) DEFAULT NULL,
+  `salesPromotedClicks` decimal(20,6) DEFAULT NULL,
+  `unitsSold` int DEFAULT NULL COMMENT 'attributedUnitsOrdered1d',
+  `unitsSoldClicks` int DEFAULT NULL,
+  `unitsSoldViews` int DEFAULT NULL,
+  `videoCompleteViews` int DEFAULT NULL,
+  `videoFirstQuartileViews` int DEFAULT NULL,
+  `videoMidpointViews` int DEFAULT NULL,
+  `videoThirdQuartileViews` int DEFAULT NULL,
+  `videoUnmutes` int DEFAULT NULL,
+  `viewabilityRate` decimal(20,6) DEFAULT NULL,
+  `viewClickThroughRate` decimal(20,6) DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`campaignId`,`bydate`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt2_sd_campaigns_attributed_new 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_campaigns_attributed_new` (
   `campaignId` bigint unsigned NOT NULL,
@@ -1955,6 +2300,65 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_productads_attributed` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_sd_productads_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_productads_attributed_all` (
+  `adId` bigint unsigned NOT NULL,
+  `bydate` date NOT NULL,
+  `addToCart` int DEFAULT NULL,
+  `addToCartClicks` int DEFAULT NULL,
+  `addToCartRate` decimal(20,6) DEFAULT NULL,
+  `addToCartViews` int DEFAULT NULL,
+  `addToList` int DEFAULT NULL,
+  `addToListFromClicks` int DEFAULT NULL,
+  `qualifiedBorrows` int DEFAULT NULL,
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `royaltyQualifiedBorrows` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `bidOptimization` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `brandedSearches` int DEFAULT NULL,
+  `brandedSearchesClicks` int DEFAULT NULL,
+  `campaignBudgetAmount` decimal(20,6) DEFAULT NULL,
+  `campaignBudgetCurrencyCode` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `detailPageViews` int DEFAULT NULL,
+  `detailPageViewsClicks` int DEFAULT NULL,
+  `eCPAddToCart` decimal(20,6) DEFAULT NULL,
+  `newToBrandDetailPageViewRate` decimal(20,6) DEFAULT NULL,
+  `newToBrandDetailPageViews` int DEFAULT NULL,
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL,
+  `newToBrandECPDetailPageView` int DEFAULT NULL,
+  `newToBrandPurchasesPercentage` decimal(20,6) DEFAULT NULL,
+  `newToBrandPurchases` int DEFAULT NULL,
+  `newToBrandPurchasesClicks` int DEFAULT NULL,
+  `newToBrandPurchasesRate` decimal(20,6) DEFAULT NULL,
+  `newToBrandSales` decimal(20,6) DEFAULT NULL,
+  `newToBrandSalesClicks` int DEFAULT NULL,
+  `newToBrandSalesPercentage` decimal(20,6) DEFAULT NULL,
+  `newToBrandUnitsSold` int DEFAULT NULL,
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL,
+  `newToBrandUnitsSoldPercentage` decimal(20,6) DEFAULT NULL,
+  `purchases` int DEFAULT NULL COMMENT 'attributedConversions14d',
+  `purchasesClicks` int DEFAULT NULL,
+  `purchasesPromoted` int DEFAULT NULL,
+  `sales` decimal(20,6) DEFAULT NULL COMMENT 'attributedSales14d',
+  `salesClicks` decimal(20,6) DEFAULT NULL,
+  `salesPromoted` decimal(20,6) DEFAULT NULL,
+  `unitsSold` int DEFAULT NULL COMMENT 'attributedUnitsOrdered1d',
+  `unitsSoldClicks` int DEFAULT NULL,
+  `video5SecondViewRate` decimal(20,6) DEFAULT NULL,
+  `video5SecondViews` int DEFAULT NULL,
+  `videoCompleteViews` int DEFAULT NULL,
+  `videoFirstQuartileViews` int DEFAULT NULL,
+  `videoMidpointViews` int DEFAULT NULL,
+  `videoThirdQuartileViews` int DEFAULT NULL,
+  `videoUnmutes` int DEFAULT NULL,
+  `viewabilityRate` decimal(20,6) DEFAULT NULL,
+  `viewableImpressions` int DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`adId`,`bydate`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt2_sd_productads_attributed_new 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_productads_attributed_new` (
   `adId` bigint unsigned NOT NULL,
@@ -2031,6 +2435,72 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_product_targets_attributed` (
   `attributedSales14d` decimal(10,2) DEFAULT NULL,
   `attributedSales30d` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`bydate`,`targetId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_amazon_adv.t_amz_adv_rpt2_sd_product_targets_attributed_all 结构
+CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt2_sd_product_targets_attributed_all` (
+  `targetingId` bigint unsigned NOT NULL,
+  `bydate` date NOT NULL,
+  `addToCart` int DEFAULT NULL,
+  `addToCartClicks` int DEFAULT NULL,
+  `addToCartRate` decimal(20,6) DEFAULT NULL,
+  `addToCartViews` int DEFAULT NULL,
+  `addToList` int DEFAULT NULL,
+  `addToListFromClicks` int DEFAULT NULL,
+  `addToListFromViews` int DEFAULT NULL,
+  `qualifiedBorrows` int DEFAULT NULL,
+  `qualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `qualifiedBorrowsFromViews` int DEFAULT NULL,
+  `royaltyQualifiedBorrows` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromClicks` int DEFAULT NULL,
+  `royaltyQualifiedBorrowsFromViews` int DEFAULT NULL,
+  `brandedSearches` int DEFAULT NULL,
+  `brandedSearchesClicks` int DEFAULT NULL,
+  `brandedSearchesViews` int DEFAULT NULL,
+  `brandedSearchRate` decimal(20,6) DEFAULT NULL,
+  `campaignBudgetCurrencyCode` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `detailPageViews` int DEFAULT NULL,
+  `detailPageViewsClicks` int DEFAULT NULL,
+  `eCPAddToCart` decimal(20,6) DEFAULT NULL,
+  `eCPBrandSearch` decimal(20,6) DEFAULT NULL,
+  `impressionsViews` int DEFAULT NULL,
+  `newToBrandDetailPageViewRate` decimal(20,6) DEFAULT NULL,
+  `newToBrandDetailPageViews` int DEFAULT NULL,
+  `newToBrandDetailPageViewsClicks` int DEFAULT NULL,
+  `newToBrandECPDetailPageView` int DEFAULT NULL,
+  `newToBrandPurchasesPercentage` decimal(20,6) DEFAULT NULL,
+  `newToBrandPurchases` int DEFAULT NULL,
+  `newToBrandPurchasesClicks` int DEFAULT NULL,
+  `newToBrandPurchasesRate` decimal(20,6) DEFAULT NULL,
+  `newToBrandSales` decimal(20,6) DEFAULT NULL,
+  `newToBrandSalesClicks` int DEFAULT NULL,
+  `newToBrandSalesPercentage` decimal(20,6) DEFAULT NULL,
+  `newToBrandUnitsSold` int DEFAULT NULL,
+  `newToBrandUnitsSoldClicks` int DEFAULT NULL,
+  `newToBrandUnitsSoldPercentage` decimal(20,6) DEFAULT NULL,
+  `purchases` int DEFAULT NULL COMMENT 'attributedConversions14d',
+  `purchasesClicks` int DEFAULT NULL,
+  `purchasesPromoted` int DEFAULT NULL,
+  `purchasesPromotedClicks` int DEFAULT NULL,
+  `sales` decimal(20,6) DEFAULT NULL COMMENT 'attributedSales14d',
+  `salesClicks` decimal(20,6) DEFAULT NULL,
+  `salesPromoted` decimal(20,6) DEFAULT NULL,
+  `salesPromotedClicks` decimal(20,6) DEFAULT NULL,
+  `unitsSold` int DEFAULT NULL COMMENT 'attributedUnitsOrdered1d',
+  `unitsSoldClicks` int DEFAULT NULL,
+  `video5SecondViewRate` decimal(20,6) DEFAULT NULL,
+  `video5SecondViews` int DEFAULT NULL,
+  `videoCompleteViews` int DEFAULT NULL,
+  `videoFirstQuartileViews` int DEFAULT NULL,
+  `videoMidpointViews` int DEFAULT NULL,
+  `videoThirdQuartileViews` int DEFAULT NULL,
+  `videoUnmutes` int DEFAULT NULL,
+  `viewabilityRate` decimal(20,6) DEFAULT NULL,
+  `viewClickThroughRate` decimal(20,6) DEFAULT NULL,
+  `opttime` datetime DEFAULT NULL,
+  PRIMARY KEY (`targetingId`,`bydate`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2609,10 +3079,10 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt_placement` (
 -- 导出  表 db_amazon_adv.t_amz_adv_rpt_query 结构
 CREATE TABLE IF NOT EXISTS `t_amz_adv_rpt_query` (
   `id` bigint unsigned NOT NULL,
-  `query` varchar(500) DEFAULT NULL,
+  `query` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `query` (`query`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -2692,6 +3162,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_adv_snapshot` (
   `recordtype` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `campaignType` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `fileSize` int DEFAULT NULL,
+  `expires` datetime DEFAULT NULL,
   `opttime` datetime NOT NULL,
   `requesttime` datetime DEFAULT NULL,
   `treat_number` int DEFAULT NULL,
@@ -2777,6 +3248,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_region` (
   `advpoint` char(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `client_id` char(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `client_secret` char(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `createtime` datetime DEFAULT NULL,
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 

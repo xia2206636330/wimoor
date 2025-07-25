@@ -40,17 +40,114 @@
 	</insert>
 	
 		<insert id="insertBatchAttributed" parameterType="java.util.List">
-		replace into t_amz_adv_rpt2_hsa_campaigns_place_attributed (
-		campaignId, bydate,placementid,  attributedSales14d,
-		attributedSales14dSameSKU,attributedConversions14d, attributedConversions14dSameSKU)
+		replace into t_amz_adv_rpt2_hsa_campaigns_place_attributed_all (
+			campaignId,
+			bydate,
+			placementid,
+			addToCart,
+			addToCartClicks,
+			addToCartRate,
+			addToList,
+			addToListFromClicks,
+			qualifiedBorrows,
+			qualifiedBorrowsFromClicks,
+			royaltyQualifiedBorrows,
+			royaltyQualifiedBorrowsFromClicks,
+			brandedSearches,
+			brandedSearchesClicks,
+			campaignBudgetAmount,
+			campaignBudgetCurrencyCode,
+			detailPageViews,
+			detailPageViewsClicks,
+			eCPAddToCart,
+			newToBrandDetailPageViewRate,
+			newToBrandDetailPageViews,
+			newToBrandDetailPageViewsClicks,
+			newToBrandECPDetailPageView,
+			newToBrandPurchases,
+			newToBrandPurchasesClicks,
+			newToBrandPurchasesPercentage,
+			newToBrandPurchasesRate,
+			newToBrandSales,
+			newToBrandSalesClicks,
+			newToBrandSalesPercentage,
+			newToBrandUnitsSold,
+			newToBrandUnitsSoldClicks,
+			newToBrandUnitsSoldPercentage,
+			purchases,
+			purchasesClicks,
+			purchasesPromoted,
+			sales,
+			salesClicks,
+			salesPromoted,
+			unitsSold,
+			unitsSoldClicks,
+			video5SecondViewRate,
+			video5SecondViews,
+			videoCompleteViews,
+			videoFirstQuartileViews,
+			videoMidpointViews,
+			videoThirdQuartileViews,
+			videoUnmutes,
+			viewabilityRate,
+			viewableImpressions,
+			viewClickThroughRate,
+			opttime)
 		values
 		<foreach collection="list" item="adv" index="index" separator=",">
 			(
-			#{adv.campaignid,jdbcType=BIGINT},#{adv.bydate,jdbcType=DATE},#{adv.placementid,jdbcType=INTEGER},
-			#{adv.attributedsales14d,jdbcType=DECIMAL},
-			#{adv.attributedsales14dsamesku,jdbcType=DECIMAL},
-			#{adv.attributedconversions14d,jdbcType=INTEGER},
-			#{adv.attributedconversions14dsamesku,jdbcType=INTEGER}
+			#{adv.campaignId,jdbcType=BIGINT},
+			#{adv.bydate,jdbcType=DATE},
+			#{adv.placementid,jdbcType=INTEGER},
+			#{adv.addToCart,jdbcType=INTEGER},
+			#{adv.addToCartClicks,jdbcType=INTEGER},
+			#{adv.addToCartRate,jdbcType=DECIMAL},
+			#{adv.addToList,jdbcType=INTEGER},
+			#{adv.addToListFromClicks,jdbcType=INTEGER},
+			#{adv.qualifiedBorrows,jdbcType=INTEGER},
+			#{adv.qualifiedBorrowsFromClicks,jdbcType=INTEGER},
+			#{adv.royaltyQualifiedBorrows,jdbcType=INTEGER},
+			#{adv.royaltyQualifiedBorrowsFromClicks,jdbcType=INTEGER},
+			#{adv.brandedSearches,jdbcType=INTEGER},
+			#{adv.brandedSearchesClicks,jdbcType=INTEGER},
+			#{adv.campaignBudgetAmount,jdbcType=DECIMAL},
+			#{adv.campaignBudgetCurrencyCode,jdbcType=CHAR},
+			#{adv.detailPageViews,jdbcType=INTEGER},
+			#{adv.detailPageViewsClicks,jdbcType=INTEGER},
+			#{adv.eCPAddToCart,jdbcType=DECIMAL},
+			#{adv.newToBrandDetailPageViewRate,jdbcType=DECIMAL},
+			#{adv.newToBrandDetailPageViews,jdbcType=INTEGER},
+			#{adv.newToBrandDetailPageViewsClicks,jdbcType=INTEGER},
+			#{adv.newToBrandECPDetailPageView,jdbcType=DECIMAL},
+			#{adv.newToBrandPurchases,jdbcType=INTEGER},
+			#{adv.newToBrandPurchasesClicks,jdbcType=INTEGER},
+			#{adv.newToBrandPurchasesPercentage,jdbcType=DECIMAL},
+			#{adv.newToBrandPurchasesRate,jdbcType=DECIMAL},
+			#{adv.newToBrandSales,jdbcType=DECIMAL},
+			#{adv.newToBrandSalesClicks,jdbcType=INTEGER},
+			#{adv.newToBrandSalesPercentage,jdbcType=DECIMAL},
+			#{adv.newToBrandUnitsSold,jdbcType=INTEGER},
+			#{adv.newToBrandUnitsSoldClicks,jdbcType=INTEGER},
+			#{adv.newToBrandUnitsSoldPercentage,jdbcType=DECIMAL},
+			#{adv.purchases,jdbcType=INTEGER},
+			#{adv.purchasesClicks,jdbcType=INTEGER},
+			#{adv.purchasesPromoted,jdbcType=INTEGER},
+			#{adv.sales,jdbcType=DECIMAL},
+			#{adv.salesClicks,jdbcType=INTEGER},
+			#{adv.salesPromoted,jdbcType=DECIMAL},
+			#{adv.unitsSold,jdbcType=INTEGER},
+			#{adv.unitsSoldClicks,jdbcType=INTEGER},
+			#{adv.video5SecondViewRate,jdbcType=DECIMAL},
+			#{adv.video5SecondViews,jdbcType=INTEGER},
+			#{adv.videoCompleteViews,jdbcType=INTEGER},
+			#{adv.videoFirstQuartileViews,jdbcType=INTEGER},
+			#{adv.videoMidpointViews,jdbcType=INTEGER},
+			#{adv.videoThirdQuartileViews,jdbcType=INTEGER},
+			#{adv.videoUnmutes,jdbcType=INTEGER},
+			#{adv.viewabilityRate,jdbcType=DECIMAL},
+			#{adv.viewableImpressions,jdbcType=INTEGER},
+			#{adv.viewClickThroughRate,jdbcType=DECIMAL},
+			#{adv.opttime,jdbcType=TIMESTAMP}
 			)
 		</foreach>
 	</insert>
@@ -126,18 +223,18 @@
 	    sum(campaignBudget) campaignBudget, sum(impressions) impressions, sum(clicks) clicks, sum(cost) Spend, 
 	    ifnull((sum(clicks) / sum(impressions)),0) 'Click Thru Rate (CTR)',
 	    ifnull((sum(cost) / sum(clicks)),0) 'Cost Per Click (CPC)',
-	    ifnull(sum(attributedSales14d),0) '14 Day Total Sales',  
-	    case when ifnull(sum(cost),0) > 0 and ifnull(sum(attributedSales14d),0) = 0 
+	    ifnull(sum(sales),0) '14 Day Total Sales',
+	    case when ifnull(sum(cost),0) > 0 and ifnull(sum(sales),0) = 0
 	    then 0
 		else 
-		ifnull((sum(cost) / sum(attributedSales14d)),0) 
+		ifnull((sum(cost) / sum(sales)),0)
 		end 'Total Advertising Cost of Sales (ACoS)',
-		ifnull((sum(attributedSales14d) / sum(cost)),0) 'Total Return on Advertising Spend (RoAS)',
-		ifnull(sum(attributedConversions14d),0) '14 Day Total Orders', 
-		ifnull(sum(attributedConversions14d),0) '14 Day Total Units',
-		ifnull((sum(attributedConversions14d) / sum(clicks)),0) '14 Day Conversion Rate' 
+		ifnull((sum(sales) / sum(cost)),0) 'Total Return on Advertising Spend (RoAS)',
+		ifnull(sum(purchases),0) '14 Day Total Orders',
+		ifnull(sum(unitsSold),0) '14 Day Total Units',
+		ifnull((sum(purchases) / sum(clicks)),0) '14 Day Conversion Rate'
     from t_amz_adv_rpt2_hsa_campaigns_place t
-    left join t_amz_adv_rpt2_hsa_campaigns_place_attributed a on a.campaignId=t.campaignId and a.bydate=t.bydate and t.placementid=a.placementid
+    left join t_amz_adv_rpt2_hsa_campaigns_place_attributed_all a on a.campaignId=t.campaignId and a.placementid =t.placementid and a.bydate=t.bydate
     left join t_amz_adv_campaigns_hsa c  on c.campaignId=t.campaignId and c.profileid=t.profileid
     left join t_amz_adv_rpt_placement p on p.id=t.placementid
     where t.profileid = #{profileid,jdbcType=BIGINT} 

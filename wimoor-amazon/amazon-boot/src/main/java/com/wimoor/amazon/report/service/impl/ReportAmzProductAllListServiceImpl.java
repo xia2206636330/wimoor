@@ -34,7 +34,7 @@ public class ReportAmzProductAllListServiceImpl extends ReportServiceImpl {
 	@Resource
 	private IProductInfoService productInfoService;
 
-	public String treatResponse(AmazonAuthority amazonAuthority,BufferedReader br )  {
+	 public String treatResponse(AmazonAuthority amazonAuthority,BufferedReader br )  {
 		/**
 		 * 
 		 * 0 item-name 1 item-description 2 listing-id 3 seller-sku 4 price 5 quantity 6
@@ -177,9 +177,12 @@ public class ReportAmzProductAllListServiceImpl extends ReportServiceImpl {
 					}
 					if(name!=null && name.length()>=1000){
 						name = name.substring(0, 1000);
-					} 
+					}
 					if (StrUtil.isEmpty(sku)) {
 						continue;
+					}
+					if(sku.equalsIgnoreCase("N5001NLJYB-HeiS")){
+						System.out.println(sku);
 					}
 					if (StrUtil.isNotEmpty(open_date)) {
 						SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");// 16/04/2020 03:51:20 BST	
@@ -226,7 +229,9 @@ public class ReportAmzProductAllListServiceImpl extends ReportServiceImpl {
 					if (productInfo != null) {
 						if (productInfo.getOpenDate() == null || LocalDateTime.now().isBefore(productInfo.getOpenDate())) {
 							ZoneId zoneid=ZoneId.of("Asia/Shanghai");
-							productInfo.setOpenDate(LocalDateTime.ofInstant(openDate.toInstant(), zoneid));
+							if(openDate!=null){
+								productInfo.setOpenDate(LocalDateTime.ofInstant(openDate.toInstant(), zoneid));
+							}
 						}
 						if (StrUtil.isNotEmpty(price)) {
 							BigDecimal buyprice = new BigDecimal(price.trim().toString());
@@ -254,7 +259,9 @@ public class ReportAmzProductAllListServiceImpl extends ReportServiceImpl {
 						productInfo.setFulfillChannel(fulfillment_channel);
 						productInfo.setSku(sku);
 						productInfo.setAsin(asin);
-						productInfo.setOpenDate(LocalDateTime.ofInstant(openDate.toInstant(),ZoneId.systemDefault()));
+						if(openDate!=null){
+							productInfo.setOpenDate(LocalDateTime.ofInstant(openDate.toInstant(),ZoneId.systemDefault()));
+						}
 						productInfo.setAmazonAuthId(new BigInteger(amazonAuthority.getId()));
 						productInfo.setMarketplaceid(amazonAuthority.getMarketPlace().getMarketplaceid());
 						productInfo.setInvalid(Boolean.FALSE);

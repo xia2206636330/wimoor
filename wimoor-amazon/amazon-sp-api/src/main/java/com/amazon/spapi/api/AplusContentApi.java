@@ -47,6 +47,9 @@ import com.amazon.spapi.model.apluscontent.SearchContentDocumentsResponse;
 import com.amazon.spapi.model.apluscontent.SearchContentPublishRecordsResponse;
 import com.amazon.spapi.model.apluscontent.ValidateContentDocumentAsinRelationsResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class AplusContentApi {
     private ApiClient apiClient;
@@ -77,7 +80,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createContentDocumentCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createContentDocumentCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = postContentDocumentRequest;
 
         // create path and map variables
@@ -105,10 +108,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -121,7 +124,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createContentDocumentValidateBeforeCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createContentDocumentValidateBeforeCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceId' is set
         if (marketplaceId == null) {
@@ -134,7 +137,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = createContentDocumentCall(marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
+        Call call = createContentDocumentCall(marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
         return call;
 
     }
@@ -163,7 +166,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<PostContentDocumentResponse> createContentDocumentWithHttpInfo(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createContentDocumentValidateBeforeCall(marketplaceId, postContentDocumentRequest, null, null);
+        Call call = createContentDocumentValidateBeforeCall(marketplaceId, postContentDocumentRequest, null, null);
         Type localVarReturnType = new TypeToken<PostContentDocumentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -178,7 +181,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createContentDocumentAsync(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ApiCallback<PostContentDocumentResponse> callback) throws ApiException, LWAException {
+    public Call createContentDocumentAsync(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ApiCallback<PostContentDocumentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -199,7 +202,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createContentDocumentValidateBeforeCall(marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
+        Call call = createContentDocumentValidateBeforeCall(marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PostContentDocumentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -215,7 +218,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getContentDocumentCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getContentDocumentCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -246,10 +249,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -262,7 +265,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getContentDocumentValidateBeforeCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getContentDocumentValidateBeforeCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'contentReferenceKey' is set
         if (contentReferenceKey == null) {
@@ -280,7 +283,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = getContentDocumentCall(contentReferenceKey, marketplaceId, includedDataSet, progressListener, progressRequestListener);
+        Call call = getContentDocumentCall(contentReferenceKey, marketplaceId, includedDataSet, progressListener, progressRequestListener);
         return call;
 
     }
@@ -311,7 +314,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetContentDocumentResponse> getContentDocumentWithHttpInfo(String contentReferenceKey, String marketplaceId, List<String> includedDataSet) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, null, null);
+        Call call = getContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, null, null);
         Type localVarReturnType = new TypeToken<GetContentDocumentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -327,7 +330,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getContentDocumentAsync(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, final ApiCallback<GetContentDocumentResponse> callback) throws ApiException, LWAException {
+    public Call getContentDocumentAsync(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, final ApiCallback<GetContentDocumentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -348,7 +351,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, progressListener, progressRequestListener);
+        Call call = getContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetContentDocumentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -366,7 +369,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listContentDocumentAsinRelationsCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call listContentDocumentAsinRelationsCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -401,10 +404,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -417,7 +420,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call listContentDocumentAsinRelationsValidateBeforeCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call listContentDocumentAsinRelationsValidateBeforeCall(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'contentReferenceKey' is set
         if (contentReferenceKey == null) {
@@ -430,7 +433,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = listContentDocumentAsinRelationsCall(contentReferenceKey, marketplaceId, includedDataSet, asinSet, pageToken, progressListener, progressRequestListener);
+        Call call = listContentDocumentAsinRelationsCall(contentReferenceKey, marketplaceId, includedDataSet, asinSet, pageToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -465,7 +468,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ListContentDocumentAsinRelationsResponse> listContentDocumentAsinRelationsWithHttpInfo(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = listContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, asinSet, pageToken, null, null);
+        Call call = listContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, asinSet, pageToken, null, null);
         Type localVarReturnType = new TypeToken<ListContentDocumentAsinRelationsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -483,7 +486,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call listContentDocumentAsinRelationsAsync(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken, final ApiCallback<ListContentDocumentAsinRelationsResponse> callback) throws ApiException, LWAException {
+    public Call listContentDocumentAsinRelationsAsync(String contentReferenceKey, String marketplaceId, List<String> includedDataSet, List<String> asinSet, String pageToken, final ApiCallback<ListContentDocumentAsinRelationsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -504,7 +507,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = listContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, asinSet, pageToken, progressListener, progressRequestListener);
+        Call call = listContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, includedDataSet, asinSet, pageToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ListContentDocumentAsinRelationsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -519,7 +522,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call postContentDocumentApprovalSubmissionCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call postContentDocumentApprovalSubmissionCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -548,10 +551,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -564,7 +567,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call postContentDocumentApprovalSubmissionValidateBeforeCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call postContentDocumentApprovalSubmissionValidateBeforeCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'contentReferenceKey' is set
         if (contentReferenceKey == null) {
@@ -577,7 +580,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = postContentDocumentApprovalSubmissionCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
+        Call call = postContentDocumentApprovalSubmissionCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -606,7 +609,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<PostContentDocumentApprovalSubmissionResponse> postContentDocumentApprovalSubmissionWithHttpInfo(String contentReferenceKey, String marketplaceId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = postContentDocumentApprovalSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, null, null);
+        Call call = postContentDocumentApprovalSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, null, null);
         Type localVarReturnType = new TypeToken<PostContentDocumentApprovalSubmissionResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -621,7 +624,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call postContentDocumentApprovalSubmissionAsync(String contentReferenceKey, String marketplaceId, final ApiCallback<PostContentDocumentApprovalSubmissionResponse> callback) throws ApiException, LWAException {
+    public Call postContentDocumentApprovalSubmissionAsync(String contentReferenceKey, String marketplaceId, final ApiCallback<PostContentDocumentApprovalSubmissionResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -642,7 +645,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = postContentDocumentApprovalSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
+        Call call = postContentDocumentApprovalSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PostContentDocumentApprovalSubmissionResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -658,7 +661,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call postContentDocumentAsinRelationsCall(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call postContentDocumentAsinRelationsCall(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = postContentDocumentAsinRelationsRequest;
 
         // create path and map variables
@@ -687,10 +690,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -703,7 +706,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call postContentDocumentAsinRelationsValidateBeforeCall(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call postContentDocumentAsinRelationsValidateBeforeCall(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'contentReferenceKey' is set
         if (contentReferenceKey == null) {
@@ -721,7 +724,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = postContentDocumentAsinRelationsCall(contentReferenceKey, marketplaceId, postContentDocumentAsinRelationsRequest, progressListener, progressRequestListener);
+        Call call = postContentDocumentAsinRelationsCall(contentReferenceKey, marketplaceId, postContentDocumentAsinRelationsRequest, progressListener, progressRequestListener);
         return call;
 
     }
@@ -752,7 +755,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<PostContentDocumentAsinRelationsResponse> postContentDocumentAsinRelationsWithHttpInfo(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = postContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentAsinRelationsRequest, null, null);
+        Call call = postContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentAsinRelationsRequest, null, null);
         Type localVarReturnType = new TypeToken<PostContentDocumentAsinRelationsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -768,7 +771,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call postContentDocumentAsinRelationsAsync(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest, final ApiCallback<PostContentDocumentAsinRelationsResponse> callback) throws ApiException, LWAException {
+    public Call postContentDocumentAsinRelationsAsync(String contentReferenceKey, String marketplaceId, PostContentDocumentAsinRelationsRequest postContentDocumentAsinRelationsRequest, final ApiCallback<PostContentDocumentAsinRelationsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -789,7 +792,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = postContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentAsinRelationsRequest, progressListener, progressRequestListener);
+        Call call = postContentDocumentAsinRelationsValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentAsinRelationsRequest, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PostContentDocumentAsinRelationsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -804,7 +807,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call postContentDocumentSuspendSubmissionCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call postContentDocumentSuspendSubmissionCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -833,10 +836,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -849,7 +852,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call postContentDocumentSuspendSubmissionValidateBeforeCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call postContentDocumentSuspendSubmissionValidateBeforeCall(String contentReferenceKey, String marketplaceId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'contentReferenceKey' is set
         if (contentReferenceKey == null) {
@@ -862,7 +865,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = postContentDocumentSuspendSubmissionCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
+        Call call = postContentDocumentSuspendSubmissionCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -891,7 +894,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<PostContentDocumentSuspendSubmissionResponse> postContentDocumentSuspendSubmissionWithHttpInfo(String contentReferenceKey, String marketplaceId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = postContentDocumentSuspendSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, null, null);
+        Call call = postContentDocumentSuspendSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, null, null);
         Type localVarReturnType = new TypeToken<PostContentDocumentSuspendSubmissionResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -906,7 +909,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call postContentDocumentSuspendSubmissionAsync(String contentReferenceKey, String marketplaceId, final ApiCallback<PostContentDocumentSuspendSubmissionResponse> callback) throws ApiException, LWAException {
+    public Call postContentDocumentSuspendSubmissionAsync(String contentReferenceKey, String marketplaceId, final ApiCallback<PostContentDocumentSuspendSubmissionResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -927,7 +930,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = postContentDocumentSuspendSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
+        Call call = postContentDocumentSuspendSubmissionValidateBeforeCall(contentReferenceKey, marketplaceId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PostContentDocumentSuspendSubmissionResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -942,7 +945,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchContentDocumentsCall(String marketplaceId, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call searchContentDocumentsCall(String marketplaceId, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -972,10 +975,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -988,7 +991,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call searchContentDocumentsValidateBeforeCall(String marketplaceId, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call searchContentDocumentsValidateBeforeCall(String marketplaceId, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceId' is set
         if (marketplaceId == null) {
@@ -996,7 +999,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = searchContentDocumentsCall(marketplaceId, pageToken, progressListener, progressRequestListener);
+        Call call = searchContentDocumentsCall(marketplaceId, pageToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1025,7 +1028,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SearchContentDocumentsResponse> searchContentDocumentsWithHttpInfo(String marketplaceId, String pageToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = searchContentDocumentsValidateBeforeCall(marketplaceId, pageToken, null, null);
+        Call call = searchContentDocumentsValidateBeforeCall(marketplaceId, pageToken, null, null);
         Type localVarReturnType = new TypeToken<SearchContentDocumentsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1040,7 +1043,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchContentDocumentsAsync(String marketplaceId, String pageToken, final ApiCallback<SearchContentDocumentsResponse> callback) throws ApiException, LWAException {
+    public Call searchContentDocumentsAsync(String marketplaceId, String pageToken, final ApiCallback<SearchContentDocumentsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1061,7 +1064,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = searchContentDocumentsValidateBeforeCall(marketplaceId, pageToken, progressListener, progressRequestListener);
+        Call call = searchContentDocumentsValidateBeforeCall(marketplaceId, pageToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SearchContentDocumentsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1077,7 +1080,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchContentPublishRecordsCall(String marketplaceId, String asin, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call searchContentPublishRecordsCall(String marketplaceId, String asin, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1109,10 +1112,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1125,7 +1128,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call searchContentPublishRecordsValidateBeforeCall(String marketplaceId, String asin, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call searchContentPublishRecordsValidateBeforeCall(String marketplaceId, String asin, String pageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceId' is set
         if (marketplaceId == null) {
@@ -1138,7 +1141,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = searchContentPublishRecordsCall(marketplaceId, asin, pageToken, progressListener, progressRequestListener);
+        Call call = searchContentPublishRecordsCall(marketplaceId, asin, pageToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1169,7 +1172,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SearchContentPublishRecordsResponse> searchContentPublishRecordsWithHttpInfo(String marketplaceId, String asin, String pageToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = searchContentPublishRecordsValidateBeforeCall(marketplaceId, asin, pageToken, null, null);
+        Call call = searchContentPublishRecordsValidateBeforeCall(marketplaceId, asin, pageToken, null, null);
         Type localVarReturnType = new TypeToken<SearchContentPublishRecordsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1185,7 +1188,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchContentPublishRecordsAsync(String marketplaceId, String asin, String pageToken, final ApiCallback<SearchContentPublishRecordsResponse> callback) throws ApiException, LWAException {
+    public Call searchContentPublishRecordsAsync(String marketplaceId, String asin, String pageToken, final ApiCallback<SearchContentPublishRecordsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1206,7 +1209,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = searchContentPublishRecordsValidateBeforeCall(marketplaceId, asin, pageToken, progressListener, progressRequestListener);
+        Call call = searchContentPublishRecordsValidateBeforeCall(marketplaceId, asin, pageToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SearchContentPublishRecordsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1222,7 +1225,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call updateContentDocumentCall(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call updateContentDocumentCall(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = postContentDocumentRequest;
 
         // create path and map variables
@@ -1251,10 +1254,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1267,7 +1270,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateContentDocumentValidateBeforeCall(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call updateContentDocumentValidateBeforeCall(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'contentReferenceKey' is set
         if (contentReferenceKey == null) {
@@ -1285,7 +1288,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = updateContentDocumentCall(contentReferenceKey, marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
+        Call call = updateContentDocumentCall(contentReferenceKey, marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1316,7 +1319,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<PostContentDocumentResponse> updateContentDocumentWithHttpInfo(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = updateContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentRequest, null, null);
+        Call call = updateContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentRequest, null, null);
         Type localVarReturnType = new TypeToken<PostContentDocumentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1332,7 +1335,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call updateContentDocumentAsync(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ApiCallback<PostContentDocumentResponse> callback) throws ApiException, LWAException {
+    public Call updateContentDocumentAsync(String contentReferenceKey, String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, final ApiCallback<PostContentDocumentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1353,7 +1356,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
+        Call call = updateContentDocumentValidateBeforeCall(contentReferenceKey, marketplaceId, postContentDocumentRequest, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PostContentDocumentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1369,7 +1372,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call validateContentDocumentAsinRelationsCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call validateContentDocumentAsinRelationsCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = postContentDocumentRequest;
 
         // create path and map variables
@@ -1399,10 +1402,10 @@ public class AplusContentApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1415,7 +1418,7 @@ public class AplusContentApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call validateContentDocumentAsinRelationsValidateBeforeCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call validateContentDocumentAsinRelationsValidateBeforeCall(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceId' is set
         if (marketplaceId == null) {
@@ -1428,7 +1431,7 @@ public class AplusContentApi {
         }
         
 
-        com.squareup.okhttp.Call call = validateContentDocumentAsinRelationsCall(marketplaceId, postContentDocumentRequest, asinSet, progressListener, progressRequestListener);
+        Call call = validateContentDocumentAsinRelationsCall(marketplaceId, postContentDocumentRequest, asinSet, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1459,7 +1462,7 @@ public class AplusContentApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ValidateContentDocumentAsinRelationsResponse> validateContentDocumentAsinRelationsWithHttpInfo(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = validateContentDocumentAsinRelationsValidateBeforeCall(marketplaceId, postContentDocumentRequest, asinSet, null, null);
+        Call call = validateContentDocumentAsinRelationsValidateBeforeCall(marketplaceId, postContentDocumentRequest, asinSet, null, null);
         Type localVarReturnType = new TypeToken<ValidateContentDocumentAsinRelationsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1475,7 +1478,7 @@ public class AplusContentApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call validateContentDocumentAsinRelationsAsync(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet, final ApiCallback<ValidateContentDocumentAsinRelationsResponse> callback) throws ApiException, LWAException {
+    public Call validateContentDocumentAsinRelationsAsync(String marketplaceId, PostContentDocumentRequest postContentDocumentRequest, List<String> asinSet, final ApiCallback<ValidateContentDocumentAsinRelationsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1496,7 +1499,7 @@ public class AplusContentApi {
             };
         }
 
-        com.squareup.okhttp.Call call = validateContentDocumentAsinRelationsValidateBeforeCall(marketplaceId, postContentDocumentRequest, asinSet, progressListener, progressRequestListener);
+        Call call = validateContentDocumentAsinRelationsValidateBeforeCall(marketplaceId, postContentDocumentRequest, asinSet, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ValidateContentDocumentAsinRelationsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1560,10 +1563,10 @@ public class AplusContentApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new AplusContentApi(new ApiClient()
+            return new AplusContentApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

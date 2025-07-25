@@ -83,9 +83,9 @@ public Result<Integer> saveShipPlanItem(@RequestBody List<AmzProductSalesPlanShi
 	}
     for(AmzProductSalesPlanShipItem item:list) {
     	if(item.getAmount()>0) {
-        	 List<AmzProductSalesPlanShipItem> oldlist = oldmap.get(item.getMarketplaceid());
-        	 if(item.getSubnum()==null||item.getSubnum()<=1) {
-        		if(oldlist!=null) {
+        	 if(item.getSubList()==null||item.getSubList().size()==0) {
+				 List<AmzProductSalesPlanShipItem> oldlist = oldmap.get(item.getMarketplaceid());
+				 if(oldlist!=null) {
         			for(AmzProductSalesPlanShipItem reitem:oldlist) {
             			iAmzProductSalesPlanShipItemService.removeById(reitem.getId());
             		}
@@ -94,6 +94,7 @@ public Result<Integer> saveShipPlanItem(@RequestBody List<AmzProductSalesPlanShi
         		item.setShopid(new BigInteger(user.getCompanyid()));
             	item.setOperator(new BigInteger(user.getId()));
             	item.setOpttime(LocalDateTime.now());
+				item.setIsdefault(true);
             	item.setAftersalesday(iAmzProductSalesPlanService.getAfterSales(item));	
             	count++;
             	if(item.getOverseaid()==null) {
@@ -115,8 +116,41 @@ public Result<Integer> saveShipPlanItem(@RequestBody List<AmzProductSalesPlanShi
 				 }else{
 					 iAmzProductSalesPlanShipItemService.save(item);
 				 }
-        	}else if(item.getSubnum()>1) {
-        		oldmap.remove(item.getMarketplaceid());
+        	}else if(item.getSubList()!=null&&item.getSubList().size()>0) {
+				 List<AmzProductSalesPlanShipItem> oldlist = oldmap.get(item.getMarketplaceid());
+				 if(oldlist!=null) {
+					 for(AmzProductSalesPlanShipItem reitem:oldlist) {
+						 iAmzProductSalesPlanShipItemService.removeById(reitem.getId());
+					 }
+					 oldmap.remove(item.getMarketplaceid());
+				 }
+				 for(AmzProductSalesPlanShipItem subitem:item.getSubList()){
+					 subitem.setShopid(new BigInteger(user.getCompanyid()));
+					 subitem.setOperator(new BigInteger(user.getId()));
+					 subitem.setOpttime(LocalDateTime.now());
+					 subitem.setAftersalesday(iAmzProductSalesPlanService.getAfterSales(item));
+					 count++;
+					 if(item.getOverseaid()==null) {
+						 subitem.setOverseaid(new BigInteger("0"));
+					 }
+					 subitem.setIsdefault(false);
+					 LambdaQueryWrapper<AmzProductSalesPlanShipItem> query=new LambdaQueryWrapper<AmzProductSalesPlanShipItem>();
+					 query.eq(AmzProductSalesPlanShipItem::getShopid, user.getCompanyid());
+					 query.eq(AmzProductSalesPlanShipItem::getGroupid, 	item.getGroupid());
+					 query.eq(AmzProductSalesPlanShipItem::getMarketplaceid,subitem.getMarketplaceid());
+					 query.eq(AmzProductSalesPlanShipItem::getSku, 	subitem.getSku());
+					 query.eq(AmzProductSalesPlanShipItem::getAmazonauthid, 	subitem.getAmazonauthid());
+					 query.eq(AmzProductSalesPlanShipItem::getWarehouseid,subitem.getWarehouseid());
+					 query.eq(AmzProductSalesPlanShipItem::getOverseaid,subitem.getOverseaid());
+					 query.eq(AmzProductSalesPlanShipItem::getTranstype,subitem.getTranstype());
+					 AmzProductSalesPlanShipItem oldone = iAmzProductSalesPlanShipItemService.getOne(query);
+					 if(oldone!=null){
+						 subitem.setId(oldone.getId());
+						 iAmzProductSalesPlanShipItemService.updateById(subitem);
+					 }else{
+						 iAmzProductSalesPlanShipItemService.save(subitem);
+					 }
+				 }
         	}
     	}
     }

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +31,6 @@ import com.amazon.spapi.model.reports.Report;
 import com.amazon.spapi.model.reports.ReportDocument;
 import com.amazon.spapi.model.reports.ReportOptions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import com.wimoor.amazon.auth.mapper.AmazonGroupMapper;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.pojo.entity.Marketplace;
@@ -65,7 +61,7 @@ public abstract class ReportServiceImpl  implements IReportService {
 	ApiBuildService apiBuildService;
 	@Autowired
 	IReportRequestTypeService iReportRequestTypeService;
-	final DownloadHelper downloadHelper = new DownloadHelper.Builder().build();
+
 	/**
 	 * 获取子类中的具体报表类型
 	 * 
@@ -95,7 +91,7 @@ public abstract class ReportServiceImpl  implements IReportService {
 		  try {
 			  ReportsApi api = apiBuildService.getReportsApi(amazonAuthority);
 			  ApiCallback<CreateReportResponse> response = new ApiCallbackReportCreate(handler,amazonAuthority,market,start,end);
-		      api.createReportAsync(body,response);
+			  api.createReportAsync(body,response);
 		  } catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -178,10 +174,16 @@ public abstract class ReportServiceImpl  implements IReportService {
 	   * @throws IllegalArgumentException when the charset is missing
 	   */
 	  public String download(AmazonAuthority amazonAuthority,String url, String compressionAlgorithm,ReportRequestRecord record) throws IOException, IllegalArgumentException {
-	    OkHttpClient httpclient = new OkHttpClient();
+	    // Execute the signed request.
+	    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+	    // 设置连接超时时间为10秒
+	    builder.connectTimeout(30, TimeUnit.MINUTES);
+	    // 设置读取超时时间为30秒
+	    builder.readTimeout(30, TimeUnit.MINUTES);
+	     // 设置写入超时时间为30秒（如果你需要进行POST或PUT请求，并且需要设置写入超时）
+	    builder.writeTimeout(30, TimeUnit.MINUTES);
+	    OkHttpClient httpclient = builder.build();
 	    Request request = new Request.Builder().url(url).get().build();
-	    httpclient.setConnectTimeout(30, TimeUnit.MINUTES);
-	    httpclient.setReadTimeout(30, TimeUnit.MINUTES);
 	    Response response = httpclient.newCall(request).execute();
 	    String mlog="wait down Response";
 	    if (!response.isSuccessful()) {

@@ -42,7 +42,7 @@ public class ReportAmzFeedbackServiceImpl extends ReportServiceImpl {
 					SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd");
 					SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yy");
 					if(amazonAuthority.getRegion().equals("NA")){
-                        if(Integer.parseInt(date.split("/")[1])>12){
+                        if(date.contains("/")&&Integer.parseInt(date.split("/")[1])>12){
 							sdf2 = new SimpleDateFormat("MM/dd/yy");
 						}
 					}

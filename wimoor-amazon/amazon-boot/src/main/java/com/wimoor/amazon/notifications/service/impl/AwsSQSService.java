@@ -34,7 +34,10 @@ public class AwsSQSService  implements InitializingBean {
 	
 	@Value("${spring.profiles.active}")
 	String profiles;
-	
+
+	@Value("${aws.region}")
+	String region;
+
 	public String getProfiles() {
 		return profiles;
 	}
@@ -63,8 +66,12 @@ public class AwsSQSService  implements InitializingBean {
 				// 处理消息
 				e.printStackTrace();
 			}
-			sqs = AmazonSQSClientBuilder.standard().withCredentials(provider).withRegion(Regions.US_WEST_2).build();
-		} 
+			if(region!=null&&region.length()>0){
+				sqs = AmazonSQSClientBuilder.standard().withCredentials(provider).withRegion(Regions.fromName(region.toLowerCase().trim())).build();
+			}else{
+				sqs = AmazonSQSClientBuilder.standard().withCredentials(provider).withRegion(Regions.US_WEST_2).build();
+			}
+		}
 	}
 	
 	public void stopTask() {
@@ -76,7 +83,7 @@ public class AwsSQSService  implements InitializingBean {
 	boolean isrun=true;
 	public void runTask() {
 		// 请求消息
-		if(!"prod".equals(profiles)) {
+		if(profiles!=null&&profiles.contains("dev")) {
 			return;
 		}
 		startSQS();

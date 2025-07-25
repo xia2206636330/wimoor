@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wimoor.common.result.Result;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.thirdparty.mapper.ThirdPartyAPIMapper;
 import com.wimoor.erp.thirdparty.mapper.ThirdPartyQuoteBuyerMapper;
@@ -46,6 +47,7 @@ public class ThirdPartyApiServiceImpl extends ServiceImpl<ThirdPartyAPIMapper, T
         queryApi.eq(ThirdPartyAPI::getShopid,user.getCompanyid());
         if(systems!=null&&systems.size()>0){
             queryApi.in(ThirdPartyAPI::getSystem,systems);
+            queryApi.eq(ThirdPartyAPI::getIsdelete,false);
             return this.baseMapper.selectList(queryApi);
         }else{
             return new ArrayList<ThirdPartyAPI>();

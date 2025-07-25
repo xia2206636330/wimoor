@@ -25,4 +25,6 @@ public interface InventoryRecordMapper  extends BaseMapper<InventoryRecord> {
 	
 	List<Map<String, Object>> findSkuNowInventory(@Param("shopid")String shopid,@Param("materialid")String materialid,
 			@Param("warehouseid")String warehouseid);
+
+	List<Map<String, Object>> selectConsumableRecord(@Param("param") Map<String, Object> maps);
 }

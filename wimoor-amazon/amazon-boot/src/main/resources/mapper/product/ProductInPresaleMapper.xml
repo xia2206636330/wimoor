@@ -23,7 +23,7 @@
 		values
 		<foreach collection="list" item="adv" index="index" separator=",">
 			(
-			#{adv.id,jdbcType=CHAR},
+			uuid_short(),
 			#{adv.sku,jdbcType=CHAR},
 			#{adv.marketplaceid,jdbcType=CHAR},
 			#{adv.groupid,jdbcType=CHAR}, 

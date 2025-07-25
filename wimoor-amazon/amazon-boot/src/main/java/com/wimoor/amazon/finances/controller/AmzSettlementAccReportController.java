@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wimoor.amazon.summary.service.IAmazonSettlementAnalysisService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -47,7 +48,7 @@ public class AmzSettlementAccReportController {
 final IAmzSettlementAccReportService iAmzSettlementAccReportService;
 final IAmzSettlementReportService iAmzSettlementReportService;
 final IAmzFinAccountService iAmzFinAccountService;
-
+final IAmazonSettlementAnalysisService iAmazonSettlementAnalysisService;
 @GetMapping("/getAccount")
 public Result<?> getAccountAction(String currency ) {
 	UserInfo user = UserInfoContext.get();
@@ -204,6 +205,101 @@ public Result<?> getSettlementAccReportAction(@RequestBody AmzSettlementDTO dto)
 }
 
 
+	@PostMapping("/checkSettlementSummary")
+	@SystemControllerLog("校验账期汇总")
+	public Result<?> checkSettlementSummaryAction(@RequestBody AmzSettlementDTO dto) throws ParseException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		UserInfo user = UserInfoContext.get();
+		String fromDate = dto.getFromDate();
+		String fatype = dto.getFatype();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if (StrUtil.isNotEmpty(fromDate)) {
+			map.put("fromDate", sdf.format(sdf.parse(fromDate.trim())));
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			fromDate = GeneralUtil.formatDate(cal.getTime(), sdf);
+			map.put("fromDate", fromDate);
+		}
+		String endDate = dto.getEndDate();
+		if (StrUtil.isNotEmpty(endDate)) {
+			map.put("endDate", sdf.format(sdf.parse(endDate.trim())));
+		} else {
+			endDate = GeneralUtil.formatDate(new Date(), sdf);
+			map.put("endDate", endDate);
+		}
+		String marketplace_name = dto.getMarketplace_name();
+		if (StrUtil.isEmpty(marketplace_name) || "all".equals(marketplace_name)) {
+			marketplace_name = null;
+		}
+		String groupid = dto.getGroupid();
+		if (StrUtil.isEmpty(groupid) || "all".equals(groupid)) {
+			groupid = null;
+		}
+		String currency = dto.getCurrency();
+		String datetype = dto.getDatetype();
+		if (StrUtil.isEmpty(datetype)) {
+			datetype = null;
+		}
+		map.put("datetype", datetype);
+		map.put("groupid", groupid);
+		map.put("shopid", user.getCompanyid());
+		map.put("marketplace_name", marketplace_name);
+		map.put("currency", currency);
+		if("finsett".equals(fatype)) {
+			List<Map<String, Object>> list = iAmzSettlementAccReportService.findSettlementAcc(map);
+			iAmazonSettlementAnalysisService.checkSummaryDataByManual(list);
+		}
+      return Result.success();
+	}
+
+	@PostMapping("/doSettlementSummary")
+	@SystemControllerLog("强制账期汇总")
+	public Result<?> doSettlementSummaryAction(@RequestBody AmzSettlementDTO dto) throws ParseException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		UserInfo user = UserInfoContext.get();
+		String fromDate = dto.getFromDate();
+		String fatype = dto.getFatype();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if (StrUtil.isNotEmpty(fromDate)) {
+			map.put("fromDate", sdf.format(sdf.parse(fromDate.trim())));
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			fromDate = GeneralUtil.formatDate(cal.getTime(), sdf);
+			map.put("fromDate", fromDate);
+		}
+		String endDate = dto.getEndDate();
+		if (StrUtil.isNotEmpty(endDate)) {
+			map.put("endDate", sdf.format(sdf.parse(endDate.trim())));
+		} else {
+			endDate = GeneralUtil.formatDate(new Date(), sdf);
+			map.put("endDate", endDate);
+		}
+		String marketplace_name = dto.getMarketplace_name();
+		if (StrUtil.isEmpty(marketplace_name) || "all".equals(marketplace_name)) {
+			marketplace_name = null;
+		}
+		String groupid = dto.getGroupid();
+		if (StrUtil.isEmpty(groupid) || "all".equals(groupid)) {
+			groupid = null;
+		}
+		String currency = dto.getCurrency();
+		String datetype = dto.getDatetype();
+		if (StrUtil.isEmpty(datetype)) {
+			datetype = null;
+		}
+		map.put("datetype", datetype);
+		map.put("groupid", groupid);
+		map.put("shopid", user.getCompanyid());
+		map.put("marketplace_name", marketplace_name);
+		map.put("currency", currency);
+		if("finsett".equals(fatype)) {
+			List<Map<String, Object>> list = iAmzSettlementAccReportService.findSettlementAcc(map);
+			iAmazonSettlementAnalysisService.doSummaryDataByManual(list);
+		}
+		return Result.success();
+	}
 
 		@SystemControllerLog( "下载sum")
 		@PostMapping("/getSettlementAccReportSum")

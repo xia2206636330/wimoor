@@ -349,7 +349,16 @@ public abstract class AmzAdvReportTreatServiceImpl implements IAmzAdvReportTreat
 	public void requestReportParamBuildV3(AmzAdvAuth advauth,AmzAdvProfile profile,AmzAdvReportRequestType type,Date startDate,Date endDate,Boolean isold) {
 		String url = "/reporting/reports";
         List<AmzAdvRequest> list=getRequestList( profile, type);
-		if(list!=null&&list.size()>0) {  return;  }
+		Calendar c = Calendar.getInstance();
+		if(list!=null&&list.size()>0) {
+			if(!isold) {
+				for (AmzAdvRequest oldone:list){
+						if(oldone!=null&&GeneralUtil.distanceOfHour(oldone.getRequesttime(), new Date())<1) {
+							return ;
+						}
+				}
+			}
+		}
 		JSONObject param = formatterParamV3(  type,  startDate,  endDate);
 		runRequestReportV3( profile, param, url, startDate,endDate, type,null);
 	}
@@ -411,9 +420,16 @@ public abstract class AmzAdvReportTreatServiceImpl implements IAmzAdvReportTreat
  
     
   public boolean isV3Report( AmzAdvReportRequestType type) {
-	  return type.getCampaigntype().equals("sp");
+	  return type.getCampaigntype().equals("sp")||type.getCampaigntype().equals("sd")||type.getCampaigntype().equals("hsa");
   }
-  
+
+	public void  requestProductAdsReport(AmzAdvAuth advauth, AmzAdvProfile profile, AmzAdvReportRequestType type) {
+		Calendar c=Calendar.getInstance();
+		Date end = c.getTime();
+		c.add(Calendar.DATE, -2);
+		requestReportParamBuildV3(advauth, profile, type, c.getTime() ,end, true);;
+	}
+
   public void  requestReport(AmzAdvAuth advauth, AmzAdvProfile profile, AmzAdvReportRequestType type) { 
     if(isV3Report(type)) {
 		Calendar c=Calendar.getInstance();

@@ -101,7 +101,7 @@ public class ShipTransCompanyController {
 			workbook.close();
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -219,13 +219,8 @@ public class ShipTransCompanyController {
 			}
 		}
 		for( ShipTransChannel oldone:oldlist) {
-			if(!useable.contains(oldone.getId())) {
-				if(isUsedInTransDetail(oldone)) {
-					throw new BizException("["+oldone.getName()+"]已被使用无法删除");
-				}
-				shipTransChannelService.removeById(oldone.getId());
-			}
-
+			oldone.setDisabled(true);
+			shipTransChannelService.updateById(oldone);
 		}
 		return Result.success();
 	}
@@ -338,9 +333,14 @@ public class ShipTransCompanyController {
 		QueryWrapper<ErpShipTransType> queryAll=new QueryWrapper<ErpShipTransType>();
 		queryAll.eq("shopid", shopid);
 		List<ErpShipTransType> oldlist = erpShipTransTypeService.list(user,queryAll);
+		List<ErpShipTransType> sysList = erpShipTransTypeService.lambdaQuery().isNull(ErpShipTransType::getShopid).list();
 		Map<String,ErpShipTransType> oldMap=new HashMap<String,ErpShipTransType>();
+		Map<String,ErpShipTransType> oldSys=new HashMap<String,ErpShipTransType>();
 		for(ErpShipTransType item:oldlist) {
 			oldMap.put(item.getName(), item);
+		}
+		for(ErpShipTransType item:sysList) {
+			oldSys.put(item.getId(), item);
 		}
 		Set<String> nameset=new HashSet<String>();
 		for(ErpShipTransType item:tranlist) {
@@ -350,6 +350,7 @@ public class ShipTransCompanyController {
 			}else if(oldone==null||!oldone.getId().equals(item.getId())) {
 				throw new BizException("运输方式名称不能重复");
 			}
+			ErpShipTransType oldsys=oldSys.get(item.getId());
 			if(oldone!=null) {
 				oldMap.remove(item.getName());
 				if(oldone.getDisable()) {
@@ -357,6 +358,9 @@ public class ShipTransCompanyController {
 				}
 				oldone.setDay(item.getDay());
 				erpShipTransTypeService.updateById(user,oldone);
+			}else if(oldsys!=null){
+				oldsys.setDay(item.getDay());
+				erpShipTransTypeService.updateById(user,oldsys);
 			}else {
 				if(StrUtil.isBlank(item.getName())) {
 					throw new BizException("运输方式名称不能为空");
@@ -373,9 +377,6 @@ public class ShipTransCompanyController {
 
 		for( Entry<String, ErpShipTransType> entry:oldMap.entrySet()) {
 			ErpShipTransType oldone=entry.getValue();
-			if(isUsedInTransDetail(oldone)) {
-				throw new BizException("["+oldone.getName()+"]已被使用无法删除");
-			}
 			oldone.setDisable(true);
 			erpShipTransTypeService.updateById(user,oldone);
 		}
@@ -438,8 +439,6 @@ public class ShipTransCompanyController {
 				e.printStackTrace();
 				return Result.failed();
 			} catch (EncryptedDocumentException e) {
-				e.printStackTrace();
-			}  catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

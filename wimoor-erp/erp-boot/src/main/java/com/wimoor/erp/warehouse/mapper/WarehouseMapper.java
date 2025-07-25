@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 @Mapper
 public interface WarehouseMapper extends BaseMapper<Warehouse> {
-	IPage<Warehouse> findByCondition(Page<?> page,@Param("search") String search, @Param("shopid") String shopid,@Param("ftype") String ftype,@Param("parentid")String parentid); 
+	IPage<Warehouse> findByCondition(Page<?> page,@Param("search") String search, @Param("shopid") String shopid,@Param("ftype") String ftype,@Param("parentid")String parentid,@Param("showhide") String showhide);
 	
 	String selectTypeByName(@Param("fname")String fname);
 

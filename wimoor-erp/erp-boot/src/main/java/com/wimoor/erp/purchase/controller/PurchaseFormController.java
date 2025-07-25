@@ -16,9 +16,8 @@ import com.wimoor.common.user.UserInfo;
 import com.wimoor.common.user.UserInfoContext;
 import com.wimoor.common.user.UserLimitDataType;
 import com.wimoor.erp.api.AdminClientOneFeignManager;
-import com.wimoor.erp.assembly.service.IAssemblyFormEntryService;
-import com.wimoor.erp.assembly.service.IAssemblyService;
-import com.wimoor.erp.common.pojo.entity.DownloadReport;
+import com.wimoor.erp.material.service.IAssemblyFormEntryService;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.common.pojo.entity.ERPBizException;
 import com.wimoor.erp.common.service.IDownloadReportService;
 import com.wimoor.erp.finance.pojo.entity.FinAccount;
@@ -39,6 +38,7 @@ import com.wimoor.erp.purchase.pojo.vo.PurchaseFormReceiveVo;
 import com.wimoor.erp.purchase.service.*;
 import com.wimoor.erp.purchase.service.impl.PurchaseFormPaymentServiceImpl;
 import com.wimoor.erp.stock.service.IChangeWhFormEntryService;
+import com.wimoor.erp.thirdparty.service.IThirdPartyWarehouseBindService;
 import com.wimoor.erp.util.LockCheckUtils;
 import com.wimoor.erp.warehouse.pojo.entity.Warehouse;
 import com.wimoor.erp.warehouse.service.IWarehouseService;
@@ -60,7 +60,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -95,6 +94,7 @@ public class PurchaseFormController {
     final IInventoryService iInventoryService;
 	final IDownloadReportService downloadReportService;
 	final IChangeWhFormEntryService iChangeWhFormEntryService;
+	final IThirdPartyWarehouseBindService thirdPartyWarehouseBindService;
 	@GetMapping("/getdetail")
 	public Result<Map<String, Object>> getDetailAction(String id) throws ERPBizException {
 		UserInfo userinfo = UserInfoContext.get();
@@ -693,16 +693,21 @@ public class PurchaseFormController {
 		@GetMapping("/refreshAlibabaOrder")
 		public Result<Object> refreshAlibabaOrderAction() throws BizException {
 			try {
-			    iInventoryHisService.runTask();
+				iInventoryHisService.runTask();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				thirdPartyWarehouseBindService.runTask();
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
 			try {
 				purchaseFormEntryAlibabaInfoService.refreshAblibabaDateTask();
-				
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
+
 			return Result.success();
 		}
 		
@@ -713,6 +718,7 @@ public class PurchaseFormController {
 		}
 		
 		@ApiOperation(value = "添加采购单")
+		@SystemControllerLog( "新增采购单")
 		@Transactional
 		@PostMapping("/saveData")
 		public Result<Map<String, Object>> saveDataAction(@RequestBody PurchaseSaveDTO dto){
@@ -1272,6 +1278,44 @@ public class PurchaseFormController {
 			result.put("notice", notice);
 			return Result.success(result);
 		}
+
+	@SystemControllerLog(value = "批量修改SKU公告")
+	@GetMapping("/updateNoticeAll")
+	public Result<Map<String, Object>> updateNoticeAllAction(String entryids,String notice){
+		UserInfo user = UserInfoContext.get();
+		Map<String, Object> map=new HashMap<String, Object>();
+		String shopid = user.getCompanyid();
+		if(StrUtil.isNotBlank(entryids)){
+			String[] ids = entryids.split(",");
+			for(int i=0;i<ids.length;i++){
+				String entryid = ids[i];
+				if(StrUtil.isNotBlank(entryid)){
+					purchaseFormService.updateNotice(entryid, notice, shopid,user.getId());
+				}
+			}
+		}
+		map.put("notice", notice);
+		return Result.success(map);
+	}
+
+	@SystemControllerLog(value = "修改单据公告")
+	@GetMapping("/updateNoticeForm")
+	public Result<Map<String, Object>> updateNoticeFormAction(String formid,String notice,String entryids){
+		UserInfo user = UserInfoContext.get();
+		Map<String, Object> map=new HashMap<String, Object>();
+		if(StrUtil.isNotBlank(formid)){
+			PurchaseForm form = purchaseFormService.getById(formid);
+			form.setRemark(notice);
+			purchaseFormService.updateById(form);
+			if(StrUtil.isNotBlank(entryids)){
+				updateNoticeAllAction( entryids, notice);
+			}
+		}
+		map.put("notice", notice);
+		return Result.success(map);
+	}
+
+
 		
 		
 		@PostMapping("/downExcelReports")
@@ -1483,7 +1527,7 @@ public class PurchaseFormController {
 		public Result<String> uploadPaymentFileAction(@RequestParam("file")MultipartFile file)  {
 		       UserInfo user=UserInfoContext.get();
 		       List<FinanceProject> projectlist = iFinanceProjectService.findProject(user.getCompanyid());
-		       List<PurchaseFormPaymentMethod> paymethlist = iFaccountService.findPurchasePayMethod();
+		       List<PurchaseFormPaymentMethod> paymethlist = iFaccountService.findPurchasePayMethod(user.getCompanyid());
 		       Map<String,FinanceProject> projectMap=new HashMap<String,FinanceProject>();
 		       Map<String,PurchaseFormPaymentMethod> paymethMap=new HashMap<String,PurchaseFormPaymentMethod>();
 		       for(FinanceProject item:projectlist) {
@@ -1506,18 +1550,41 @@ public class PurchaseFormController {
 							}
 							Cell numbercell = info.getCell(0);
 							String number = numbercell.getStringCellValue();
+							if(StrUtil.isBlank(number)){
+								throw new BizException("第"+(i+1)+"行，采购单号不能为空");
+							}
+							number=number.replaceAll(" ", "");
+							number=number.trim();
 							Cell skucell=info.getCell(1);
 							String sku=skucell.getStringCellValue();
+							if(StrUtil.isBlank(sku)){
+								throw new BizException("第"+(i+1)+"行，采购单号"+number+"对应SKU不能为空");
+							}
+							sku=sku.replaceAll(" ", "");
+							sku=sku.trim();
+
 							Cell feetypecell=info.getCell(2);
 							String feetype=feetypecell.getStringCellValue();
+							if(StrUtil.isBlank(feetype)){
+								throw new BizException("第"+(i+1)+"行，采购单号"+number+"对应"+sku+"费用类型不能为空");
+							}
+							feetype=feetype.replaceAll(" ", "");
+							feetype=feetype.trim();
 							Cell paytypecell=info.getCell(3);
 							String paytype=paytypecell.getStringCellValue();
+							if(StrUtil.isBlank(paytype)){
+								throw new BizException("第"+(i+1)+"行，采购单号"+number+"对应"+sku+"支付方式不能为空");
+							}
+							paytype=paytype.replaceAll(" ", "");
+							paytype=paytype.trim();
 							Cell amountcell=info.getCell(4);
 							Double amount = amountcell.getNumericCellValue();
+							if(amount==null){
+								throw new BizException("第"+(i+1)+"行，采购单号"+number+"对应"+sku+"支付费用不能为空");
+							}
 							Cell remarkcell=info.getCell(5);
 							String remark=null;
-							if(remarkcell==null) {
-								remarkcell=info.createCell(5);
+							if(remarkcell!=null) {
 								remark=remarkcell.getStringCellValue();
 							}
 							String key=user.getCompanyid()+number+sku;
@@ -1569,8 +1636,6 @@ public class PurchaseFormController {
 					} catch (EncryptedDocumentException e) {
 						e.printStackTrace();
 					} catch (InvalidFormatException e) {
-						e.printStackTrace();
-					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}

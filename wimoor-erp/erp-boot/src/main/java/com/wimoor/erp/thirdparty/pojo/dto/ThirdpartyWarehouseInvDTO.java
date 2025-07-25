@@ -9,5 +9,8 @@ public class ThirdpartyWarehouseInvDTO extends BasePageQuery {
     String action;
     String shopid;
     String houseid;
+    String source_platform;
     String sku;
+    String createdStartTime;
+    String createdEndTime;
 }

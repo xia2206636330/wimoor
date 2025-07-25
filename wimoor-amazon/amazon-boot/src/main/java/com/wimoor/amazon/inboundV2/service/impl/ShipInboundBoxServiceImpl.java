@@ -121,11 +121,15 @@ public List<ShipInboundBox> findListByShipmentid(String formid,String shipmentid
 	queryWrapper.eq("formid", formid);
 	if(shipmentid!=null) {
 		queryWrapper.eq("shipmentid", shipmentid);
-		queryWrapper.orderByAsc("boxid");
+		queryWrapper.orderByAsc("id");
 	}else{
 		queryWrapper.orderByAsc("boxnum");
 	}
 	return this.baseMapper.selectList(queryWrapper);
+}
+
+public List<Map<String,Object>> findListAllByShipmentid(String formid,String shipmentid) {
+	return this.baseMapper.findListAllByShipmentid(formid,shipmentid);
 }
 
 public List<Map<String, Object>> findShipInboundBox(String inboundPlanId) {
@@ -137,7 +141,12 @@ public Boolean hasSubmitPackage(ShipInboundPlan inplan) {
 	ShipInboundOperation operation = iShipInboundOperationService.getOperation(auth, inplan.getId(), "setPackingInformation");
 	return operation!=null&&(operation.getOperationStatus().equals("SUCCESS"));
 }
- 
+ public Map<String,Object> getBoxDetialCase(PackingDTO dto){
+	 Map<String, Object> map = new HashMap<String,Object>();
+	 List<Map<String,Object>> listbox = this.baseMapper.findListByPackageGroupidCase(dto.getFormid(),dto.getPackingGroupId());
+	 map.put("listbox",listbox);
+	 return map;
+ }
 @SuppressWarnings("unchecked")
 public Map<String, Object> getBoxDetial(PackingDTO dto)  {
 	Map<String, Object> map = new HashMap<String,Object>();
@@ -223,6 +232,12 @@ public Map<String, Object> getBoxDetial(PackingDTO dto)  {
 	return map;
 }
 
+	public Map<String, Object> getShipmentBoxDetialCase(PackingDTO dto)  {
+		Map<String, Object> map = new HashMap<String,Object>();
+		List<Map<String,Object>> listbox=this.baseMapper.getAreCaseBoxInfo(dto.getFormid(),dto.getShipmentid());
+		map.put("listbox", listbox);
+		return map;
+	}
 @SuppressWarnings("unchecked")
 public Map<String, Object> getShipmentBoxDetial(PackingDTO dto)  {
 	Map<String, Object> map = new HashMap<String,Object>();
@@ -377,7 +392,6 @@ public  void  savePackingInformation(ShipCartDTO dto, UserInfo user) {
 		}
 	}
 	
-
 	if(dto.getBoxnum()!=dto.getBoxListDetail().size()) {
 		throw new BizException("箱子数量与保存的箱子记录不匹配，请重试或联系管理员");
 	}
@@ -429,16 +443,25 @@ public Map<String,Object> listPackingOptions(PackingDTO dto) {
 			}
 			query.eq(ShipInboundPlanPackingOptions::getFormid, plan.getId());
 			List<ShipInboundPlanPackingOptions> list = shipInboundPlanPackingOptionsMapper.selectList(query);
-			List<PackingOption> options = new ArrayList<PackingOption>();
-			for(ShipInboundPlanPackingOptions optionitem:list) {
-				JSONObject json = JSONUtil.parseObj(optionitem.getContents());
-				PackingOption option=JSONUtil.toBean(json, PackingOption.class, false);
-				options.add(option);
+			List<JSONObject> options = new ArrayList<JSONObject>();
+			try{
+				for(ShipInboundPlanPackingOptions optionitem:list) {
+					JSONObject json = JSONUtil.parseObj(optionitem.getContents());
+					if(json.getStr("status").equals("ACCEPTED")){
+						options.clear();
+						options.add(json);
+						break;
+					}else{
+						options.add(json);
+					}
+				}
+				map.put("options", options);
+				map.put("pagination", null);
+				return map;
+			}catch(Exception e){
+				e.printStackTrace();
 			}
-			saveOptions(plan, options);
-			map.put("options", options);
-			map.put("pagination", null);
-			return map;
+
 		}
 		if(plan.getInvtype()==1) {
 			Map<String,Object> map=new HashMap<String,Object>();

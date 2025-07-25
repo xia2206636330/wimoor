@@ -21,6 +21,20 @@ public class QuoteDTO extends BasePageQuery {
 
   private String number;
 
+  private List<String> numbers;
+
+  private List<String> shipmentids;
+
+  private String groupname;
+
+  private String shipmentid;
+
+  private String country;
+
+  private String warehousename;
+
+  private String remark;
+
   private String displayType;
 
   String fromDate;

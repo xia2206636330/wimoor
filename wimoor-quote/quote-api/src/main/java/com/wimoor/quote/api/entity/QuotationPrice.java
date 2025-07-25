@@ -1,20 +1,28 @@
 package com.wimoor.quote.api.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 @ApiModel(value="t_quotation_price对象", description="询价价格表")
-@EqualsAndHashCode(callSuper = true)
 @TableName("t_supplier_quotation_price")
-public class QuotationPrice extends BaseEntity{
+public class QuotationPrice{
+
+    @TableId(value = "id", type = IdType.AUTO )
+    @ApiModelProperty(value = "ID")
+    String id;
+
+    public boolean isNullId(){
+        return id==null;
+    }
 
     @ApiModelProperty(value = "订单id")
     @TableField(value =  "orderid")
@@ -35,6 +43,10 @@ public class QuotationPrice extends BaseEntity{
     @ApiModelProperty(value = "报价类型kg,cbm")
     @TableField(value =  "ftype")
     private String  ftype;
+
+    @ApiModelProperty(value = "报价备注")
+    @TableField(value =  "remark")
+    private String  remark;
 
     @ApiModelProperty(value = "单位报价")
     @TableField(value =  "unitprice")

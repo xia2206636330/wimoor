@@ -2,7 +2,7 @@ package com.amazon.spapi.documents;
 
 import com.amazon.spapi.documents.exception.CryptoException;
 import com.amazon.spapi.documents.exception.MissingCharsetException;
-import com.squareup.okhttp.MediaType;
+import okhttp3.MediaType;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;

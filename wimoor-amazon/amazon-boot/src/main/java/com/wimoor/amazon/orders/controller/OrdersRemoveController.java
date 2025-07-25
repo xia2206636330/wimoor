@@ -24,6 +24,8 @@ import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.io.IOException;
+
 /**
  * <p>
  * 订单抓取 前端控制器
@@ -76,7 +78,7 @@ public class OrdersRemoveController{
 				workbook.close();
 				fOut.flush();
 				fOut.close();
-			} catch (Exception e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			

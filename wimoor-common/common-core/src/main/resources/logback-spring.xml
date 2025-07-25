@@ -78,7 +78,13 @@
             <appender-ref ref="CONSOLE" />
         </root>
     </springProfile>
-
+    <!-- 开发环境输出至控制台 -->
+    <springProfile name="dev252">
+        <logger name="com.alibaba.nacos" level="OFF" addtivity="false"> </logger>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
     <!-- 生产环境输出至文件 -->
     <springProfile name="prod">
         <root level="INFO">

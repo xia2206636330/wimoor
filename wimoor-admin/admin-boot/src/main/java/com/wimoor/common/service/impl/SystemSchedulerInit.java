@@ -35,7 +35,7 @@ public class SystemSchedulerInit implements ApplicationRunner {
 
 @Override
    public void run(ApplicationArguments args) throws Exception {
-	   if("prod".equals(profile)) {
+	   if(profile!=null&&!profile.contains("dev")) {
 		    // systemSchedulerService.insertTask();
 		    systemSchedulerService.refreshTask();
 	   }

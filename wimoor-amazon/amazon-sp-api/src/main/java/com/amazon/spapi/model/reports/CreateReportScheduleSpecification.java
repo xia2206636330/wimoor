@@ -10,28 +10,26 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-import org.threeten.bp.OffsetDateTime;
-
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import io.swagger.annotations.ApiModelProperty;
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.threeten.bp.OffsetDateTime;
 /**
- * CreateReportScheduleSpecification
+ * Information required to create the report schedule.
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "Information required to create the report schedule.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class CreateReportScheduleSpecification {
   @SerializedName("reportType")
   private String reportType = null;
@@ -43,44 +41,45 @@ public class CreateReportScheduleSpecification {
   private ReportOptions reportOptions = null;
 
   /**
-   * One of a set of predefined ISO 8601 periods that specifies how often a report should be created.
+   * One of a set of predefined &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; periods that specifies how often a report should be created.
    */
   @JsonAdapter(PeriodEnum.Adapter.class)
   public enum PeriodEnum {
+    @SerializedName("PT5M")
     PT5M("PT5M"),
-    
+    @SerializedName("PT15M")
     PT15M("PT15M"),
-    
+    @SerializedName("PT30M")
     PT30M("PT30M"),
-    
+    @SerializedName("PT1H")
     PT1H("PT1H"),
-    
+    @SerializedName("PT2H")
     PT2H("PT2H"),
-    
+    @SerializedName("PT4H")
     PT4H("PT4H"),
-    
+    @SerializedName("PT8H")
     PT8H("PT8H"),
-    
+    @SerializedName("PT12H")
     PT12H("PT12H"),
-    
+    @SerializedName("P1D")
     P1D("P1D"),
-    
+    @SerializedName("P2D")
     P2D("P2D"),
-    
+    @SerializedName("P3D")
     P3D("P3D"),
-    
+    @SerializedName("PT84H")
     PT84H("PT84H"),
-    
+    @SerializedName("P7D")
     P7D("P7D"),
-    
+    @SerializedName("P14D")
     P14D("P14D"),
-    
+    @SerializedName("P15D")
     P15D("P15D"),
-    
+    @SerializedName("P18D")
     P18D("P18D"),
-    
+    @SerializedName("P30D")
     P30D("P30D"),
-    
+    @SerializedName("P1M")
     P1M("P1M");
 
     private String value;
@@ -88,7 +87,6 @@ public class CreateReportScheduleSpecification {
     PeriodEnum(String value) {
       this.value = value;
     }
-
     public String getValue() {
       return value;
     }
@@ -97,31 +95,27 @@ public class CreateReportScheduleSpecification {
     public String toString() {
       return String.valueOf(value);
     }
-
-    public static PeriodEnum fromValue(String text) {
+    public static PeriodEnum fromValue(String input) {
       for (PeriodEnum b : PeriodEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (b.value.equals(input)) {
           return b;
         }
       }
       return null;
     }
-
     public static class Adapter extends TypeAdapter<PeriodEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final PeriodEnum enumeration) throws IOException {
-        jsonWriter.value(enumeration.getValue());
+        jsonWriter.value(String.valueOf(enumeration.getValue()));
       }
 
       @Override
       public PeriodEnum read(final JsonReader jsonReader) throws IOException {
-        String value = jsonReader.nextString();
-        return PeriodEnum.fromValue(String.valueOf(value));
+        Object value = jsonReader.nextString();
+        return PeriodEnum.fromValue((String)(value));
       }
     }
-  }
-
-  @SerializedName("period")
+  }  @SerializedName("period")
   private PeriodEnum period = null;
 
   @SerializedName("nextReportCreationTime")
@@ -136,7 +130,7 @@ public class CreateReportScheduleSpecification {
    * The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.
    * @return reportType
   **/
-  @ApiModelProperty(required = true, value = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
+  @Schema(required = true, description = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
   public String getReportType() {
     return reportType;
   }
@@ -159,7 +153,7 @@ public class CreateReportScheduleSpecification {
    * A list of marketplace identifiers for the report schedule.
    * @return marketplaceIds
   **/
-  @ApiModelProperty(required = true, value = "A list of marketplace identifiers for the report schedule.")
+  @Schema(required = true, description = "A list of marketplace identifiers for the report schedule.")
   public List<String> getMarketplaceIds() {
     return marketplaceIds;
   }
@@ -177,7 +171,7 @@ public class CreateReportScheduleSpecification {
    * Get reportOptions
    * @return reportOptions
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public ReportOptions getReportOptions() {
     return reportOptions;
   }
@@ -192,10 +186,10 @@ public class CreateReportScheduleSpecification {
   }
 
    /**
-   * One of a set of predefined ISO 8601 periods that specifies how often a report should be created.
+   * One of a set of predefined &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; periods that specifies how often a report should be created.
    * @return period
   **/
-  @ApiModelProperty(required = true, value = "One of a set of predefined ISO 8601 periods that specifies how often a report should be created.")
+  @Schema(required = true, description = "One of a set of predefined <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> periods that specifies how often a report should be created.")
   public PeriodEnum getPeriod() {
     return period;
   }
@@ -210,10 +204,10 @@ public class CreateReportScheduleSpecification {
   }
 
    /**
-   * The date and time when the schedule will create its next report, in ISO 8601 date time format.
+   * The date and time when the schedule will create its next report, in &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; date time format.
    * @return nextReportCreationTime
   **/
-  @ApiModelProperty(value = "The date and time when the schedule will create its next report, in ISO 8601 date time format.")
+  @Schema(description = "The date and time when the schedule will create its next report, in <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> date time format.")
   public OffsetDateTime getNextReportCreationTime() {
     return nextReportCreationTime;
   }
@@ -271,4 +265,3 @@ public class CreateReportScheduleSpecification {
   }
 
 }
-

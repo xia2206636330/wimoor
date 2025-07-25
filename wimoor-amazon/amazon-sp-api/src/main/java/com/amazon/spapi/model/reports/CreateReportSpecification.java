@@ -10,25 +10,26 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
+import java.util.Objects;
+import java.util.Arrays;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import org.threeten.bp.OffsetDateTime;
-
-import com.google.gson.annotations.SerializedName;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * Information required to create the report.
  */
-@ApiModel(description = "Information required to create the report.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "Information required to create the report.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class CreateReportSpecification {
   @SerializedName("reportOptions")
   private ReportOptions reportOptions = null;
@@ -54,7 +55,7 @@ public class CreateReportSpecification {
    * Get reportOptions
    * @return reportOptions
   **/
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   public ReportOptions getReportOptions() {
     return reportOptions;
   }
@@ -72,7 +73,7 @@ public class CreateReportSpecification {
    * The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.
    * @return reportType
   **/
-  @ApiModelProperty(required = true, value = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
+  @Schema(required = true, description = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
   public String getReportType() {
     return reportType;
   }
@@ -87,10 +88,10 @@ public class CreateReportSpecification {
   }
 
    /**
-   * The start of a date and time range, in ISO 8601 date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.
+   * The start of a date and time range, in &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.
    * @return dataStartTime
   **/
-  @ApiModelProperty(value = "The start of a date and time range, in ISO 8601 date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.")
+  @Schema(description = "The start of a date and time range, in <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.")
   public OffsetDateTime getDataStartTime() {
     return dataStartTime;
   }
@@ -105,10 +106,10 @@ public class CreateReportSpecification {
   }
 
    /**
-   * The end of a date and time range, in ISO 8601 date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.
+   * The end of a date and time range, in &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.
    * @return dataEndTime
   **/
-  @ApiModelProperty(value = "The end of a date and time range, in ISO 8601 date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.")
+  @Schema(description = "The end of a date and time range, in <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> date time format, used for selecting the data to report. The default is now. The value must be prior to or equal to the current date and time. Not all report types make use of this.")
   public OffsetDateTime getDataEndTime() {
     return dataEndTime;
   }
@@ -128,10 +129,10 @@ public class CreateReportSpecification {
   }
 
    /**
-   * A list of marketplace identifiers. The report document&#39;s contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.
+   * A list of marketplace identifiers. The report document&#x27;s contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.
    * @return marketplaceIds
   **/
-  @ApiModelProperty(required = true, value = "A list of marketplace identifiers. The report document's contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.")
+  @Schema(required = true, description = "A list of marketplace identifiers. The report document's contents will contain data for all of the specified marketplaces, unless the report type indicates otherwise.")
   public List<String> getMarketplaceIds() {
     return marketplaceIds;
   }
@@ -189,4 +190,3 @@ public class CreateReportSpecification {
   }
 
 }
-

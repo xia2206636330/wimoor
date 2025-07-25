@@ -25,7 +25,13 @@ public class ShipTransChannel extends ErpBaseEntity{
     
     @TableField(value= "shopid")
     private String shopid;
- 
-    
- 
+
+	@NotNull(message="国家")
+	@Size(max=50,message="名称不能超过50个字符")
+	@TableField(value= "country")
+	private String country;
+
+	@TableField(value= "disabled")
+	private Boolean disabled;
+
 }

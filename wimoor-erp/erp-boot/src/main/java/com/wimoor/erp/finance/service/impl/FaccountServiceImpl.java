@@ -289,10 +289,11 @@ public class FaccountServiceImpl extends ServiceImpl<FinAccountMapper,FinAccount
 	}
 
 
-	public List<PurchaseFormPaymentMethod> findPurchasePayMethod() {
-		QueryWrapper<PurchaseFormPaymentMethod> queryWrapper=new QueryWrapper<PurchaseFormPaymentMethod>();
-		queryWrapper.isNotNull("id");
-		List<PurchaseFormPaymentMethod> list=purchaseFormPaymentMethodMapper.selectList(queryWrapper);
+	public List<PurchaseFormPaymentMethod> findPurchasePayMethod(String shopid) {
+		//QueryWrapper<PurchaseFormPaymentMethod> queryWrapper=new QueryWrapper<PurchaseFormPaymentMethod>();
+		//queryWrapper.isNotNull("id");
+		//List<PurchaseFormPaymentMethod> list=purchaseFormPaymentMethodMapper.selectList(queryWrapper);
+		List<PurchaseFormPaymentMethod> list=purchaseFormPaymentMethodMapper.getMethodByShopid(shopid);
 		return list;
 	}
 
@@ -384,6 +385,21 @@ public class FaccountServiceImpl extends ServiceImpl<FinAccountMapper,FinAccount
 	public List<FinAccount> findAccountArchiveAll(String shopid) {
 		// TODO Auto-generated method stub
 		return this.baseMapper.findAccountArchiveAll(shopid);
+	}
+
+	@Override
+	public void savePaymethodIndex(UserInfo user,List<Map<String, Object>> indexlist) {
+		if(indexlist!=null && indexlist.size()>0){
+			for (Map<String, Object> item:indexlist){
+				if(item.get("id")!=null && item.get("findex")!=null) {
+					item.put("shopid", user.getCompanyid());
+					this.purchaseFormPaymentMethodMapper.savePaymethodIndex(item);
+				}
+			}
+
+
+		}
+
 	}
 
 	@Override

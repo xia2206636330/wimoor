@@ -887,7 +887,20 @@ IAmzFinAccountService iAmzFinAccountService;
 	            });
 	        }
 	        List<AmazonSettlementOpen> addlist=new ArrayList<>();
+			String oldDate="0000-00-00 00:00:00";
+			Date old=DateUtil.parse(oldDate);
+			for(AmazonSettlementOpen item:list) {
+				if(item.getPostedDate()!=null) {
+					if(item.getPostedDate().compareTo(old)>0) {
+						old=item.getPostedDate();
+					}
+				}
+			}
 	       	 for(AmazonSettlementOpen item:list) {
+				 String date=DateUtil.format(item.getPostedDate(),"yyyy-MM-dd HH:mm:ss");
+				 if(date.equals(oldDate)){
+					item.setPostedDate(old);
+				 }
 	       		 if(item.getPostedDate()!=null) {
 	       			 addlist.add(item);
 	       		 }

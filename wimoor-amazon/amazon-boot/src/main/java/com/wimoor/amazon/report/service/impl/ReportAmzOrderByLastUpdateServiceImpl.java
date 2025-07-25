@@ -2,14 +2,13 @@ package com.wimoor.amazon.report.service.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
+import com.amazon.spapi.model.reports.CreateReportSpecification;
+import com.amazon.spapi.model.reports.ReportOptions;
+import com.wimoor.amazon.util.AmzDateUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -36,6 +35,37 @@ public class ReportAmzOrderByLastUpdateServiceImpl extends ReportServiceImpl{
 	IReportRequestTypeService iReportRequestTypeService;
 	@Resource
 	ISummaryOrderReportService summaryOrderReportService;
+
+	public void   requestReport(AmazonAuthority amazonAuthority,Calendar cstart,Calendar cend,Boolean ignore) {
+		amazonAuthority.setUseApi("createReport");
+		List<Marketplace> marketlist = marketplaceService.findbyauth(amazonAuthority.getId());
+		List<String> list=new ArrayList<String>();
+		for(Marketplace market:marketlist) {
+			CreateReportSpecification body=new CreateReportSpecification();
+			body.setReportType(myReportType());
+			body.setDataStartTime(AmzDateUtils.getOffsetDateTimeUTC(cstart));
+			body.setDataEndTime(AmzDateUtils.getOffsetDateTimeUTC(cend));
+			ReportOptions reportOptions=getMyOptions();
+			if(reportOptions!=null) {
+				body.setReportOptions(reportOptions);
+			}
+			list.add(market.getMarketplaceid());
+			amazonAuthority.setMarketPlace(market);
+			if(ignore==null||ignore==false) {
+				Map<String,Object> param=new HashMap<String,Object>();
+				param.put("sellerid", amazonAuthority.getSellerid());
+				param.put("reporttype", this.myReportType());
+				param.put("marketplacelist", list);
+				Date lastupdate= iReportRequestRecordService.lastUpdateRequestByType(param);
+				if(lastupdate!=null&&GeneralUtil.distanceOfHour(lastupdate, new Date())<6) {
+					continue;
+				}
+			}
+			body.setMarketplaceIds(list);
+			callCreateAPI(this, body, amazonAuthority, market,cstart.getTime(),cend.getTime());
+		}
+	}
+
 	public   String treatResponse(AmazonAuthority amazonAuthority, BufferedReader br)  {
 		StringBuffer log = new StringBuffer();
 		

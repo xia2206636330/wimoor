@@ -26,5 +26,7 @@ public interface IShipInboundBoxService  extends IService<ShipInboundBox>{
 	public ShipInboundOperation confirmPackingOption(PackingDTO dto);
 	public List<Map<String, Object>> findAllBoxDim(String formid);
 	public Boolean hasSubmitPackage(ShipInboundPlan inplan);
-
+    Map<String, Object> getShipmentBoxDetialCase(PackingDTO dto);
+	Map<String, Object> getBoxDetialCase(PackingDTO dto);
+	List<Map<String,Object>> findListAllByShipmentid(String formid,String shipmentid);
 }

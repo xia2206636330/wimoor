@@ -13,6 +13,7 @@ import java.util.TimeZone;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.wimoor.common.GeneralUtil;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -403,7 +404,6 @@ public class AdvertController extends ERPBaseController<AmzAdvAuth> {
 		} 
 	}	 
 	@GetMapping(value = "/bindUrl")
-	//todo:亚马逊广告授权(当前授权只局限于2020-12-10之后获取到的授权)
 	public Result<String> bindUrlAction(String groupid,String region)  {
 		String prefix = null;
 		if("NA".equals(region)){
@@ -412,12 +412,19 @@ public class AdvertController extends ERPBaseController<AmzAdvAuth> {
 			prefix = "https://eu.account.amazon.com/ap/oa";
 		}else if("FE".equals(region)){
 			prefix = "https://apac.account.amazon.com/ap/oa";
-		} 
+		}
 		AmzRegion authRegion = amzAdvAuthService.getRegion(region);
-		String myurl = prefix + "?client_id=" + authRegion.getClientId()
-				  + "&scope=advertising::campaign_management&response_type=code&state=" + region
-				  + "_" + groupid + "&redirect_uri=" + amzAdvAuthService.getRedirecturl();
-	    return Result.success(myurl);
+		String myurl =null;
+		if(authRegion!=null&&authRegion.getCreatetime().before(GeneralUtil.getDatez("2020-12-10"))){
+			myurl = prefix + "?client_id=" + authRegion.getClientId()
+					+ "&scope=cpc_advertising:campaign_management&response_type=code&state=" + region
+					+ "_" + groupid + "&redirect_uri=" + amzAdvAuthService.getRedirecturl();
+		}else{
+			myurl = prefix + "?client_id=" + authRegion.getClientId()
+					+ "&scope=advertising::campaign_management&response_type=code&state=" + region
+					+ "_" + groupid + "&redirect_uri=" + amzAdvAuthService.getRedirecturl();
+		}
+		return Result.success(myurl);
 	 
 	}
 	
