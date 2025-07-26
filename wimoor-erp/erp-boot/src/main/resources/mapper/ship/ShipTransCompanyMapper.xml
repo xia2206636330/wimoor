@@ -57,14 +57,32 @@
    </select>
    
    <select id="findByCompanyId" resultType="com.wimoor.erp.ship.pojo.entity.ShipTransDetail" parameterType="java.lang.String">
-   select s.*,m.name mname,c.name cname,ty.name tname,
-          case when s.priceunits='volume' then '体积(m3)' else '重量(kg)' end priceu,c.name channeltype
+   select
+	  s.`id` ,
+	s.`company` ,
+	s.`marketplaceid` ,
+	s.`subarea` ,
+	 case when  c.disabled=1 then null else  s.`channel` end as  `channel`,
+	s.`channame` ,
+	s.`pretime` ,
+	s.`price` ,
+	s.`drate` ,
+	s.`opttime` ,
+	  case when  ty.disable=1 then null else  s.`transtype` end as  `transtype`,
+	s.`priceunits` ,
+	s.`remark`,
+	s.`cbmrate` ,
+	s.`operator`,
+	s.`disabled`,
+    m.name mname,c.name cname,ty.name tname,
+    case when s.priceunits='volume' then '体积(m3)' else '重量(kg)' end priceu,c.name channeltype
     from  t_erp_ship_transcompany  t 
 	left join t_erp_ship_transdetail s on s.company=t.id
 	left join t_marketplace m on m.marketplaceId=s.marketplaceid
 	left join t_erp_ship_transchannel c on c.id=s.channel
 	left join t_erp_transtype ty on ty.id=s.transtype
 	where t.id=#{comid,jdbcType=CHAR} and s.disabled=0
+
 	order by m.findex
    </select>
   <select id="findDisabledByCompanyId" resultType="com.wimoor.erp.ship.pojo.entity.ShipTransDetail" parameterType="java.lang.String">

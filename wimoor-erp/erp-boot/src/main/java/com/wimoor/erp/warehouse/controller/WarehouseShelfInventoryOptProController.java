@@ -4,8 +4,8 @@ package com.wimoor.erp.warehouse.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.wimoor.erp.assembly.pojo.entity.AssemblyForm;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
+import com.wimoor.erp.material.pojo.entity.AssemblyForm;
+import com.wimoor.erp.material.service.IAssemblyFormService;
 import com.wimoor.erp.material.pojo.entity.Material;
 import com.wimoor.erp.material.service.IMaterialService;
 import com.wimoor.erp.purchase.service.IPurchaseFormReceiveService;
@@ -19,7 +19,6 @@ import com.wimoor.erp.warehouse.pojo.vo.MaterialShelfInfoVo;
 import com.wimoor.erp.warehouse.pojo.vo.WarehouseShelfTreeVo;
 import com.wimoor.erp.warehouse.service.IWarehouseService;
 import com.wimoor.erp.warehouse.service.IWarehouseShelfService;
-import io.swagger.annotations.ApiModel;
 import org.springframework.web.bind.annotation.*;
 
 import com.wimoor.common.result.Result;

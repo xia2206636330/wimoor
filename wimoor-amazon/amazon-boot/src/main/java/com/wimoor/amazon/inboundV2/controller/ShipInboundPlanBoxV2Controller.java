@@ -57,11 +57,20 @@ public class ShipInboundPlanBoxV2Controller {
 	@ApiOperation(value = "获取箱子信息")
 	@PostMapping("/getBoxDetail")
 	public Result<Map<String, Object>> getBoxDetailAction(@RequestBody PackingDTO dto) {
-		if(dto.getShipmentid()!=null) {
-			return Result.success(shipInboundBoxV2Service.getShipmentBoxDetial(dto));
-		}else {
-			return Result.success(shipInboundBoxV2Service.getBoxDetial(dto));
+		if(dto.getArecase()!=null&&dto.getArecase().equals("true")){
+			if(dto.getShipmentid()!=null) {
+				return Result.success(shipInboundBoxV2Service.getShipmentBoxDetialCase(dto));
+			}else {
+				return Result.success(shipInboundBoxV2Service.getBoxDetialCase(dto));
+			}
+		}else{
+			if(dto.getShipmentid()!=null) {
+				return Result.success(shipInboundBoxV2Service.getShipmentBoxDetial(dto));
+			}else {
+				return Result.success(shipInboundBoxV2Service.getBoxDetial(dto));
+			}
 		}
+
 	}
 	
 	@ApiOperation(value = "获取箱子信息")

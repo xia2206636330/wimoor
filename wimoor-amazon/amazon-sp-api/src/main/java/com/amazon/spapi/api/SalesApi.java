@@ -37,6 +37,9 @@ import com.amazon.spapi.client.ProgressResponseBody;
 import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.sales.GetOrderMetricsResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class SalesApi {
     private ApiClient apiClient;
@@ -74,7 +77,7 @@ public class SalesApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getOrderMetricsCall(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getOrderMetricsCall(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -118,10 +121,10 @@ public class SalesApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -134,7 +137,7 @@ public class SalesApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getOrderMetricsValidateBeforeCall(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getOrderMetricsValidateBeforeCall(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceIds' is set
         if (marketplaceIds == null) {
@@ -152,7 +155,7 @@ public class SalesApi {
         }
         
 
-        com.squareup.okhttp.Call call = getOrderMetricsCall(marketplaceIds, interval, granularity, granularityTimeZone, buyerType, fulfillmentNetwork, firstDayOfWeek, asin, sku, progressListener, progressRequestListener);
+        Call call = getOrderMetricsCall(marketplaceIds, interval, granularity, granularityTimeZone, buyerType, fulfillmentNetwork, firstDayOfWeek, asin, sku, progressListener, progressRequestListener);
         return call;
 
     }
@@ -195,7 +198,7 @@ public class SalesApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetOrderMetricsResponse> getOrderMetricsWithHttpInfo(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getOrderMetricsValidateBeforeCall(marketplaceIds, interval, granularity, granularityTimeZone, buyerType, fulfillmentNetwork, firstDayOfWeek, asin, sku, null, null);
+        Call call = getOrderMetricsValidateBeforeCall(marketplaceIds, interval, granularity, granularityTimeZone, buyerType, fulfillmentNetwork, firstDayOfWeek, asin, sku, null, null);
         Type localVarReturnType = new TypeToken<GetOrderMetricsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -217,7 +220,7 @@ public class SalesApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getOrderMetricsAsync(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku, final ApiCallback<GetOrderMetricsResponse> callback) throws ApiException, LWAException {
+    public Call getOrderMetricsAsync(List<String> marketplaceIds, String interval, String granularity, String granularityTimeZone, String buyerType, String fulfillmentNetwork, String firstDayOfWeek, String asin, String sku, final ApiCallback<GetOrderMetricsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -238,7 +241,7 @@ public class SalesApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getOrderMetricsValidateBeforeCall(marketplaceIds, interval, granularity, granularityTimeZone, buyerType, fulfillmentNetwork, firstDayOfWeek, asin, sku, progressListener, progressRequestListener);
+        Call call = getOrderMetricsValidateBeforeCall(marketplaceIds, interval, granularity, granularityTimeZone, buyerType, fulfillmentNetwork, firstDayOfWeek, asin, sku, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetOrderMetricsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -302,10 +305,10 @@ public class SalesApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new SalesApi(new ApiClient()
+            return new SalesApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

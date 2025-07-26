@@ -2,21 +2,15 @@ package com.wimoor.erp.stock.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import com.wimoor.common.service.ISerialNumService;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +58,7 @@ public class StockTakingServiceImpl extends  ServiceImpl<StockTakingMapper,Stock
 	final IMaterialService iMaterialService;
 	final IInventoryService iInventoryService;
     final FileUpload fileUpload;
+	final ISerialNumService serialNumService;
 	
 	public IPage<Map<String, Object>> findByCondition(Page<?> page,Map<String, Object> map) {
 		IPage<Map<String, Object>> list = this.baseMapper.findByCondition(page,map);
@@ -128,9 +123,7 @@ public class StockTakingServiceImpl extends  ServiceImpl<StockTakingMapper,Stock
 		}
 		return this.baseMapper.insert(entity)>0;
 	}
- 
- 
- 
+
 	@Transactional(rollbackFor = Exception.class)
 	public StockTaking saveStockTakingAndItem(StockTaking stockTaking, StockTakingItem item, boolean isnew) throws BizException {
 		if (isnew) {
@@ -158,6 +151,117 @@ public class StockTakingServiceImpl extends  ServiceImpl<StockTakingMapper,Stock
 		}
 		updateById(stockTaking);
 		return stockTaking;
+	}
+
+	@Override
+	public Map<String, Object> selectAllStocktakingByWarehouseId(String warehouseid) {
+		    Map<String, Object> map=new LinkedHashMap<String, Object>();
+			List<Map<String, Object>> itemlist = this.findStockInv(warehouseid);
+			if(itemlist!=null && itemlist.size()>0) {
+				map.put(itemlist.get(0).get("wname").toString(), itemlist);
+			}else{
+				Warehouse warehouse = warehouseService.getById(warehouseid);
+				map.put(warehouse.getName(), new ArrayList<Map<String,Object>>());
+			}
+		return map;
+	}
+
+	@Override
+	public List<Map<String,Object>> uploadStockTakingFileByWarehouse(UserInfo user,Workbook workbook,String warehouseid) {
+		//sheet的数量--代表仓位的数量 且仓位有库存SKU
+		int sheetNums = workbook.getNumberOfSheets();
+		List<Map<String,Object>> result=new LinkedList<Map<String,Object>>();
+		if(sheetNums>0) {
+			for(int i=0;i<sheetNums;i++) {
+				Sheet sheet = workbook.getSheetAt(i);
+				String warehouseName = sheet.getSheetName().trim();
+				Warehouse warehouse = warehouseService.getWarehouseByName(user.getCompanyid(), warehouseName);
+				if(warehouse!=null) {
+					String mwarehouseid=warehouse.getId();
+					for (int j = 1; j <= sheet.getLastRowNum();j++) {
+						Row info = sheet.getRow(j);
+						boolean isblankrow=true;
+						if(info==null) {
+							continue;
+						}
+						Iterator<Cell> iterator = info.cellIterator();
+						while(iterator.hasNext()) {
+							Cell cell = iterator.next();
+							if(cell.getCellTypeEnum() !=CellType.BLANK) {
+								isblankrow=false;
+								break;
+							}
+						}
+						if (info == null||isblankrow) {
+							continue;
+						}
+						try {
+							String sku = null;
+							if (info.getCell(0) != null) {
+								sku = info.getCell(0).getStringCellValue();
+							}
+							int amount=0;
+							String amountStr=null;
+							if (info.getCell(3) != null) {
+								Cell cell3 = info.getCell(3);
+								cell3.setCellType(CellType.STRING);
+								amountStr = cell3.getStringCellValue().trim();
+								if(StrUtil.isEmpty(amountStr)) {
+									continue;
+								}
+								if(info.getCell(2) != null) {
+									Cell cell2 = info.getCell(2);
+									cell2.setCellType(CellType.STRING);
+									String invAmount = cell2.getStringCellValue().trim();
+									if(invAmount.equals(amountStr)) {
+										continue;
+									}
+								}
+							}
+							if(StrUtil.isNotEmpty(amountStr)) {
+								amount=Integer.parseInt(amountStr);
+							}
+							if (StrUtil.isEmpty(sku) || amount<0) {
+								throw new BizException("Excel文件中必填字段为空！");
+							}else {
+								Material material = this.iMaterialService.findBySKU(sku, user.getCompanyid());
+								if(material!=null) {
+									String materialid = material.getId();
+									//先删除此盘点单 中已存在的sku的item
+									Map<String, Object> maps = this.iInventoryService.getSelfInvBySKU(mwarehouseid, material.getId());
+									BigDecimal fulfillable = new BigDecimal(maps.get("fulfillable").toString());
+									StockTakingItem item = new StockTakingItem();;
+									int overamount =  amount-fulfillable.intValue();
+									boolean isnew = true;
+									maps.put("materialid",materialid);
+									maps.put("warehouseid",mwarehouseid);
+									maps.put("amount",amount);
+									if (overamount > 0) {
+										maps.put("overamount",overamount);
+										maps.put("lossamount",0);
+									} else {
+										int lossamount = overamount* -1;
+										maps.put("overamount",0);
+										maps.put("lossamount",lossamount);
+									}
+									result.add(maps);
+
+								}else {
+									throw new BizException("未找到对应SKU,请正确填写！");
+								}
+							}
+						} catch (Exception e) {
+
+						}
+					}
+				}else {
+					throw new BizException("未找到对应仓库,请正确填写！");
+				}
+
+			}
+
+		}
+			return result;
 	}
 
 	public Map<String, BigDecimal> getTotalProfitAndLoss(String id) {
@@ -231,6 +335,13 @@ public class StockTakingServiceImpl extends  ServiceImpl<StockTakingMapper,Stock
 				Row row = sheet.createRow(0);
 				for (int i = 0; i < titlelist.size(); i++) {
 					Cell cell = row.createCell(i);
+					if(titlelist.get(i).equals("可用库存")){
+						Drawing drawing = sheet.createDrawingPatriarch(); // 获取绘图的父对象，以便在上面绘制图形或注释等
+						CreationHelper factory = workbook.getCreationHelper(); // 获取创建帮助对象，用于创建不同类型的对象，例如日期等
+						Comment comment = drawing.createCellComment(new XSSFClientAnchor(0, 0, 0, 0, (short) 2, 0, (short) 5, 8)); // 创建注释对象，并设置位置和大小（行列号）
+						comment.setString(factory.createRichTextString("不知道库存时可以填0，系统会自动查询仓库内库存")); // 设置注释的文本内容
+						cell.setCellComment(comment);
+					}
 					cell.setCellValue(titlelist.get(i));
 				}
 				for (int i = 0; i < list.size(); i++) {

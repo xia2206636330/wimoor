@@ -3,6 +3,7 @@ package com.wimoor.erp.finance.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wimoor.common.user.UserInfo;
@@ -22,7 +23,7 @@ public interface IFaccountService extends IService<FinAccount> {
 
 	public void updateFinCancelChange(FinAccount account, String projectid, Date createtime, BigDecimal amount, String ftype);
 	
-	public List<PurchaseFormPaymentMethod> findPurchasePayMethod();
+	public List<PurchaseFormPaymentMethod> findPurchasePayMethod(String shopid);
 
 	public List<FinAccount> findPayAccountByMethod(String paymethod, String shopid);
 
@@ -33,4 +34,6 @@ public interface IFaccountService extends IService<FinAccount> {
 	public Boolean saveAccount(FinAccount fin);
 	
 	public List<FinAccount> findAccountArchiveAll(String shopid);
+
+	void savePaymethodIndex(UserInfo currUser,List<Map<String, Object>> indexlist);
 }

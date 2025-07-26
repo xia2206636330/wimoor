@@ -1,5 +1,6 @@
 package com.wimoor.erp.stock.service;
 
+import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.stock.pojo.entity.ErpDispatchOverseaFormEntry;
 
 import java.util.List;
@@ -25,4 +26,7 @@ public interface IErpDispatchOverseaFormEntryService extends IService<ErpDispatc
 
 	void deleteByFormid(String id);
 
+	List<Map<String, Object>> getPrintLabel(UserInfo user, String id);
+
+	void saveEname(UserInfo user, List<Map<String, Object>> skulist);
 }

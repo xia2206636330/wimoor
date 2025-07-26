@@ -153,11 +153,15 @@ public class ShipInboundPlanTransportationController {
 					if(inplan.getPlacementOptionId()!=null){
 						old.setPlacementOptionId(inplan.getPlacementOptionId());
 					}
+				 	old.setTransportationToken(null);
 					if(inplan.getShipmentids()==null){
 						List<ShipInboundShipment> listshipment = this.shipInboundShipmentV2Service.lambdaQuery().eq(ShipInboundShipment::getFormid, old.getId()).list();
 				        List<String> shipmentids=new ArrayList<String>();
 						for(ShipInboundShipment item:listshipment){
 							shipmentids.add(item.getShipmentid());
+							item.setTransportationToken(null);
+							item.setTransportationOptionId(null);
+							this.shipInboundShipmentV2Service.updateById(item);
 						}
 						old.setShipmentids(shipmentids);
 					}else{

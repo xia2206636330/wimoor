@@ -1,6 +1,7 @@
 package com.wimoor.erp.stock.service;
 
 import com.wimoor.common.user.UserInfo;
+import com.wimoor.erp.common.pojo.entity.ChartLine;
 import com.wimoor.erp.stock.pojo.entity.ErpDispatchOverseaForm;
 
 import java.util.List;
@@ -31,5 +32,6 @@ public interface IErpDispatchOverseaFormService extends IService<ErpDispatchOver
 	String uploadDispatchStockByExcel(Sheet sheet, UserInfo user);
 
 	IPage<Map<String, Object>> findByCondition(Page<Object> page, Map<String, Object> map);
-	List<Map<String, Object>> getShipArrivalTimeRecord(String shopid, String country,String sku, String groupid);
+	List<Map<String, Object>> getShipArrivalTimeRecord(UserInfo user,String warehouseid, String sku );
+    ChartLine shipArrivalTimeChart(String country, String sku, Integer daysize, UserInfo userinfo);
 }

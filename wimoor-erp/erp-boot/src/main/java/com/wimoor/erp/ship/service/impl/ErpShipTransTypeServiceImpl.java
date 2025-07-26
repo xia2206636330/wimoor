@@ -45,7 +45,7 @@ public class ErpShipTransTypeServiceImpl extends  ServiceImpl<ErpShipTransTypeMa
 	@Override
 	public boolean updateById(UserInfo user, ErpShipTransType oldone) {
 		if(oldone.getIssystem()==false) {
-			boolean result = this.baseMapper.updateById(oldone)>0;
+			boolean result=this.baseMapper.updateById(oldone)>0;
 			saveDay(user,oldone);
 			return result;
 		}else {

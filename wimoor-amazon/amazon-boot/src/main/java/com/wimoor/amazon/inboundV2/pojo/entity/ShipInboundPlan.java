@@ -122,7 +122,11 @@ public class ShipInboundPlan  extends AmazonBaseEntity{
 	@ApiModelProperty(value = "提交箱子信息")
 	@TableField(value="submitbox")
 	private Boolean submitbox;
-	
+
+	@ApiModelProperty(value = "是否原装")
+	@TableField(value="areCasesRequired")
+	private Boolean areCasesRequired;
+
 	@TableField(exist = false)
 	@ApiModelProperty(value = "产品列表")
     private List<ShipInboundItem> planitemlist=new LinkedList<ShipInboundItem>();
@@ -138,6 +142,12 @@ public class ShipInboundPlan  extends AmazonBaseEntity{
 	@ApiModelProperty(value = "Transportation Token")
 	@TableField(value="transportation_token")
 	String transportationToken;
+
+	@ApiModelProperty(value = "shipments")
+	@TableField(value="shipments")
+	String shipments;
+
+
 	
 	@TableField(exist = false)
 	List<String> shipmentids;

@@ -38,6 +38,9 @@ import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.catalogitems.Item;
 import com.amazon.spapi.model.catalogitems.ItemSearchResults;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class CatalogApi {
     private ApiClient apiClient;
@@ -70,7 +73,7 @@ public class CatalogApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCatalogItemCall(String asin, List<String> marketplaceIds, List<String> includedData, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getCatalogItemCall(String asin, List<String> marketplaceIds, List<String> includedData, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -103,10 +106,10 @@ public class CatalogApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -119,7 +122,7 @@ public class CatalogApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getCatalogItemValidateBeforeCall(String asin, List<String> marketplaceIds, List<String> includedData, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getCatalogItemValidateBeforeCall(String asin, List<String> marketplaceIds, List<String> includedData, String locale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'asin' is set
         if (asin == null) {
@@ -132,7 +135,7 @@ public class CatalogApi {
         }
         
 
-        com.squareup.okhttp.Call call = getCatalogItemCall(asin, marketplaceIds, includedData, locale, progressListener, progressRequestListener);
+        Call call = getCatalogItemCall(asin, marketplaceIds, includedData, locale, progressListener, progressRequestListener);
         return call;
 
     }
@@ -165,7 +168,7 @@ public class CatalogApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<Item> getCatalogItemWithHttpInfo(String asin, List<String> marketplaceIds, List<String> includedData, String locale) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getCatalogItemValidateBeforeCall(asin, marketplaceIds, includedData, locale, null, null);
+        Call call = getCatalogItemValidateBeforeCall(asin, marketplaceIds, includedData, locale, null, null);
         Type localVarReturnType = new TypeToken<Item>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -182,7 +185,7 @@ public class CatalogApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCatalogItemAsync(String asin, List<String> marketplaceIds, List<String> includedData, String locale, final ApiCallback<Item> callback) throws ApiException, LWAException {
+    public Call getCatalogItemAsync(String asin, List<String> marketplaceIds, List<String> includedData, String locale, final ApiCallback<Item> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -203,7 +206,7 @@ public class CatalogApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getCatalogItemValidateBeforeCall(asin, marketplaceIds, includedData, locale, progressListener, progressRequestListener);
+        Call call = getCatalogItemValidateBeforeCall(asin, marketplaceIds, includedData, locale, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<Item>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -228,7 +231,7 @@ public class CatalogApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchCatalogItemsCall(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call searchCatalogItemsCall(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -278,10 +281,10 @@ public class CatalogApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -294,7 +297,7 @@ public class CatalogApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call searchCatalogItemsValidateBeforeCall(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call searchCatalogItemsValidateBeforeCall(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceIds' is set
         if (marketplaceIds == null) {
@@ -302,7 +305,7 @@ public class CatalogApi {
         }
         
 
-        com.squareup.okhttp.Call call = searchCatalogItemsCall(marketplaceIds, identifiers, identifiersType, includedData, locale, sellerId, keywords, brandNames, classificationIds, pageSize, pageToken, keywordsLocale, progressListener, progressRequestListener);
+        Call call = searchCatalogItemsCall(marketplaceIds, identifiers, identifiersType, includedData, locale, sellerId, keywords, brandNames, classificationIds, pageSize, pageToken, keywordsLocale, progressListener, progressRequestListener);
         return call;
 
     }
@@ -351,7 +354,7 @@ public class CatalogApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<ItemSearchResults> searchCatalogItemsWithHttpInfo(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = searchCatalogItemsValidateBeforeCall(marketplaceIds, identifiers, identifiersType, includedData, locale, sellerId, keywords, brandNames, classificationIds, pageSize, pageToken, keywordsLocale, null, null);
+        Call call = searchCatalogItemsValidateBeforeCall(marketplaceIds, identifiers, identifiersType, includedData, locale, sellerId, keywords, brandNames, classificationIds, pageSize, pageToken, keywordsLocale, null, null);
         Type localVarReturnType = new TypeToken<ItemSearchResults>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -376,7 +379,7 @@ public class CatalogApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call searchCatalogItemsAsync(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale, final ApiCallback<ItemSearchResults> callback) throws ApiException, LWAException {
+    public Call searchCatalogItemsAsync(List<String> marketplaceIds, List<String> identifiers, String identifiersType, List<String> includedData, String locale, String sellerId, List<String> keywords, List<String> brandNames, List<String> classificationIds, Integer pageSize, String pageToken, String keywordsLocale, final ApiCallback<ItemSearchResults> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -397,7 +400,7 @@ public class CatalogApi {
             };
         }
 
-        com.squareup.okhttp.Call call = searchCatalogItemsValidateBeforeCall(marketplaceIds, identifiers, identifiersType, includedData, locale, sellerId, keywords, brandNames, classificationIds, pageSize, pageToken, keywordsLocale, progressListener, progressRequestListener);
+        Call call = searchCatalogItemsValidateBeforeCall(marketplaceIds, identifiers, identifiersType, includedData, locale, sellerId, keywords, brandNames, classificationIds, pageSize, pageToken, keywordsLocale, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<ItemSearchResults>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -461,10 +464,10 @@ public class CatalogApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new CatalogApi(new ApiClient()
+            return new CatalogApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

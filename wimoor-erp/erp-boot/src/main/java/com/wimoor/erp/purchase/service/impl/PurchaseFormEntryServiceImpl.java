@@ -5,13 +5,12 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Sets;
 import com.wimoor.common.GeneralUtil;
 import com.wimoor.common.mvc.BizException;
 import com.wimoor.common.mvc.FileUpload;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AmazonClientOneFeignManager;
-import com.wimoor.erp.assembly.mapper.AssemblyEntryInstockMapper;
+import com.wimoor.erp.material.mapper.AssemblyEntryInstockMapper;
 import com.wimoor.erp.customer.mapper.CustomerMapper;
 import com.wimoor.erp.customer.pojo.entity.Customer;
 import com.wimoor.erp.inventory.pojo.vo.MaterialInventoryVo;
@@ -45,9 +44,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
+
 
 @Service("purchaseFormEntryService")
 @RequiredArgsConstructor
@@ -373,12 +372,15 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 			String mainname=item.get("mainname")==null?"":item.get("mainname").toString();
 			String mainsku=item.get("mainsku")==null?"":item.get("mainsku").toString();
 			String sku=item.get("sku")==null?"":item.get("sku").toString();
+			Map<String,Object> changeentry=null;
 			if(inwaretime!=null){
 				    item.put("shopid",dto.getShopid());
 					Map<String,Object> subparam=new HashMap<String,Object>();
 					subparam.put("materialid",item.get("materialid").toString());
 					subparam.put("shopid",item.get("shopid").toString());
 					subparam.put("inwaretime",GeneralUtil.formatDate(inwaretime));
+				    Set<String> materialidSet=new TreeSet<String>();
+				    materialidSet.add(item.get("materialid").toString());
 					Map<String, Object> assmap = assemblyEntryInstockMapper.getAssInstockBySub(subparam);
 					if(assmap!=null){
 						item.putAll(assmap);
@@ -392,14 +394,48 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 								skuset.addAll(Arrays.asList(mainsku.split(",")));
 								item.put("mainsku", StrUtil.join(",",skuset));
 							}
+							materialidSet.addAll(Arrays.asList(assmap.get("mainmid").toString().split(",")));
 						}
+						subparam.put("midlist",materialidSet);
 
 				}
-				Map<String,Object> changeamount=iChangeWhFormEntryService.getChangeAmount(subparam);
+				changeentry=iChangeWhFormEntryService.getByFromMaterial(subparam);
 				Map<String, Object> stocking = stockTakingItemMapper.getStockingItem(subparam);
-				Integer chamount=changeamount==null||changeamount.get("changeAmount")==null?0:Integer.parseInt(changeamount.get("changeAmount").toString());
-				if(changeamount!=null&&changeamount.size()>0){
-					item.putAll(changeamount);
+				Integer chamount=changeentry==null||changeentry.get("changeAmount")==null?0:Integer.parseInt(changeentry.get("changeAmount").toString());
+				if(changeentry!=null&&changeentry.size()>0){
+					String changestr=changeentry.get("changeitem").toString();
+					String[] changeform=changestr.split(";");
+					String changestr2=changeentry.get("changeitem").toString();
+					String[] changeform2=changestr.split(";");
+					for(int i=0;i<changeform.length;i++){
+						String changeformitem=changeform[i];
+						if(StrUtil.isNotBlank(changeformitem)){
+							String[] changeitem=changeformitem.split("->");
+							if(changeitem.length>0){
+								if(changeitem[0].equals(item.get("materialid"))){
+									Map<String,Object> subparam2=new HashMap<String,Object>();
+									subparam2.put("materialid",changeitem[1]);
+									subparam2.put("shopid",item.get("shopid").toString());
+									subparam2.put("inwaretime",GeneralUtil.formatDate(inwaretime));
+									Map<String, Object> assmap2 = assemblyEntryInstockMapper.getAssInstockBySub(subparam2);
+									if(assmap2!=null) {
+										//item.putAll(assmap2);
+										if (assmap2.get("mainsku") != null && mainsku != null) {
+											String m_mainsku = assmap2.get("mainsku").toString();
+											if (m_mainsku.equals(mainsku)) {
+												item.put("changeskus",(item.get("changeskus")!=null? item.get("changeskus").toString() + ",":"") + assmap2.get("mainsku"));
+											} else {
+												Set<String> skuset = new TreeSet<String>();
+												skuset.addAll(Arrays.asList(m_mainsku.split(",")));
+												item.put("changeskus",(item.get("changeskus")!=null? item.get("changeskus").toString() + ",":"")  + StrUtil.join(",", skuset));
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					item.putAll(changeentry);
 				}
 				if(stocking!=null){
 					item.putAll(stocking);
@@ -407,18 +443,24 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 				}
 				Map<String,Object> param=new HashMap<String,Object>();
 				param.put("inwaretime",GeneralUtil.formatDate(inwaretime));
-				if(item.get("mainsku")!=null){
-					param.put("msku",item.get("mainsku")+","+sku);
-					param.put("shipmentids",null);
-					param.put("shopid",dto.getShopid());
-				}else{
-					param.put("msku",sku);
-					param.put("shipmentids",null);
-					param.put("shopid",dto.getShopid());
-				}
+				param.put("msku",sku+(item.get("mainsku")!=null?","+item.get("mainsku").toString():""));
+				param.put("shipmentids",null);
+				param.put("shopid",dto.getShopid());
 				Map<String, Object> map = amazonClientOneFeignManager.getLastShipmentQty(param);
 				if(map!=null){
 					item.putAll(map);
+				}
+
+				Map<String,Object> param2=new HashMap<String,Object>();
+				param2.put("inwaretime",GeneralUtil.formatDate(inwaretime));
+				param2.put("msku",(changeentry!=null&&changeentry.get("changesku")!=null?","+changeentry.get("changesku").toString():"")+(item.get("changeskus")!=null?","+item.get("changeskus").toString():""));
+				param2.put("shipmentids",null);
+				param2.put("shopid",dto.getShopid());
+				if(param2.get("msku")!=null&&StrUtil.isNotBlank(param2.get("msku").toString())){
+					Map<String, Object> map2 = amazonClientOneFeignManager.getLastShipmentQty(param2);
+					if(map2!=null){
+						item.put("changeship",map2);
+					}
 				}
 				Integer subshipqty=0;
 				Map<String,Integer> skusub=new HashMap<String,Integer>();
@@ -432,6 +474,20 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 						}
 						String qty=skuq.length>1?skuq[1]:"0";
 						skusub.put(subsku,Integer.parseInt(qty));
+					}
+				}
+				if(item.get("mainSkuSubnumber")!=null){
+					String[] skuqtylist = item.get("mainSkuSubnumber").toString().split(",");
+					for(String skuqty:skuqtylist){
+						String[] skuq=skuqty.split(":");
+						String innerQtySku=skuq.length>1?skuq[1]:"";
+						String innerMainsku=skuq.length>1?skuq[0]:"";
+						if(StrUtil.isBlank(innerQtySku)){
+							continue;
+						}
+						if(skusub.get(innerMainsku)==null){
+							skusub.put(innerMainsku,Integer.parseInt(innerQtySku));
+						}
 					}
 				}
 				if(item.get("subnumber")!=null&&item.get("skushipqty")!=null){
@@ -452,11 +508,15 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 
 					}
 					item.put("subshipqty",subshipqty);
-					item.put("outqty",subshipqty+chamount);
+					item.put("outqty",subshipqty);//+chamount
+					item.put("chamount",chamount);//+chamount
 				}else{
 					Integer shipqty =map!=null&&map.get("shipqty")!=null?Integer.parseInt(map.get("shipqty").toString()):0;
-					item.put("outqty",shipqty+chamount);
+					item.put("outqty",shipqty);//+chamount
+					item.put("chamount",chamount);//+chamount
 				}
+
+
 			}
 
 			if(mainmid!=null){
@@ -499,7 +559,6 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 		title.put(i++, "采购单");
 		title.put(i++, "收货数量");
 		title.put(i++, "发货");
-
 		title.put(i++, "产品名称");
 		title.put(i++, "产品类型");
 		title.put(i++, "仓库名称");
@@ -524,6 +583,9 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 		title.put(i++, "主SKU库存-待入库");
 		title.put(i++, "主SKU库存-可用");
 		title.put(i++, "主SKU库存-待出库");
+		title.put(i++, "待料");
+		title.put(i++, "待料后发货");
+		title.put(i++, "待料出库");
 
 		Map<String, String> titlemap = new HashMap<String, String>();
 		titlemap.put("sku","sku");
@@ -554,6 +616,10 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 		titlemap.put("主SKU库存-待入库","maininbound");
 		titlemap.put("主SKU库存-可用","mainfulfillable");
 		titlemap.put("主SKU库存-待出库","mainoutbound");
+		titlemap.put("待料","changeAmount");
+		titlemap.put("待料后发货","changeAmount");
+		titlemap.put("待料出库","changeship.shipqty");
+
 		Sheet sheet = workbook.createSheet();
 		Row row = sheet.createRow(0);
 		for(Integer key: title.keySet()){
@@ -565,10 +631,22 @@ public class PurchaseFormEntryServiceImpl extends  ServiceImpl<PurchaseFormEntry
 			Row crow = sheet.createRow(i+1);
 			for(Integer key: title.keySet()){
 				Cell cell = crow.createCell(key);
-				if(rmap.get(titlemap.get(title.get(key)))==null){
+				String titlestr=title.get(key);
+				String valuekey=titlemap.get(titlestr);
+				String value=null;
+				if(valuekey.equals("changeship.shipqty")){
+						Map<String,Object> obj=(Map<String,Object>)rmap.get("changeship");
+						if(obj!=null&&obj.get("shipqty")!=null){
+							value=obj.get("shipqty").toString();
+						}
+
+				}else{
+					  Object obj=rmap.get(valuekey);
+					  value=obj!=null?obj.toString():null;
+				}
+				if(value==null){
 					cell.setCellValue("");
 				} else {
-					String value=rmap.get(titlemap.get(title.get(key))).toString();
 					if(title.get(key).equals("产品类型")){
 						if(value.equals("0")){
 							value="单独成品";

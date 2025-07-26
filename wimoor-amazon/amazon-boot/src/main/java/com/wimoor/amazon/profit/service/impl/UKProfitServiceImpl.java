@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.math.Calculator;
+import com.wimoor.common.StringFormat;
 import org.springframework.stereotype.Service;
 
 import com.googlecode.aviator.AviatorEvaluator;
@@ -146,6 +148,13 @@ public class UKProfitServiceImpl extends ProfitServiceImpl {
 			if (format.contains("?")) {// 如果有逻辑判断
 				format = (String) AviatorEvaluator.exec(format, outboundWeight);
 			}
+			if(format.contains("{0}")) {
+				String result = StringFormat.format(format, outboundWeight);
+				format =  new BigDecimal(Calculator.conversion(result)).toString();
+			}
+			if(format.contains("value")) {
+				format =  AviatorEvaluator.exec(format, outboundWeight).toString();
+			}
 			if(GeneralUtil.isDouble(format)) {
 				FBA = new BigDecimal(format);
 			}
@@ -286,5 +295,25 @@ public class UKProfitServiceImpl extends ProfitServiceImpl {
 		}
 		return fbaFormat.getWeight().multiply(new BigDecimal("1000")).subtract(weight.multiply(new BigDecimal("1000"))).setScale(0);
 	}
-	
+	public BigDecimal getSLOutboundWeight(String country, ProductTier productTier, InputDimensions inputDimension) {
+		BigDecimal weight = inputDimension.getWeight(getWeightUnit(country)).getValue();
+		if (weight == null) {
+			weight = new BigDecimal("0");
+		}
+		BigDecimal boxweight = productTier.getBoxWeight();
+		if (boxweight==null) {
+			boxweight = new BigDecimal("0");
+
+		}
+/*
+For small parcels (excluding items fulfilled via Low-Price FBA), standard parcels and oversize items (excluding Special oversize), Amazon uses dimensional weight to determine the weight tier whenever it is greater than the unit weight.
+ */
+//		inputDimension.setDimensionalWeight(inputDimension.getDimensionalWeight(getDimUnit(country)));
+//		if (inputDimension.getDimensionalWeight().getValue().compareTo(weight) > 0) {
+//			weight = inputDimension.getDimensionalWeight().getValue();
+//		}
+		BigDecimal outboundWeight = weight.add(boxweight).setScale(2, RoundingMode.CEILING);//进位取整数，模拟不足一盎司/克按一盎司/克算
+		return outboundWeight;
+	}
+
 }

@@ -1,12 +1,9 @@
 package com.wimoor.erp.ship.service.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 import javax.annotation.Resource;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.wimoor.common.service.impl.SystemLogAspect;
 import com.wimoor.erp.ship.pojo.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +14,7 @@ import com.wimoor.common.mvc.BizException;
 import com.wimoor.common.mvc.FileUpload;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AmazonClientOneFeignManager;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
+import com.wimoor.erp.material.service.IAssemblyFormService;
 import com.wimoor.erp.common.pojo.entity.EnumByInventory;
 import com.wimoor.erp.inventory.pojo.entity.InventoryParameter;
 import com.wimoor.erp.inventory.service.IInventoryFormAgentService;

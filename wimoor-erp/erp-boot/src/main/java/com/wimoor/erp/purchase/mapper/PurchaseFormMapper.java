@@ -19,7 +19,7 @@ public interface PurchaseFormMapper extends BaseMapper<PurchaseForm> {
 	
 	List<Map<String, Object>> purchaseSumReport(Map<String, Object> param);
 
-	List<Map<String, Object>> findeLastByMaterialid(Page<?> page,@Param("materialid") String materialid);
+	List<Map<String, Object>> findeLastByMaterialid(Page<?> page,@Param("materialid") String materialid,@Param("warehouseid") String warehouseid);
 
 	Map<String, Object> selectSummarytByCondition(Map<String, Object> param);
 

@@ -19,17 +19,26 @@
 
 <select id="getOptList" parameterType="java.lang.String" resultType="java.util.Map">
 		SELECT 
-		w.name wname,s.name shelfname,s.number,u.name operator,m.sku,m.name mname,r.opttime,
-		ifnull(t.name,'上下架') formname,r.quantity,
+		w.name wname,
+		s.name shelfname,
+		s.number,
+		u.name operator,
+		m.sku,
+		m.name mname,
+		r.opttime,
+		ifnull(t.name,'上下架') formname,
+		r.quantity,
 		case r.opt  when 0 then '下架' 
 		            when 1 then '上架'
 		            when 2 then '修正下架'
 		            when 3 then '修正上架'
 		            ELSE '未知' END  optname,
 		   IFNULL(p.location,p.url) image  ,
-			r.shelfid       
-		
+		r.shelfid,
+		r.balance_qty,
+		i.quantity quantity2
 		from t_erp_warehouse_shelf_inventory_opt_record r
+		LEFT JOIN t_erp_warehouse_shelf_inventory i on i.shelfid=r.shelfid and i.materialid=r.materialid and i.shopid=r.shopid and i.warehouseid=r.warehouseid
 		LEFT JOIN t_erp_formtype t ON t.id=r.formtype
 		LEFT JOIN t_erp_material m ON m.id=r.materialid
 		LEFT JOIN t_picture p ON p.id=m.image

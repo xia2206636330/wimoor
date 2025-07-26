@@ -19,8 +19,8 @@ import com.wimoor.common.mvc.BizException;
 import com.wimoor.common.service.ISerialNumService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AdminClientOneFeignManager;
-import com.wimoor.erp.assembly.pojo.entity.AssemblyForm;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
+import com.wimoor.erp.material.pojo.entity.AssemblyForm;
+import com.wimoor.erp.material.service.IAssemblyFormService;
 import com.wimoor.erp.common.pojo.entity.ERPBizException;
 import com.wimoor.erp.material.mapper.MaterialMarkMapper;
 import com.wimoor.erp.material.service.IDimensionsInfoService;
@@ -149,6 +149,7 @@ public class PurchasePlanServiceImpl extends  ServiceImpl<PurchasePlanMapper,Pur
 	
 	public String getLastForm(Map<String, Object> map) {
 		String id = map.get("id")!=null?map.get("id").toString():null;
+		String warehouseid = map.get("warehouseid")!=null?map.get("warehouseid").toString():null;
 		String issfg =  map.get("issfg")!=null?map.get("issfg").toString():null;
 		if(id==null) {
 			return null;
@@ -156,14 +157,15 @@ public class PurchasePlanServiceImpl extends  ServiceImpl<PurchasePlanMapper,Pur
 		String lastform = "";
 		SimpleDateFormat sdf4 = new SimpleDateFormat("MM-dd");
 		if ("1".equals(issfg.toString())) {// 组装成品
-			Map<String,Object> form = assemblyFormService.getLastOneFormByMaterial(id);
+			Map<String,Object> form = assemblyFormService.getLastOneFormByMaterial(id,warehouseid);
 			if (form != null) {
-				lastform = sdf4.format(form.get("createdate").toString());
+				Date time = GeneralUtil.getDate(form.get("createdate"));
+				lastform =GeneralUtil.formatDate(time)  ;
 				lastform = lastform + " " +form.get("amount").toString();
 				lastform = lastform + "  <br> " +form.get("auditstatusName").toString();
 			}
 		} else if ("0".equals(issfg.toString()) || "2".equals(issfg.toString())) {// 单独成品,半成品
-			Map<String, Object> data = purchaseFormService.getLastOneFormByMaterial(id);
+			Map<String, Object> data = purchaseFormService.getLastOneFormByMaterial(id,warehouseid);
 			if (data != null) {
 				Object creatdate = data.get("createdate");
 				if (creatdate != null) {
@@ -181,6 +183,8 @@ public class PurchasePlanServiceImpl extends  ServiceImpl<PurchasePlanMapper,Pur
 		}
 		return lastform;
 	}
+
+
 
 	public Map<String, Object> getLast3Form(Map<String, Object> map) {
 		String id = map.get("id")!=null?map.get("id").toString():null;

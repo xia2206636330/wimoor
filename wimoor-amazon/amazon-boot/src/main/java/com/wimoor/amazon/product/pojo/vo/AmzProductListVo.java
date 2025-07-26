@@ -75,6 +75,7 @@ public class AmzProductListVo {
 	BigDecimal priceweek;
 	BigDecimal profitrate;
 	String newprorate;
+	Map<String,Object> param;
 	Integer ordermonth;
 	Integer salesreturnmonth;
 	Integer orderReturnMonth;
@@ -90,6 +91,7 @@ public class AmzProductListVo {
 	BigDecimal buybox;
 	BigDecimal positiveFeedbackRating;
 	BigDecimal changeprice;
+	BigDecimal mprice;
 	Integer unitsordered7;
 	//Integer afn_fulfillable_quantity;
 	String remark;
@@ -113,5 +115,6 @@ public class AmzProductListVo {
 	String fbahealth;
 	String owner;
 	String ownername;
+	String costDetail;
 	Boolean hasChildren=false;
 }

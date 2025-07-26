@@ -17,5 +17,6 @@ public interface ChangeWhFormEntryMapper extends BaseMapper<ChangeWhFormEntry>{
 
 	List<ChangeWhFormEntry> selectByFormid(String formid);
 
-    Map<String,Object> getChangeAmount(@Param("params")Map<String, Object> param);
+	Map<String, Object> getByFromMaterial(Map<String, Object> subparam);
+
 }

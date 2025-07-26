@@ -60,6 +60,7 @@
 				 max(wh.id) warehouseid,
 				 max(form.marketplaceid) marketplaceid,
 		         max(form.id) inboundPlanId,
+		         max(form.inbound_pland_id) planid,
 				 max(ag.id) amazongroupid,
 				 max(form.amazonauthid) amazonauthid,
 				 max(ifnull(form.invstatus,0)) invstatus,
@@ -70,10 +71,12 @@
 		         max(ty.name) transtypename,
 				 max(tyd.day) transday,
 				 max(form.submitbox) submitbox,
+				 max(form.AreCasesRequired) AreCasesRequired,
 				 max(form.shipping_date) shippingDate,
 				 MAX(DATEDIFF(ifnull(form.shipping_date,now()),form.auditime)) sumdays,
 				 MAX(ifnull(tyd.day,8)) hasday,
-		         MAX(form.shopid) shopid
+		         MAX(form.shopid) shopid,
+		         MAX(form.shipments) shipments
 		from t_erp_ship_v2_inboundplan form
 		left join t_amazon_group ag on ag.id=form.groupid
 		left join t_erp_ship_address addre on addre.id=form.source_address
@@ -312,7 +315,8 @@
 			trans.arrivalTime,item.quantity,item.received,inp.createtime,
 			ship.destination center ,detail.channame ,
 			case when stat.`status`='WORKING' and ship.status>=5 then '已删除' else stat.name end shipmentstatus,
-			ifnull(item.received,0) sumrec,ship.status
+			ifnull(item.received,0) sumrec,ship.status,
+			concat(DATE_FORMAT(dy.start_date, '%Y-%m-%d'),'-',DATE_FORMAT(dy.end_date, '%Y-%m-%d')) deliveryTime
 		from t_erp_ship_v2_inboundshipment_item item
 		left join t_erp_ship_v2_inboundshipment ship on ship.ShipmentId =item.ShipmentId
 		left join t_erp_ship_inboundtrans trans on trans.shipmentid=ship.shipment_confirmation_id
@@ -323,6 +327,7 @@
 		left join t_marketplace mkp on mkp.marketplaceId=inp.marketplaceid
 		left join t_amazon_group g on g.id=inp.groupid
 		left join t_erp_warehouse w on w.id=inp.warehouseid
+		left join t_erp_ship_v2_inboundshipment_delivery dy on dy.delivery_window_option_id=ship.delivery_window_option_id
 		where inp.shopid =#{param.shopid,jdbcType=CHAR}
 			and ship.status>1
 		<if test="param.endDate!=null">
@@ -343,7 +348,7 @@
 		</if>
 		<if test="param.search!=null">
 			and (item.sku like #{param.search,jdbcType=CHAR}
-			or ship.ShipmentId like #{param.search,jdbcType=CHAR} or inp.number like #{param.search,jdbcType=CHAR} )
+			or ship.shipment_confirmation_id like #{param.search,jdbcType=CHAR} or inp.number like #{param.search,jdbcType=CHAR} )
 		</if>
 		<if test="param.company != null">
 			and cop.name like #{param.company,jdbcType=CHAR} 
@@ -474,11 +479,13 @@
 			max(start_receive_date) start_receive_date,
 			max(trt.name) transtype,
 			max(v.weight) boxweight, 
-			max(v.volume) boxvolume
+			max(v.volume) boxvolume,
+			max(v.boxmeter) boxmeter
 		from t_erp_ship_v2_inboundshipment ship
 		left join (
 			select b.shipmentid,sum(ifnull(weight,0)) weight,
-				ROUND(sum(ifnull(length,0)*ifnull(width,0)*ifnull(height,0)/ifnull(detail.drate,5000)),2) volume 
+				ROUND(sum(ifnull(length,0)*ifnull(width,0)*ifnull(height,0)/ifnull(detail.drate,5000)),2) volume,
+		        ROUND(sum(ifnull(length,0)*ifnull(width,0)*ifnull(height,0)/1000000),6) boxmeter
 			from
 		           t_erp_ship_v2_inboundshipment_box b
 					LEFT JOIN t_erp_ship_v2_inboundshipment s ON s.ShipmentId=b.shipmentid

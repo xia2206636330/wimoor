@@ -2,17 +2,15 @@ package com.amazon.spapi.documents.impl;
 
 import com.amazon.spapi.documents.HttpTransferClient;
 import com.amazon.spapi.documents.exception.HttpResponseException;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+
+import okhttp3.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HTTP transfer client utilizing OkHttp.
@@ -127,9 +125,8 @@ public class OkHttpTransferClient implements HttpTransferClient {
          */
         public OkHttpTransferClient build() {
             if (client == null) {
-                client = new OkHttpClient();
+                client = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.MINUTES).build();
             }
-
             return new OkHttpTransferClient(client, maxErrorBodyLen);
         }
     }

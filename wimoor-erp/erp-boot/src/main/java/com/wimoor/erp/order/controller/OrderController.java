@@ -9,19 +9,20 @@ import com.wimoor.common.result.Result;
 import com.wimoor.common.service.ISerialNumService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.common.user.UserInfoContext;
+import com.wimoor.erp.common.pojo.entity.ChartLine;
 import com.wimoor.erp.material.pojo.entity.Material;
 import com.wimoor.erp.material.service.IMaterialService;
-import com.wimoor.erp.material.service.impl.MaterialServiceImpl;
 import com.wimoor.erp.order.pojo.entity.Order;
-import com.wimoor.erp.order.pojo.entity.OrderPlan;
+import com.wimoor.erp.order.pojo.entity.OrderShipPlan;
 import com.wimoor.erp.order.pojo.entity.OrderPlatform;
-import com.wimoor.erp.order.service.IOrderPlanService;
+import com.wimoor.erp.order.service.IOrderShipPlanService;
 import com.wimoor.erp.order.service.IOrderPlatformService;
 import com.wimoor.erp.order.service.IOrderService;
 import com.wimoor.erp.stock.pojo.entity.InWarehouseForm;
 import com.wimoor.erp.stock.pojo.entity.OutWarehouseForm;
 import com.wimoor.erp.stock.service.IInWarehouseFormService;
 import com.wimoor.erp.stock.service.IOutWarehouseFormService;
+import com.wimoor.erp.util.CountryUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +34,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api(tags = "订单接口")
 @RestController
@@ -50,7 +47,7 @@ import java.util.Map;
 public class OrderController {
     private final IOrderService orderService;
     private final IOrderPlatformService orderPlatformService;
-    private final IOrderPlanService orderPlanService;
+    private final IOrderShipPlanService orderPlanService;
     private final ISerialNumService iSerialNumService;
     private final IOutWarehouseFormService iOutWarehouseFormService;
     private final IMaterialService iMaterialsService;
@@ -106,6 +103,8 @@ public class OrderController {
     @PostMapping("/save")
     public Result<Order> saveAction(@RequestBody Order dto)   {
         UserInfo userinfo = UserInfoContext.get();
+        String country= orderService.getCountryCode(dto.getCountry());
+        dto.setCountry(country);
         if(dto.idIsNULL()){
             dto.setShopid(userinfo.getCompanyid());
             dto.setOperator(userinfo.getId());
@@ -259,24 +258,26 @@ public class OrderController {
             cell = row.createCell(1);
             cell.setCellValue("仓库");
             cell = row.createCell(2);
-            cell.setCellValue("SKU");
+            cell.setCellValue("国家");
             cell = row.createCell(3);
-            cell.setCellValue("名称");
+            cell.setCellValue("SKU");
             cell = row.createCell(4);
-            cell.setCellValue("订单");
+            cell.setCellValue("名称");
             cell = row.createCell(5);
-            cell.setCellValue("购买日期");
+            cell.setCellValue("订单");
             cell = row.createCell(6);
-            cell.setCellValue("销量");
+            cell.setCellValue("购买日期");
             cell = row.createCell(7);
+            cell.setCellValue("销量");
+            cell = row.createCell(8);
             cell.setCellValue("销售额");
-            cell=row.createCell(8);
-            cell.setCellValue("邮费");
             cell=row.createCell(9);
-            cell.setCellValue("平台佣金");
+            cell.setCellValue("邮费");
             cell=row.createCell(10);
-            cell.setCellValue("平台佣金百分比");
+            cell.setCellValue("平台佣金");
             cell=row.createCell(11);
+            cell.setCellValue("平台佣金百分比");
+            cell=row.createCell(12);
             cell.setCellValue("利润");
             for(int i=0;list!=null&&i<list.size();i++) {
                 Map<String, Object> item = list.get(i);
@@ -286,22 +287,30 @@ public class OrderController {
                 cell = row.createCell(1);
                 cell.setCellValue(GeneralUtil.getValue(item.get("warehousename")));
                 cell = row.createCell(2);
-                cell.setCellValue(GeneralUtil.getValue(item.get("sku")));
+                String countryname= CountryUtil.getCountryName(GeneralUtil.getValue(item.get("country")));
+                if(countryname!=null){
+                    countryname=GeneralUtil.getValue(item.get("country"));
+                }
+                cell.setCellValue(countryname);
                 cell = row.createCell(3);
-                cell.setCellValue(GeneralUtil.getValue(item.get("name")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("sku")));
                 cell = row.createCell(4);
-                cell.setCellValue(GeneralUtil.getValue(item.get("order_id")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("name")));
                 cell = row.createCell(5);
-                cell.setCellValue(GeneralUtil.getValue(item.get("quantity")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("order_id")));
                 cell = row.createCell(6);
-                cell.setCellValue(GeneralUtil.getValue(item.get("price")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("purchase_date")));
                 cell = row.createCell(7);
-                cell.setCellValue(GeneralUtil.getValue(item.get("ship_fee")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("quantity")));
                 cell = row.createCell(8);
-                cell.setCellValue(GeneralUtil.getValue(item.get("referral_fee")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("price")));
                 cell = row.createCell(9);
-                cell.setCellValue(GeneralUtil.getValue(item.get("referral_rate")));
+                cell.setCellValue(GeneralUtil.getValue(item.get("ship_fee")));
                 cell = row.createCell(10);
+                cell.setCellValue(GeneralUtil.getValue(item.get("referral_fee")));
+                cell = row.createCell(11);
+                cell.setCellValue(GeneralUtil.getValue(item.get("referral_rate")));
+                cell = row.createCell(12);
                 cell.setCellValue(GeneralUtil.getValue(item.get("profit")));
             }
             workbook.write(fOut);
@@ -443,19 +452,19 @@ public class OrderController {
     @GetMapping("/set")
     public Result<?> setAction(String materialId,String operate)   {
                         UserInfo user = UserInfoContext.get();
-                        OrderPlan plan=new OrderPlan();
+                        OrderShipPlan plan=new OrderShipPlan();
                         plan.setShopid(user.getCompanyid());
                         plan.setMaterialid(materialId);
                         if(operate.equals("add")){
                             return Result.success(orderPlanService.save(plan));
                         }else{
-                            return Result.success(orderPlanService.lambdaUpdate().eq(OrderPlan::getMaterialid, materialId).eq(OrderPlan::getShopid, user.getCompanyid()).remove());
+                            return Result.success(orderPlanService.lambdaUpdate().eq(OrderShipPlan::getMaterialid, materialId).eq(OrderShipPlan::getShopid, user.getCompanyid()).remove());
                         }
               }
     @GetMapping("/clear")
     public Result<?> clearAction()   {
         UserInfo user = UserInfoContext.get();
-        return Result.success(orderPlanService.lambdaUpdate().eq(OrderPlan::getShopid, user.getCompanyid()).remove());
+        return Result.success(orderPlanService.lambdaUpdate().eq(OrderShipPlan::getShopid, user.getCompanyid()).remove());
     }
 
 
@@ -475,20 +484,22 @@ public class OrderController {
             cell = row.createCell(1);
             cell.setCellValue("仓库");
             cell = row.createCell(2);
-            cell.setCellValue("SKU");
+            cell.setCellValue("国家");
             cell = row.createCell(3);
-            cell.setCellValue("订单");
+            cell.setCellValue("SKU");
             cell = row.createCell(4);
-            cell.setCellValue("购买日期");
+            cell.setCellValue("订单");
             cell = row.createCell(5);
-            cell.setCellValue("销量");
+            cell.setCellValue("购买日期");
             cell = row.createCell(6);
-            cell.setCellValue("销售额");
+            cell.setCellValue("销量");
             cell = row.createCell(7);
-            cell.setCellValue("邮费");
+            cell.setCellValue("销售额");
             cell = row.createCell(8);
-            cell.setCellValue("平台佣金");
+            cell.setCellValue("邮费");
             cell = row.createCell(9);
+            cell.setCellValue("平台佣金");
+            cell = row.createCell(10);
             cell.setCellValue("平台佣金百分比");
             workbook.write(fOut);
             fOut.flush();
@@ -504,14 +515,14 @@ public class OrderController {
     }
 
     @PostMapping(value = "/uploadExcel",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Result<String> uploadExcelAction(@RequestParam("file") MultipartFile file) {
+    public Result<String> uploadExcelAction(@RequestParam("warehouseid") String warehouseid,@RequestParam("file") MultipartFile file) {
         UserInfo user = UserInfoContext.get();
         if (file != null) {
             try {
                 InputStream inputStream = file.getInputStream();
                 Workbook workbook = WorkbookFactory.create(inputStream);
                 Sheet sheet = workbook.getSheetAt(0);
-                String result = orderService.uploadOrder(sheet, user);
+                String result = orderService.uploadOrder(sheet, user,warehouseid);
                 workbook.close();
                 return Result.success(result);
             } catch (IOException e) {
@@ -527,4 +538,21 @@ public class OrderController {
         }
         return Result.failed();
     }
+
+    @GetMapping("/salesLine")
+    public Result<com.wimoor.erp.common.pojo.entity.Chart> getSalesLineAction(String sku,String warehouseid,String daysize) {
+        UserInfo userinfo = UserInfoContext.get();
+        com.wimoor.erp.common.pojo.entity.Chart chart=new com.wimoor.erp.common.pojo.entity.Chart();
+            List<ChartLine> lines = new ArrayList<ChartLine>();
+            ChartLine line = orderService.findOrderSummaryBySku(userinfo.getCompanyid(), warehouseid, sku,  daysize, userinfo);
+            lines.add(line);
+            chart.setLines(lines);
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.DATE, -1);
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, Integer.parseInt(daysize) * -1 - 1);
+            chart.setLabels(com.wimoor.erp.common.pojo.entity.ChartPoint.getLabels(com.wimoor.erp.common.pojo.entity.ChartPoint.Daily, c.getTime(), end.getTime()));
+            chart.setLegends(Arrays.asList(sku));
+            return Result.success(chart);
+        }
 }

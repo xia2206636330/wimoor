@@ -37,10 +37,14 @@
 	</select>
 
 	<select id="findeLastByMaterialid" resultType="java.util.Map" parameterType="java.lang.String">
-		select f.createdate,f.number, e.amount,e.auditstatus,e.id entryid,e.totalin totalin,e.totalpay totalpay
+		select f.createdate,f.number, e.amount,e.auditstatus,e.id entryid,e.totalin totalin,e.totalpay totalpay,w.name wname
 		from t_erp_purchase_form f
+		left join t_erp_warehouse w on w.id=f.warehouseid
 		left join t_erp_purchase_form_entry e on f.id=e.formid
 		where e.materialid=#{materialid,jdbcType=CHAR}
+		<if test='warehouseid!=null'>
+		  and  f.warehouseid=#{warehouseid,jdbcType=CHAR}
+		</if>
 		order by f.createdate desc
 	</select>
 

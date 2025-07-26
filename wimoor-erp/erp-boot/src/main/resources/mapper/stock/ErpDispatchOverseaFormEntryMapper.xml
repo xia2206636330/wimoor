@@ -44,4 +44,23 @@
 					) i2  on i2.materialid=m.id 
 	    where formid = #{formid,jdbcType=CHAR}
   </select>
+
+	<select id="getPrintLabel" resultType="java.util.Map" parameterType="java.lang.String">
+		select IFNULL(l.sku,m.sku) sku,
+			   ifnull(IFNULL(l.name,c.cname),m.name) name,
+			   IFNULL(l.ename,c.ename) ename,
+			   IFNULL(p.location,p.url) image,
+			   form.remark,
+			   w.country,
+			   a.*
+		from t_erp_dispatch_oversea_form_entry a
+				 left join t_erp_dispatch_oversea_form form on form.id=a.formid
+				 left join t_erp_material m on a.materialid = m.id
+				 left join t_erp_warehouse w on w.id=form.to_warehouseid
+				 left join t_erp_order_listing l on l.shopid=form.shopid and l.warehouseid=w.id and ifnull(l.msku,l.sku)=m.sku
+				 left join t_erp_material_customs c on c.materialid=m.id and c.country=ifnull(l.country,w.country)
+				 left join t_picture p on m.image=p.id
+		where formid =  #{formid,jdbcType=CHAR}
+	</select>
+
 </mapper>

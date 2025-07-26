@@ -23,6 +23,7 @@ public class PlanDTO extends BasePageQuery{
 	String search ;
 	Boolean selected ;
 	Boolean notag;
+	Boolean expendall;
 	String status ;
 	String status2;
 	String owner ;

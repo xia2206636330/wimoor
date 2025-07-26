@@ -170,6 +170,22 @@ public class ShipInboundPlanV2Controller {
 		    ShipInboundOperation result = shipInboundPlanV2Service.confirmInboundPlan(plan);
 			return Result.success(result);
 	}
+
+	@ApiOperation(value = "修改混装和原装")
+	@GetMapping("/updateAreCasesRequired")
+	@SystemControllerLog("修改混装和原装")
+	@Transactional
+	public  Result<?> updateAreCasesRequired(String formid,String areCasesRequired){
+		UserInfo user=UserInfoContext.get();
+		ShipInboundPlan plan = shipInboundPlanV2Service.getById(formid);
+		if(areCasesRequired.equals("true")){
+			plan.setAreCasesRequired(true);
+		}else{
+			plan.setAreCasesRequired(false);
+		}
+		return Result.success(shipInboundPlanV2Service.updateById(plan));
+	}
+
 	@ApiOperation(value = "完成配货发货计划处理")
 	@GetMapping("/doneInboundPlan")
 	@SystemControllerLog("完成配货")
@@ -182,6 +198,7 @@ public class ShipInboundPlanV2Controller {
 			plan.setOpttime(new Date());
 			plan.setAuditstatus(3);
 			shipInboundPlanV2Service.updateById(plan);
+			shipInboundV2ShipmentRecordService.saveRecord(plan);
 		}
 		return Result.success(plan);
 	}
@@ -312,14 +329,16 @@ public class ShipInboundPlanV2Controller {
 			try {
 				 List<ShipInboundItemVo> itemlist = iShipInboundItemService.listByFormid(inplan.getId());
 				 ShipFormDTO dto=getFormDTO(inplan,itemlist);
-				 erpClientOneFeign.outBoundShipInventory(dto);
+				 if(inplan.getInvtype()!=2){
+					 erpClientOneFeign.outBoundShipInventory(dto);
+					 inplan.setInvstatus(1);
+				 }
 				 for(ShipInboundItemVo item:itemlist) {
 					 ShipInboundItem itemold = iShipInboundItemService.getById(item.getId());
 					 itemold.setMsku(item.getMsku());
 					 iShipInboundItemService.updateById(itemold);
 				 }
 				 inplan.setAuditstatus(2);
-				 inplan.setInvstatus(1);
 				 inplan.setAuditor(user.getId());
 				 inplan.setAuditime(new Date());
 				 inplan.setOpttime(new Date());

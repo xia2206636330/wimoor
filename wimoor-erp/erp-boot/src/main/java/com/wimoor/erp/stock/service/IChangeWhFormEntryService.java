@@ -13,5 +13,5 @@ public interface IChangeWhFormEntryService extends IService<ChangeWhFormEntry> {
 	List<Map<String, Object>> findFormDetailByFormid(String formid);
 
 	List<ChangeWhFormEntry> selectByFormid(String formid);
-	Map<String,Object> getChangeAmount(Map<String,Object> param);
+	Map<String, Object> getByFromMaterial(Map<String, Object> subparam);
 }

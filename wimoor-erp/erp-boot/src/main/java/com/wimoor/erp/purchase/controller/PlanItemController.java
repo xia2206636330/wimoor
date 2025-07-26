@@ -60,6 +60,7 @@ public class PlanItemController {
 	@PostMapping("/save")
     @Transactional
 	@CacheEvict(value = { "inventoryByMskuCache"  }, allEntries = true)
+	@SystemControllerLog("采购计划item保存")
 	public Result<PurchasePlanItem> savePlanItemAction(@RequestBody PurchasePlanItem item) throws ERPBizException {
 		UserInfo userinfo = UserInfoContext.get();
 		String shopid = userinfo.getCompanyid();
@@ -94,6 +95,7 @@ public class PlanItemController {
 	@GetMapping("/delete")
     @Transactional
 	@CacheEvict(value = { "inventoryByMskuCache"  }, allEntries = true)
+	@SystemControllerLog("采购计划item删除")
 	public Result<?> deletePlanItemAction(String planid,String materialid,String groupid) throws ERPBizException {
 		LambdaQueryWrapper<PurchasePlanItem> query=new LambdaQueryWrapper<PurchasePlanItem>();
 		query.eq(PurchasePlanItem::getMaterialid, materialid);

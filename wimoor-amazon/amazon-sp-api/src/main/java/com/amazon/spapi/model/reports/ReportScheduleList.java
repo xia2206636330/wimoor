@@ -10,23 +10,25 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
+import java.util.Objects;
+import java.util.Arrays;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import com.google.gson.annotations.SerializedName;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * A list of report schedules.
  */
-@ApiModel(description = "A list of report schedules.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "A list of report schedules.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class ReportScheduleList {
   @SerializedName("reportSchedules")
   private List<ReportSchedule> reportSchedules = new ArrayList<ReportSchedule>();
@@ -42,10 +44,10 @@ public class ReportScheduleList {
   }
 
    /**
-   * Get reportSchedules
+   * Detailed information about a report schedule.
    * @return reportSchedules
   **/
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "Detailed information about a report schedule.")
   public List<ReportSchedule> getReportSchedules() {
     return reportSchedules;
   }
@@ -95,4 +97,3 @@ public class ReportScheduleList {
   }
 
 }
-

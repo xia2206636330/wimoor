@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 import org.threeten.bp.OffsetDateTime;
 
 import com.amazon.spapi.SellingPartnerAPIAA.LWAAccessTokenCache;
@@ -74,7 +77,7 @@ public class FeedsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelFeedCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call cancelFeedCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -101,10 +104,10 @@ public class FeedsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -117,7 +120,7 @@ public class FeedsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call cancelFeedValidateBeforeCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call cancelFeedValidateBeforeCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'feedId' is set
         if (feedId == null) {
@@ -125,7 +128,7 @@ public class FeedsApi {
         }
         
 
-        com.squareup.okhttp.Call call = cancelFeedCall(feedId, progressListener, progressRequestListener);
+        Call call = cancelFeedCall(feedId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -150,7 +153,7 @@ public class FeedsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<Void> cancelFeedWithHttpInfo(String feedId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = cancelFeedValidateBeforeCall(feedId, null, null);
+        Call call = cancelFeedValidateBeforeCall(feedId, null, null);
         return apiClient.execute(call);
     }
 
@@ -163,7 +166,7 @@ public class FeedsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelFeedAsync(String feedId, final ApiCallback<Void> callback) throws ApiException, LWAException {
+    public Call cancelFeedAsync(String feedId, final ApiCallback<Void> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -184,7 +187,7 @@ public class FeedsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = cancelFeedValidateBeforeCall(feedId, progressListener, progressRequestListener);
+        Call call = cancelFeedValidateBeforeCall(feedId, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
@@ -197,7 +200,7 @@ public class FeedsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createFeedCall(CreateFeedSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createFeedCall(CreateFeedSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -223,10 +226,10 @@ public class FeedsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -239,7 +242,7 @@ public class FeedsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createFeedValidateBeforeCall(CreateFeedSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createFeedValidateBeforeCall(CreateFeedSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -247,7 +250,7 @@ public class FeedsApi {
         }
         
 
-        com.squareup.okhttp.Call call = createFeedCall(body, progressListener, progressRequestListener);
+        Call call = createFeedCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -274,7 +277,7 @@ public class FeedsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateFeedResponse> createFeedWithHttpInfo(CreateFeedSpecification body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createFeedValidateBeforeCall(body, null, null);
+        Call call = createFeedValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<CreateFeedResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -288,7 +291,7 @@ public class FeedsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createFeedAsync(CreateFeedSpecification body, final ApiCallback<CreateFeedResponse> callback) throws ApiException, LWAException {
+    public Call createFeedAsync(CreateFeedSpecification body, final ApiCallback<CreateFeedResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -309,7 +312,7 @@ public class FeedsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createFeedValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = createFeedValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateFeedResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -323,7 +326,7 @@ public class FeedsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createFeedDocumentCall(CreateFeedDocumentSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createFeedDocumentCall(CreateFeedDocumentSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -349,10 +352,10 @@ public class FeedsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -365,7 +368,7 @@ public class FeedsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createFeedDocumentValidateBeforeCall(CreateFeedDocumentSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createFeedDocumentValidateBeforeCall(CreateFeedDocumentSpecification body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -373,7 +376,7 @@ public class FeedsApi {
         }
         
 
-        com.squareup.okhttp.Call call = createFeedDocumentCall(body, progressListener, progressRequestListener);
+        Call call = createFeedDocumentCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -400,7 +403,7 @@ public class FeedsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateFeedDocumentResponse> createFeedDocumentWithHttpInfo(CreateFeedDocumentSpecification body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createFeedDocumentValidateBeforeCall(body, null, null);
+        Call call = createFeedDocumentValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<CreateFeedDocumentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -414,7 +417,7 @@ public class FeedsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createFeedDocumentAsync(CreateFeedDocumentSpecification body, final ApiCallback<CreateFeedDocumentResponse> callback) throws ApiException, LWAException {
+    public Call createFeedDocumentAsync(CreateFeedDocumentSpecification body, final ApiCallback<CreateFeedDocumentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -435,7 +438,7 @@ public class FeedsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createFeedDocumentValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = createFeedDocumentValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateFeedDocumentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -449,7 +452,7 @@ public class FeedsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFeedCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getFeedCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -476,10 +479,10 @@ public class FeedsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -492,7 +495,7 @@ public class FeedsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getFeedValidateBeforeCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getFeedValidateBeforeCall(String feedId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'feedId' is set
         if (feedId == null) {
@@ -500,7 +503,7 @@ public class FeedsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getFeedCall(feedId, progressListener, progressRequestListener);
+        Call call = getFeedCall(feedId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -527,7 +530,7 @@ public class FeedsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<Feed> getFeedWithHttpInfo(String feedId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getFeedValidateBeforeCall(feedId, null, null);
+        Call call = getFeedValidateBeforeCall(feedId, null, null);
         Type localVarReturnType = new TypeToken<Feed>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -541,7 +544,7 @@ public class FeedsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFeedAsync(String feedId, final ApiCallback<Feed> callback) throws ApiException, LWAException {
+    public Call getFeedAsync(String feedId, final ApiCallback<Feed> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -562,7 +565,7 @@ public class FeedsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getFeedValidateBeforeCall(feedId, progressListener, progressRequestListener);
+        Call call = getFeedValidateBeforeCall(feedId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<Feed>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -576,7 +579,7 @@ public class FeedsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFeedDocumentCall(String feedDocumentId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getFeedDocumentCall(String feedDocumentId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -603,10 +606,10 @@ public class FeedsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -619,7 +622,7 @@ public class FeedsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getFeedDocumentValidateBeforeCall(String feedDocumentId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getFeedDocumentValidateBeforeCall(String feedDocumentId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'feedDocumentId' is set
         if (feedDocumentId == null) {
@@ -627,7 +630,7 @@ public class FeedsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getFeedDocumentCall(feedDocumentId, progressListener, progressRequestListener);
+        Call call = getFeedDocumentCall(feedDocumentId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -654,7 +657,7 @@ public class FeedsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<FeedDocument> getFeedDocumentWithHttpInfo(String feedDocumentId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getFeedDocumentValidateBeforeCall(feedDocumentId, null, null);
+        Call call = getFeedDocumentValidateBeforeCall(feedDocumentId, null, null);
         Type localVarReturnType = new TypeToken<FeedDocument>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -668,7 +671,7 @@ public class FeedsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFeedDocumentAsync(String feedDocumentId, final ApiCallback<FeedDocument> callback) throws ApiException, LWAException {
+    public Call getFeedDocumentAsync(String feedDocumentId, final ApiCallback<FeedDocument> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -689,7 +692,7 @@ public class FeedsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getFeedDocumentValidateBeforeCall(feedDocumentId, progressListener, progressRequestListener);
+        Call call = getFeedDocumentValidateBeforeCall(feedDocumentId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<FeedDocument>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -709,7 +712,7 @@ public class FeedsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFeedsCall(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getFeedsCall(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -749,10 +752,10 @@ public class FeedsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -765,10 +768,10 @@ public class FeedsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getFeedsValidateBeforeCall(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getFeedsValidateBeforeCall(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
 
-        com.squareup.okhttp.Call call = getFeedsCall(feedTypes, marketplaceIds, pageSize, processingStatuses, createdSince, createdUntil, nextToken, progressListener, progressRequestListener);
+        Call call = getFeedsCall(feedTypes, marketplaceIds, pageSize, processingStatuses, createdSince, createdUntil, nextToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -807,7 +810,7 @@ public class FeedsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetFeedsResponse> getFeedsWithHttpInfo(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getFeedsValidateBeforeCall(feedTypes, marketplaceIds, pageSize, processingStatuses, createdSince, createdUntil, nextToken, null, null);
+        Call call = getFeedsValidateBeforeCall(feedTypes, marketplaceIds, pageSize, processingStatuses, createdSince, createdUntil, nextToken, null, null);
         Type localVarReturnType = new TypeToken<GetFeedsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -827,7 +830,7 @@ public class FeedsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFeedsAsync(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken, final ApiCallback<GetFeedsResponse> callback) throws ApiException, LWAException {
+    public Call getFeedsAsync(List<String> feedTypes, List<String> marketplaceIds, Integer pageSize, List<String> processingStatuses, OffsetDateTime createdSince, OffsetDateTime createdUntil, String nextToken, final ApiCallback<GetFeedsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -848,7 +851,7 @@ public class FeedsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getFeedsValidateBeforeCall(feedTypes, marketplaceIds, pageSize, processingStatuses, createdSince, createdUntil, nextToken, progressListener, progressRequestListener);
+        Call call = getFeedsValidateBeforeCall(feedTypes, marketplaceIds, pageSize, processingStatuses, createdSince, createdUntil, nextToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetFeedsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -912,10 +915,10 @@ public class FeedsApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new FeedsApi(new ApiClient()
+            return new FeedsApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

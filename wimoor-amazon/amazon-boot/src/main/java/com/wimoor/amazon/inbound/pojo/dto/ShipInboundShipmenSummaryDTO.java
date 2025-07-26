@@ -22,7 +22,9 @@ public class ShipInboundShipmenSummaryDTO extends BasePageQuery{
 	
 	@ApiModelProperty(value = "货件ID", example = "FBA2X65XXX")
 	String formid ;
-	
+
+	@ApiModelProperty(value = "报表数据类型", example = "old,new")
+	String ftype ;
 	
 	@ApiModelProperty(value = "开始日期", example = "2022-01-01")
 	String fromdate ;

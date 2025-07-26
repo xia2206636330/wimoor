@@ -26,7 +26,7 @@
   </sql>
   
   <select id="selectRemoveList" parameterType="java.util.Map" resultType="com.wimoor.amazon.orders.pojo.vo.AmazonOrdersRemoveVo" >
-    SELECT t.`*`  FROM t_amz_order_remove_report t
+    SELECT t.*  FROM t_amz_order_remove_report t
     where t.amazonAuthId = #{param.amazonauthid,jdbcType=CHAR}
 	<if test="param.startDate!=null">
       <if test="param.datetype=='purchase'">
@@ -60,7 +60,7 @@
   </select>
   
   <select id="selectPInfoBySku" parameterType="java.util.Map" resultType="java.util.Map" >
-  	SELECT max(NAME) name ,max(IFNULL(p.location,p.url)) image,i.asin asin FROM t_product_info i
+  	SELECT max(NAME) name ,max(IFNULL(p.location,p.url)) image,max(i.asin) asin FROM t_product_info i
  	LEFT JOIN t_picture p ON p.id=i.image
 	WHERE i.amazonauthid=#{authid,jdbcType=CHAR} AND sku=#{sku,jdbcType=CHAR} limit 1
   </select>

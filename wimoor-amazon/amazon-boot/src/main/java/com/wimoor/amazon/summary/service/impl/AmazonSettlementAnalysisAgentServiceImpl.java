@@ -4,14 +4,7 @@ package com.wimoor.amazon.summary.service.impl;
  
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -74,11 +67,61 @@ public   class AmazonSettlementAnalysisAgentServiceImpl implements IAmazonSettle
 	@Autowired
 	IAmzSettlementSummarySkuMonthService iAmzSettlementSummarySkuMonthService;
 //////////////////////////AmzSettlementReportSummaryDay end////////////////
- 
+    public void checkSummaryDataByManual(List<Map<String, Object>> list){
+		for(Map<String,Object> map:list) {
+			AmzSettlementAccReport item = amzSettlementAccReportMapper.selectById(map.get("settlement_id").toString());
+			Double result = amzSettlementSummarySkuMapper.summaryData(item.getSettlementId());
+			if(result.intValue()!=0) {
+				item.setSumtime(null);
+				amzSettlementAccReportMapper.updateById(item);
+			}
+		}
+	}
+	public  void doSummaryDataByManual(List<Map<String, Object>> list){
+		Set<String> month=new HashSet<String>();
+		Map<String,List<Map<String,Object>>> authMap=new HashMap<String,List<Map<String,Object>>>();
+		for(Map<String,Object> map:list) {
+			List<Map<String,Object>> item=authMap.get(map.get("amazonauthid").toString());
+			if(item==null) {
+				item=new ArrayList<Map<String,Object>>();
+				authMap.put(map.get("amazonauthid").toString(),item);
+			}
+			item.add(map);
+		}
+		for(Map.Entry<String,List<Map<String,Object>>> entry:authMap.entrySet()){
+			String amazonauthid=entry.getKey();
+			List<Map<String,Object>> mlist=entry.getValue();
+			for(Map<String,Object> map:mlist) {
+				AmzSettlementAccReport item = amzSettlementAccReportMapper.selectById(map.get("settlement_id").toString());
+				this.confirm(item);
+				item.setSumtime(new Date());
+				if(item.getMarketplaceName()!=null&&item.getSettlementStartDate()!=null){
+					String monthkey=item.getMarketplaceName()+"#"+item.getSettlementStartDate().format(DateTimeFormatter.ofPattern("YYYY-MM"));
+					month.add(monthkey);
+				}
+				if(item.getSettlementEndDate()!=null&&item.getMarketplaceName()!=null){
+					String monthkey2=item.getMarketplaceName()+"#"+item.getSettlementEndDate().format(DateTimeFormatter.ofPattern("YYYY-MM"));
+					month.add(monthkey2);
+				}
+				amzSettlementAccReportMapper.updateById(item);
+			}
+			for(String monthkey:month){
+				String[] keys=monthkey.split("#");
+				String marketname=keys[0];
+				String monthitme=keys[1];
+				try {
+					iAmzSettlementSummarySkuMonthService.summaryMonthly(amazonauthid,marketname,GeneralUtil.getDatez(monthitme+"-01") );
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	public void checkSummaryData() {
 		List<AmazonAuthority> amazonAuthorityList =amazonAuthorityService.getAllAuth();
 		Calendar c =Calendar.getInstance();
 		c.add(Calendar.DATE, -210);
+
 		for (int step = 0; step < amazonAuthorityList.size(); step++) {
 			AmazonAuthority amazonAuthority = amazonAuthorityList.get(step);
 	    	 QueryWrapper<AmzSettlementAccReport> query = new QueryWrapper<AmzSettlementAccReport>();

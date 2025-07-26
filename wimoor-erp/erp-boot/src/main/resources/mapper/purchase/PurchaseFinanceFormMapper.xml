@@ -60,7 +60,7 @@
   </select>
   
   <select id="findFormId"  parameterType="java.lang.String" resultType="java.util.Map" >
-  	 select t.`*`,u2.name creatorname,u.name operatorname,u3.name auditorname,me.name paymethod,
+  	 select t.*,u2.name creatorname,u.name operatorname,u3.name auditorname,me.name paymethod,
   	  m.sku,m.name mname,p.location image,f.number purnumber
   	 from t_erp_purchase_fin_form t
   	 LEFT JOIN t_userinfo u ON u.id=t.operator

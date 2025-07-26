@@ -26,7 +26,7 @@ public class QuartzTaskFactory extends QuartzJobBean{
 					   Object parameter = detail.getJobDataMap().get("parameter");
 					   Object description= detail.getJobDataMap().get("description");
 					   SystemSchedulerInit init =SpringUtil.getBean(SystemSchedulerInit.class);
-					   if(!"prod".equals(init.getProfile())) {return;}
+					   if(init.getProfile()!=null&&init.getProfile().contains("dev")) {return;}
 					      log.info(description+":rundate=================>"+new Date()+"============>"+parameter);
 						   try {
 							       Result<?> result = null;

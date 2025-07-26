@@ -3,6 +3,7 @@ package com.wimoor.erp.finance.controller;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,8 @@ public class FaccountController {
 	
 	@GetMapping("/getPaymentMethod")
 	public Result<List<PurchaseFormPaymentMethod>> getPaymentMethodAction(){
-		List<PurchaseFormPaymentMethod> list=faccountService.findPurchasePayMethod();
+		UserInfo userinfo = UserInfoContext.get();
+		List<PurchaseFormPaymentMethod> list=faccountService.findPurchasePayMethod(userinfo.getCompanyid());
 		return Result.success(list);
 	}
 	
@@ -125,6 +127,13 @@ public class FaccountController {
 	    oldone.setIsdelete(false);
 	    faccountService.updateById(oldone);
 		return Result.success(fin);
+	}
+
+	@PostMapping("/savePaymethodIndex")
+	public Result<FinAccount> savePaymethodIndexAction(@RequestBody List<Map<String,Object>> indexlist){
+		UserInfo userinfo = UserInfoContext.get();
+		faccountService.savePaymethodIndex(userinfo,indexlist);
+		return Result.success();
 	}
 	
 	

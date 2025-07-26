@@ -612,7 +612,7 @@
 			${serchstr}
 		</if>
 		from t_amz_adv_rpt2_hsa_keywords t
-		left join t_amz_adv_rpt2_hsa_keywords_attributed a on a.keywordId=t.keywordId and a.bydate=t.bydate
+		left join t_amz_adv_rpt2_hsa_keywords_attributed_all a on a.keywordId=t.keywordId and a.bydate=t.bydate
 		where t.profileid = #{profileid,jdbcType=BIGINT}
 			and t.campaignId = #{campaignid,jdbcType=BIGINT}
 			and t.adGroupId = #{adgroupid,jdbcType=BIGINT}
@@ -633,7 +633,7 @@
 			${serchstr}
 		</if>
 		from t_amz_adv_rpt2_hsa_keywords t
-		left join t_amz_adv_rpt2_hsa_keywords_attributed a on a.keywordId=t.keywordId and a.bydate=t.bydate
+		left join t_amz_adv_rpt2_hsa_keywords_attributed_all a on a.keywordId=t.keywordId and a.bydate=t.bydate
 		where t.profileid = #{profileid,jdbcType=BIGINT}
 			and t.campaignId = #{campaignid,jdbcType=BIGINT}
 			and t.adGroupId = #{adgroupid,jdbcType=BIGINT}
@@ -759,21 +759,19 @@
 		select sum(impressions) impressions, sum(clicks) clicks, sum(cost) cost,
 			ifnull((sum(cost) / sum(clicks)),0) avgcost,
 			ifnull((sum(clicks) / sum(impressions)),0) CTR,
-			case when ifnull(sum(cost),0)>0 and ifnull(sum(attributedSales14d),0)=0
+			case when ifnull(sum(cost),0)>0 and ifnull(sum(sales),0)=0
 			then 10000000000
-			else ifnull((sum(cost) / sum(attributedSales14d)),0)
+			else ifnull((sum(cost) / sum(sales)),0)
 			end ACOS,
-			ifnull((sum(attributedSales14d) / sum(cost)),0) ROAS,
-			ifnull(sum(attributedSales14d),0) sumSales,
-			ifnull(sum(attributedConversions14d),0) sumUnits,
-			ifnull((sum(attributedConversions14d) / sum(clicks)),0) CSRT,
-			ifnull(sum(attributedConversions14d) - sum(attributedConversions14dSameSKU),0) attributedConversions,
-			ifnull(sum(attributedConversions14dSameSKU),0) attributedConversionsSameSKU,
-			ifnull(sum(attributedConversions14d),0) attributedUnitsOrdered,
-			ifnull(sum(attributedSales14dSameSKU),0) attributedSalesSameSKU,
-			ifnull(sum(attributedSales14d) - sum(attributedSales14dSameSKU),0) attributedSales
+			ifnull((sum(sales) / sum(cost)),0) ROAS,
+			ifnull(sum(sales),0) sumSales,
+			ifnull(sum(unitsSold),0) sumUnits,
+			ifnull((sum(purchases) / sum(clicks)),0) CSRT,
+			ifnull(sum(purchases) ,0) attributedConversions,
+			ifnull(sum(unitsSold),0) attributedUnitsOrdered,
+			ifnull(sum(sales) ,0) attributedSales
 		from t_amz_adv_rpt2_hsa_keywords v
-		left join t_amz_adv_rpt2_hsa_keywords_attributed aa on aa.keywordId=v.keywordId and aa.bydate=v.bydate
+		left join t_amz_adv_rpt2_hsa_keywords_attributed_all aa on aa.keywordId=v.keywordId and aa.bydate=v.bydate
 		left join t_amz_adv_keywords t on t.keywordId = v.keywordId and t.adGroupId= v.adGroupId 
 			and t.campaignId = v.campaignId and t.profileid = v.profileid
 		left join t_amz_adv_campaigns_hsa tc on t.campaignId = tc.campaignId and t.profileid = tc.profileid

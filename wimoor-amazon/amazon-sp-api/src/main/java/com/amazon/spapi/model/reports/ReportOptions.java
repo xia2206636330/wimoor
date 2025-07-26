@@ -10,19 +10,19 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
-import java.util.HashMap;
 import java.util.Objects;
-
-import io.swagger.annotations.ApiModel;
-
+import java.util.Arrays;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.HashMap;
+import java.util.Map;
 /**
  * Additional information passed to reports. This varies by report type.
  */
-@ApiModel(description = "Additional information passed to reports. This varies by report type.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "Additional information passed to reports. This varies by report type.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class ReportOptions extends HashMap<String, String> {
 
   @Override
@@ -63,4 +63,3 @@ public class ReportOptions extends HashMap<String, String> {
   }
 
 }
-

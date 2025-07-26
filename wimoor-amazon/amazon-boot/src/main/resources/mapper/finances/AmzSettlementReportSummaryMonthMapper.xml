@@ -10,7 +10,6 @@
 		<id column="amount_description" property="amountDescription" jdbcType="CHAR" />
 		<result column="currency" property="currency" jdbcType="CHAR" />
 		<result column="amount" property="amount" jdbcType="DECIMAL" />
-		<result column="quantity_purchased" property="quantityPurchased" jdbcType="INTEGER" />
 	</resultMap>
 	
 	<sql id="Base_Column_List">
@@ -207,7 +206,7 @@
 		select UUID_SHORT(),
 		       r.settlement_id,
 		       r.amazonAuthId,
-		       rt.marketplace_name,
+			   ifnull(rt.marketplace_name,r.marketplace_name),
 		       r.posted_date,
 		       transaction_type,
 		       amount_type,
@@ -225,7 +224,7 @@
 		left JOIN t_amz_settlement_acc_report rt ON rt.settlement_id=r.settlement_id
 		LEFT JOIN t_amazon_auth a ON a.id=r.amazonAuthId
 		where  r.settlement_id=#{settlement_id,jdbcType=CHAR}
-		group BY r.amazonAuthId,rt.marketplace_name,r.posted_date ,transaction_type ,amount_type ,amount_description,fulfillment_id,r.currency
+		group BY r.amazonAuthId,ifnull(rt.marketplace_name,r.marketplace_name),r.posted_date ,transaction_type ,amount_type ,amount_description,fulfillment_id,r.currency
 	</delete>
 
 	<insert id="insertBatch" parameterType="java.util.List">

@@ -64,6 +64,9 @@ import com.amazon.spapi.model.shipping.PurchaseShipmentResponse;
 import com.amazon.spapi.model.shipping.UnlinkCarrierAccountRequest;
 import com.amazon.spapi.model.shipping.UnlinkCarrierAccountResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class ShippingApi {
     private ApiClient apiClient;
@@ -94,7 +97,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelShipmentCall(String shipmentId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call cancelShipmentCall(String shipmentId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -123,10 +126,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -139,7 +142,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call cancelShipmentValidateBeforeCall(String shipmentId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call cancelShipmentValidateBeforeCall(String shipmentId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'shipmentId' is set
         if (shipmentId == null) {
@@ -147,7 +150,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = cancelShipmentCall(shipmentId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = cancelShipmentCall(shipmentId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -176,7 +179,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CancelShipmentResponse> cancelShipmentWithHttpInfo(String shipmentId, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = cancelShipmentValidateBeforeCall(shipmentId, xAmznShippingBusinessId, null, null);
+        Call call = cancelShipmentValidateBeforeCall(shipmentId, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<CancelShipmentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -191,7 +194,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelShipmentAsync(String shipmentId, String xAmznShippingBusinessId, final ApiCallback<CancelShipmentResponse> callback) throws ApiException, LWAException {
+    public Call cancelShipmentAsync(String shipmentId, String xAmznShippingBusinessId, final ApiCallback<CancelShipmentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -212,7 +215,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = cancelShipmentValidateBeforeCall(shipmentId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = cancelShipmentValidateBeforeCall(shipmentId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CancelShipmentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -229,7 +232,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call directPurchaseShipmentCall(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call directPurchaseShipmentCall(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -261,10 +264,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -277,7 +280,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call directPurchaseShipmentValidateBeforeCall(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call directPurchaseShipmentValidateBeforeCall(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -285,7 +288,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = directPurchaseShipmentCall(body, xAmznIdempotencyKey, locale, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = directPurchaseShipmentCall(body, xAmznIdempotencyKey, locale, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -318,7 +321,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<DirectPurchaseResponse> directPurchaseShipmentWithHttpInfo(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = directPurchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, locale, xAmznShippingBusinessId, null, null);
+        Call call = directPurchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, locale, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<DirectPurchaseResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -335,7 +338,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call directPurchaseShipmentAsync(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId, final ApiCallback<DirectPurchaseResponse> callback) throws ApiException, LWAException {
+    public Call directPurchaseShipmentAsync(DirectPurchaseRequest body, String xAmznIdempotencyKey, String locale, String xAmznShippingBusinessId, final ApiCallback<DirectPurchaseResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -356,7 +359,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = directPurchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, locale, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = directPurchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, locale, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<DirectPurchaseResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -372,7 +375,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call generateCollectionFormCall(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call generateCollectionFormCall(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -402,10 +405,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -418,7 +421,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call generateCollectionFormValidateBeforeCall(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call generateCollectionFormValidateBeforeCall(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -426,7 +429,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = generateCollectionFormCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = generateCollectionFormCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -457,7 +460,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GenerateCollectionFormResponse> generateCollectionFormWithHttpInfo(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = generateCollectionFormValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, null, null);
+        Call call = generateCollectionFormValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GenerateCollectionFormResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -473,7 +476,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call generateCollectionFormAsync(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ApiCallback<GenerateCollectionFormResponse> callback) throws ApiException, LWAException {
+    public Call generateCollectionFormAsync(GenerateCollectionFormRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ApiCallback<GenerateCollectionFormResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -494,7 +497,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = generateCollectionFormValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = generateCollectionFormValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GenerateCollectionFormResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -511,7 +514,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAccessPointsCall(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getAccessPointsCall(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -545,10 +548,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -561,7 +564,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getAccessPointsValidateBeforeCall(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getAccessPointsValidateBeforeCall(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'accessPointTypes' is set
         if (accessPointTypes == null) {
@@ -579,7 +582,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getAccessPointsCall(accessPointTypes, countryCode, postalCode, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getAccessPointsCall(accessPointTypes, countryCode, postalCode, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -612,7 +615,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetAccessPointsResponse> getAccessPointsWithHttpInfo(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getAccessPointsValidateBeforeCall(accessPointTypes, countryCode, postalCode, xAmznShippingBusinessId, null, null);
+        Call call = getAccessPointsValidateBeforeCall(accessPointTypes, countryCode, postalCode, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetAccessPointsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -629,7 +632,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAccessPointsAsync(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId, final ApiCallback<GetAccessPointsResponse> callback) throws ApiException, LWAException {
+    public Call getAccessPointsAsync(List<String> accessPointTypes, String countryCode, String postalCode, String xAmznShippingBusinessId, final ApiCallback<GetAccessPointsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -650,7 +653,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getAccessPointsValidateBeforeCall(accessPointTypes, countryCode, postalCode, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getAccessPointsValidateBeforeCall(accessPointTypes, countryCode, postalCode, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetAccessPointsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -666,7 +669,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAdditionalInputsCall(String requestToken, String rateId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getAdditionalInputsCall(String requestToken, String rateId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -698,10 +701,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -714,7 +717,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getAdditionalInputsValidateBeforeCall(String requestToken, String rateId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getAdditionalInputsValidateBeforeCall(String requestToken, String rateId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'requestToken' is set
         if (requestToken == null) {
@@ -727,7 +730,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getAdditionalInputsCall(requestToken, rateId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getAdditionalInputsCall(requestToken, rateId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -758,7 +761,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetAdditionalInputsResponse> getAdditionalInputsWithHttpInfo(String requestToken, String rateId, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getAdditionalInputsValidateBeforeCall(requestToken, rateId, xAmznShippingBusinessId, null, null);
+        Call call = getAdditionalInputsValidateBeforeCall(requestToken, rateId, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetAdditionalInputsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -774,7 +777,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAdditionalInputsAsync(String requestToken, String rateId, String xAmznShippingBusinessId, final ApiCallback<GetAdditionalInputsResponse> callback) throws ApiException, LWAException {
+    public Call getAdditionalInputsAsync(String requestToken, String rateId, String xAmznShippingBusinessId, final ApiCallback<GetAdditionalInputsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -795,7 +798,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getAdditionalInputsValidateBeforeCall(requestToken, rateId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getAdditionalInputsValidateBeforeCall(requestToken, rateId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetAdditionalInputsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -809,7 +812,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCarrierAccountFormInputsCall(String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getCarrierAccountFormInputsCall(String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -837,10 +840,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -853,10 +856,10 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getCarrierAccountFormInputsValidateBeforeCall(String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getCarrierAccountFormInputsValidateBeforeCall(String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
 
-        com.squareup.okhttp.Call call = getCarrierAccountFormInputsCall(xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCarrierAccountFormInputsCall(xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -883,7 +886,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetCarrierAccountFormInputsResponse> getCarrierAccountFormInputsWithHttpInfo(String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getCarrierAccountFormInputsValidateBeforeCall(xAmznShippingBusinessId, null, null);
+        Call call = getCarrierAccountFormInputsValidateBeforeCall(xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetCarrierAccountFormInputsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -897,7 +900,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCarrierAccountFormInputsAsync(String xAmznShippingBusinessId, final ApiCallback<GetCarrierAccountFormInputsResponse> callback) throws ApiException, LWAException {
+    public Call getCarrierAccountFormInputsAsync(String xAmznShippingBusinessId, final ApiCallback<GetCarrierAccountFormInputsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -918,7 +921,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getCarrierAccountFormInputsValidateBeforeCall(xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCarrierAccountFormInputsValidateBeforeCall(xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetCarrierAccountFormInputsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -933,7 +936,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCarrierAccountsCall(GetCarrierAccountsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getCarrierAccountsCall(GetCarrierAccountsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -961,10 +964,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -977,7 +980,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getCarrierAccountsValidateBeforeCall(GetCarrierAccountsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getCarrierAccountsValidateBeforeCall(GetCarrierAccountsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -985,7 +988,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getCarrierAccountsCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCarrierAccountsCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1014,7 +1017,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetCarrierAccountsResponse> getCarrierAccountsWithHttpInfo(GetCarrierAccountsRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getCarrierAccountsValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
+        Call call = getCarrierAccountsValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetCarrierAccountsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1029,7 +1032,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCarrierAccountsAsync(GetCarrierAccountsRequest body, String xAmznShippingBusinessId, final ApiCallback<GetCarrierAccountsResponse> callback) throws ApiException, LWAException {
+    public Call getCarrierAccountsAsync(GetCarrierAccountsRequest body, String xAmznShippingBusinessId, final ApiCallback<GetCarrierAccountsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1050,7 +1053,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getCarrierAccountsValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCarrierAccountsValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetCarrierAccountsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1065,7 +1068,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCollectionFormCall(String collectionFormId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getCollectionFormCall(String collectionFormId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1094,10 +1097,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1110,7 +1113,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getCollectionFormValidateBeforeCall(String collectionFormId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getCollectionFormValidateBeforeCall(String collectionFormId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'collectionFormId' is set
         if (collectionFormId == null) {
@@ -1118,7 +1121,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getCollectionFormCall(collectionFormId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCollectionFormCall(collectionFormId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1147,7 +1150,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetCollectionFormResponse> getCollectionFormWithHttpInfo(String collectionFormId, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getCollectionFormValidateBeforeCall(collectionFormId, xAmznShippingBusinessId, null, null);
+        Call call = getCollectionFormValidateBeforeCall(collectionFormId, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetCollectionFormResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1162,7 +1165,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCollectionFormAsync(String collectionFormId, String xAmznShippingBusinessId, final ApiCallback<GetCollectionFormResponse> callback) throws ApiException, LWAException {
+    public Call getCollectionFormAsync(String collectionFormId, String xAmznShippingBusinessId, final ApiCallback<GetCollectionFormResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1183,7 +1186,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getCollectionFormValidateBeforeCall(collectionFormId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCollectionFormValidateBeforeCall(collectionFormId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetCollectionFormResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1198,7 +1201,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCollectionFormHistoryCall(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getCollectionFormHistoryCall(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -1226,10 +1229,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1242,7 +1245,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getCollectionFormHistoryValidateBeforeCall(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getCollectionFormHistoryValidateBeforeCall(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -1250,7 +1253,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getCollectionFormHistoryCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCollectionFormHistoryCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1279,7 +1282,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetCollectionFormHistoryResponse> getCollectionFormHistoryWithHttpInfo(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getCollectionFormHistoryValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
+        Call call = getCollectionFormHistoryValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetCollectionFormHistoryResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1294,7 +1297,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getCollectionFormHistoryAsync(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId, final ApiCallback<GetCollectionFormHistoryResponse> callback) throws ApiException, LWAException {
+    public Call getCollectionFormHistoryAsync(GetCollectionFormHistoryRequest body, String xAmznShippingBusinessId, final ApiCallback<GetCollectionFormHistoryResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1315,7 +1318,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getCollectionFormHistoryValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getCollectionFormHistoryValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetCollectionFormHistoryResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1330,7 +1333,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getRatesCall(GetRatesRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getRatesCall(GetRatesRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -1358,10 +1361,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1374,7 +1377,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getRatesValidateBeforeCall(GetRatesRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getRatesValidateBeforeCall(GetRatesRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -1382,7 +1385,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getRatesCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getRatesCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1411,7 +1414,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetRatesResponse> getRatesWithHttpInfo(GetRatesRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getRatesValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
+        Call call = getRatesValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetRatesResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1426,7 +1429,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getRatesAsync(GetRatesRequest body, String xAmznShippingBusinessId, final ApiCallback<GetRatesResponse> callback) throws ApiException, LWAException {
+    public Call getRatesAsync(GetRatesRequest body, String xAmznShippingBusinessId, final ApiCallback<GetRatesResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1447,7 +1450,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getRatesValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getRatesValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetRatesResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1465,7 +1468,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getShipmentDocumentsCall(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getShipmentDocumentsCall(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1500,10 +1503,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1516,7 +1519,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getShipmentDocumentsValidateBeforeCall(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getShipmentDocumentsValidateBeforeCall(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'shipmentId' is set
         if (shipmentId == null) {
@@ -1529,7 +1532,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getShipmentDocumentsCall(shipmentId, packageClientReferenceId, format, dpi, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getShipmentDocumentsCall(shipmentId, packageClientReferenceId, format, dpi, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1564,7 +1567,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetShipmentDocumentsResponse> getShipmentDocumentsWithHttpInfo(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getShipmentDocumentsValidateBeforeCall(shipmentId, packageClientReferenceId, format, dpi, xAmznShippingBusinessId, null, null);
+        Call call = getShipmentDocumentsValidateBeforeCall(shipmentId, packageClientReferenceId, format, dpi, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetShipmentDocumentsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1582,7 +1585,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getShipmentDocumentsAsync(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId, final ApiCallback<GetShipmentDocumentsResponse> callback) throws ApiException, LWAException {
+    public Call getShipmentDocumentsAsync(String shipmentId, String packageClientReferenceId, String format, BigDecimal dpi, String xAmznShippingBusinessId, final ApiCallback<GetShipmentDocumentsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1603,7 +1606,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getShipmentDocumentsValidateBeforeCall(shipmentId, packageClientReferenceId, format, dpi, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getShipmentDocumentsValidateBeforeCall(shipmentId, packageClientReferenceId, format, dpi, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetShipmentDocumentsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1619,7 +1622,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getTrackingCall(String trackingId, String carrierId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getTrackingCall(String trackingId, String carrierId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1651,10 +1654,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1667,7 +1670,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getTrackingValidateBeforeCall(String trackingId, String carrierId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getTrackingValidateBeforeCall(String trackingId, String carrierId, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'trackingId' is set
         if (trackingId == null) {
@@ -1680,7 +1683,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getTrackingCall(trackingId, carrierId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getTrackingCall(trackingId, carrierId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1711,7 +1714,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetTrackingResponse> getTrackingWithHttpInfo(String trackingId, String carrierId, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getTrackingValidateBeforeCall(trackingId, carrierId, xAmznShippingBusinessId, null, null);
+        Call call = getTrackingValidateBeforeCall(trackingId, carrierId, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetTrackingResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1727,7 +1730,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getTrackingAsync(String trackingId, String carrierId, String xAmznShippingBusinessId, final ApiCallback<GetTrackingResponse> callback) throws ApiException, LWAException {
+    public Call getTrackingAsync(String trackingId, String carrierId, String xAmznShippingBusinessId, final ApiCallback<GetTrackingResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1748,7 +1751,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getTrackingValidateBeforeCall(trackingId, carrierId, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getTrackingValidateBeforeCall(trackingId, carrierId, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetTrackingResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1763,7 +1766,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getUnmanifestedShipmentsCall(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getUnmanifestedShipmentsCall(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -1791,10 +1794,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1807,7 +1810,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getUnmanifestedShipmentsValidateBeforeCall(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getUnmanifestedShipmentsValidateBeforeCall(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -1815,7 +1818,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = getUnmanifestedShipmentsCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getUnmanifestedShipmentsCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1844,7 +1847,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetUnmanifestedShipmentsResponse> getUnmanifestedShipmentsWithHttpInfo(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getUnmanifestedShipmentsValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
+        Call call = getUnmanifestedShipmentsValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<GetUnmanifestedShipmentsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1859,7 +1862,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getUnmanifestedShipmentsAsync(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId, final ApiCallback<GetUnmanifestedShipmentsResponse> callback) throws ApiException, LWAException {
+    public Call getUnmanifestedShipmentsAsync(GetUnmanifestedShipmentsRequest body, String xAmznShippingBusinessId, final ApiCallback<GetUnmanifestedShipmentsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1880,7 +1883,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getUnmanifestedShipmentsValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = getUnmanifestedShipmentsValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetUnmanifestedShipmentsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1896,7 +1899,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call linkCarrierAccountCall(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call linkCarrierAccountCall(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -1925,10 +1928,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1941,7 +1944,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call linkCarrierAccountValidateBeforeCall(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call linkCarrierAccountValidateBeforeCall(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'carrierId' is set
         if (carrierId == null) {
@@ -1954,7 +1957,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = linkCarrierAccountCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = linkCarrierAccountCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1985,7 +1988,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<LinkCarrierAccountResponse> linkCarrierAccountWithHttpInfo(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = linkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, null, null);
+        Call call = linkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<LinkCarrierAccountResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2001,7 +2004,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call linkCarrierAccountAsync(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ApiCallback<LinkCarrierAccountResponse> callback) throws ApiException, LWAException {
+    public Call linkCarrierAccountAsync(String carrierId, LinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ApiCallback<LinkCarrierAccountResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2022,7 +2025,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = linkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = linkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<LinkCarrierAccountResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2037,7 +2040,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call oneClickShipmentCall(OneClickShipmentRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call oneClickShipmentCall(OneClickShipmentRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2065,10 +2068,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2081,7 +2084,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call oneClickShipmentValidateBeforeCall(OneClickShipmentRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call oneClickShipmentValidateBeforeCall(OneClickShipmentRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -2089,7 +2092,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = oneClickShipmentCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = oneClickShipmentCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2118,7 +2121,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<OneClickShipmentResponse> oneClickShipmentWithHttpInfo(OneClickShipmentRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = oneClickShipmentValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
+        Call call = oneClickShipmentValidateBeforeCall(body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<OneClickShipmentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2133,7 +2136,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call oneClickShipmentAsync(OneClickShipmentRequest body, String xAmznShippingBusinessId, final ApiCallback<OneClickShipmentResponse> callback) throws ApiException, LWAException {
+    public Call oneClickShipmentAsync(OneClickShipmentRequest body, String xAmznShippingBusinessId, final ApiCallback<OneClickShipmentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2154,7 +2157,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = oneClickShipmentValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = oneClickShipmentValidateBeforeCall(body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<OneClickShipmentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2170,7 +2173,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call purchaseShipmentCall(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call purchaseShipmentCall(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2200,10 +2203,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2216,7 +2219,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call purchaseShipmentValidateBeforeCall(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call purchaseShipmentValidateBeforeCall(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -2224,7 +2227,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = purchaseShipmentCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = purchaseShipmentCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2255,7 +2258,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<PurchaseShipmentResponse> purchaseShipmentWithHttpInfo(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = purchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, null, null);
+        Call call = purchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<PurchaseShipmentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2271,7 +2274,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call purchaseShipmentAsync(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ApiCallback<PurchaseShipmentResponse> callback) throws ApiException, LWAException {
+    public Call purchaseShipmentAsync(PurchaseShipmentRequest body, String xAmznIdempotencyKey, String xAmznShippingBusinessId, final ApiCallback<PurchaseShipmentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2292,7 +2295,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = purchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = purchaseShipmentValidateBeforeCall(body, xAmznIdempotencyKey, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<PurchaseShipmentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2308,7 +2311,7 @@ public class ShippingApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call unlinkCarrierAccountCall(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call unlinkCarrierAccountCall(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2337,10 +2340,10 @@ public class ShippingApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2353,7 +2356,7 @@ public class ShippingApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call unlinkCarrierAccountValidateBeforeCall(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call unlinkCarrierAccountValidateBeforeCall(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'carrierId' is set
         if (carrierId == null) {
@@ -2366,7 +2369,7 @@ public class ShippingApi {
         }
         
 
-        com.squareup.okhttp.Call call = unlinkCarrierAccountCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = unlinkCarrierAccountCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2397,7 +2400,7 @@ public class ShippingApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<UnlinkCarrierAccountResponse> unlinkCarrierAccountWithHttpInfo(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = unlinkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, null, null);
+        Call call = unlinkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, null, null);
         Type localVarReturnType = new TypeToken<UnlinkCarrierAccountResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2413,7 +2416,7 @@ public class ShippingApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call unlinkCarrierAccountAsync(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ApiCallback<UnlinkCarrierAccountResponse> callback) throws ApiException, LWAException {
+    public Call unlinkCarrierAccountAsync(String carrierId, UnlinkCarrierAccountRequest body, String xAmznShippingBusinessId, final ApiCallback<UnlinkCarrierAccountResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2434,7 +2437,7 @@ public class ShippingApi {
             };
         }
 
-        com.squareup.okhttp.Call call = unlinkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
+        Call call = unlinkCarrierAccountValidateBeforeCall(carrierId, body, xAmznShippingBusinessId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<UnlinkCarrierAccountResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2498,10 +2501,10 @@ public class ShippingApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new ShippingApi(new ApiClient()
+            return new ShippingApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

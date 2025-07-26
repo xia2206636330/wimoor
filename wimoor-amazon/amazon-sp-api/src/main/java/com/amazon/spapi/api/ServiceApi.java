@@ -60,6 +60,9 @@ import com.amazon.spapi.model.services.UpdateReservationResponse;
 import com.amazon.spapi.model.services.UpdateScheduleRequest;
 import com.amazon.spapi.model.services.UpdateScheduleResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class ServiceApi {
     private ApiClient apiClient;
@@ -90,7 +93,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call addAppointmentForServiceJobByServiceJobIdCall(String serviceJobId, AddAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call addAppointmentForServiceJobByServiceJobIdCall(String serviceJobId, AddAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -117,10 +120,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -133,7 +136,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call addAppointmentForServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, AddAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call addAppointmentForServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, AddAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -146,7 +149,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = addAppointmentForServiceJobByServiceJobIdCall(serviceJobId, body, progressListener, progressRequestListener);
+        Call call = addAppointmentForServiceJobByServiceJobIdCall(serviceJobId, body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -175,7 +178,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SetAppointmentResponse> addAppointmentForServiceJobByServiceJobIdWithHttpInfo(String serviceJobId, AddAppointmentRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = addAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, body, null, null);
+        Call call = addAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, body, null, null);
         Type localVarReturnType = new TypeToken<SetAppointmentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -190,7 +193,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call addAppointmentForServiceJobByServiceJobIdAsync(String serviceJobId, AddAppointmentRequest body, final ApiCallback<SetAppointmentResponse> callback) throws ApiException, LWAException {
+    public Call addAppointmentForServiceJobByServiceJobIdAsync(String serviceJobId, AddAppointmentRequest body, final ApiCallback<SetAppointmentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -211,7 +214,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = addAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, body, progressListener, progressRequestListener);
+        Call call = addAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SetAppointmentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -227,7 +230,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call assignAppointmentResourcesCall(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call assignAppointmentResourcesCall(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -255,10 +258,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -271,7 +274,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call assignAppointmentResourcesValidateBeforeCall(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call assignAppointmentResourcesValidateBeforeCall(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -289,7 +292,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = assignAppointmentResourcesCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
+        Call call = assignAppointmentResourcesCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -320,7 +323,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<AssignAppointmentResourcesResponse> assignAppointmentResourcesWithHttpInfo(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = assignAppointmentResourcesValidateBeforeCall(serviceJobId, appointmentId, body, null, null);
+        Call call = assignAppointmentResourcesValidateBeforeCall(serviceJobId, appointmentId, body, null, null);
         Type localVarReturnType = new TypeToken<AssignAppointmentResourcesResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -336,7 +339,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call assignAppointmentResourcesAsync(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body, final ApiCallback<AssignAppointmentResourcesResponse> callback) throws ApiException, LWAException {
+    public Call assignAppointmentResourcesAsync(String serviceJobId, String appointmentId, AssignAppointmentResourcesRequest body, final ApiCallback<AssignAppointmentResourcesResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -357,7 +360,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = assignAppointmentResourcesValidateBeforeCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
+        Call call = assignAppointmentResourcesValidateBeforeCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<AssignAppointmentResourcesResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -372,7 +375,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelReservationCall(String reservationId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call cancelReservationCall(String reservationId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -401,10 +404,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -417,7 +420,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call cancelReservationValidateBeforeCall(String reservationId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call cancelReservationValidateBeforeCall(String reservationId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'reservationId' is set
         if (reservationId == null) {
@@ -430,7 +433,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = cancelReservationCall(reservationId, marketplaceIds, progressListener, progressRequestListener);
+        Call call = cancelReservationCall(reservationId, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -459,7 +462,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CancelReservationResponse> cancelReservationWithHttpInfo(String reservationId, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = cancelReservationValidateBeforeCall(reservationId, marketplaceIds, null, null);
+        Call call = cancelReservationValidateBeforeCall(reservationId, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<CancelReservationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -474,7 +477,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelReservationAsync(String reservationId, List<String> marketplaceIds, final ApiCallback<CancelReservationResponse> callback) throws ApiException, LWAException {
+    public Call cancelReservationAsync(String reservationId, List<String> marketplaceIds, final ApiCallback<CancelReservationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -495,7 +498,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = cancelReservationValidateBeforeCall(reservationId, marketplaceIds, progressListener, progressRequestListener);
+        Call call = cancelReservationValidateBeforeCall(reservationId, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CancelReservationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -510,7 +513,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelServiceJobByServiceJobIdCall(String serviceJobId, String cancellationReasonCode, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call cancelServiceJobByServiceJobIdCall(String serviceJobId, String cancellationReasonCode, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -539,10 +542,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -555,7 +558,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call cancelServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, String cancellationReasonCode, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call cancelServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, String cancellationReasonCode, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -568,7 +571,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = cancelServiceJobByServiceJobIdCall(serviceJobId, cancellationReasonCode, progressListener, progressRequestListener);
+        Call call = cancelServiceJobByServiceJobIdCall(serviceJobId, cancellationReasonCode, progressListener, progressRequestListener);
         return call;
 
     }
@@ -597,7 +600,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CancelServiceJobByServiceJobIdResponse> cancelServiceJobByServiceJobIdWithHttpInfo(String serviceJobId, String cancellationReasonCode) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = cancelServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, cancellationReasonCode, null, null);
+        Call call = cancelServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, cancellationReasonCode, null, null);
         Type localVarReturnType = new TypeToken<CancelServiceJobByServiceJobIdResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -612,7 +615,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call cancelServiceJobByServiceJobIdAsync(String serviceJobId, String cancellationReasonCode, final ApiCallback<CancelServiceJobByServiceJobIdResponse> callback) throws ApiException, LWAException {
+    public Call cancelServiceJobByServiceJobIdAsync(String serviceJobId, String cancellationReasonCode, final ApiCallback<CancelServiceJobByServiceJobIdResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -633,7 +636,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = cancelServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, cancellationReasonCode, progressListener, progressRequestListener);
+        Call call = cancelServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, cancellationReasonCode, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CancelServiceJobByServiceJobIdResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -647,7 +650,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call completeServiceJobByServiceJobIdCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call completeServiceJobByServiceJobIdCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -674,10 +677,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -690,7 +693,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call completeServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call completeServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -698,7 +701,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = completeServiceJobByServiceJobIdCall(serviceJobId, progressListener, progressRequestListener);
+        Call call = completeServiceJobByServiceJobIdCall(serviceJobId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -725,7 +728,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CompleteServiceJobByServiceJobIdResponse> completeServiceJobByServiceJobIdWithHttpInfo(String serviceJobId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = completeServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, null, null);
+        Call call = completeServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, null, null);
         Type localVarReturnType = new TypeToken<CompleteServiceJobByServiceJobIdResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -739,7 +742,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call completeServiceJobByServiceJobIdAsync(String serviceJobId, final ApiCallback<CompleteServiceJobByServiceJobIdResponse> callback) throws ApiException, LWAException {
+    public Call completeServiceJobByServiceJobIdAsync(String serviceJobId, final ApiCallback<CompleteServiceJobByServiceJobIdResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -760,7 +763,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = completeServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, progressListener, progressRequestListener);
+        Call call = completeServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CompleteServiceJobByServiceJobIdResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -775,7 +778,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createReservationCall(CreateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createReservationCall(CreateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -803,10 +806,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -819,7 +822,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createReservationValidateBeforeCall(CreateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createReservationValidateBeforeCall(CreateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -832,7 +835,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = createReservationCall(body, marketplaceIds, progressListener, progressRequestListener);
+        Call call = createReservationCall(body, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -861,7 +864,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateReservationResponse> createReservationWithHttpInfo(CreateReservationRequest body, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createReservationValidateBeforeCall(body, marketplaceIds, null, null);
+        Call call = createReservationValidateBeforeCall(body, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<CreateReservationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -876,7 +879,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createReservationAsync(CreateReservationRequest body, List<String> marketplaceIds, final ApiCallback<CreateReservationResponse> callback) throws ApiException, LWAException {
+    public Call createReservationAsync(CreateReservationRequest body, List<String> marketplaceIds, final ApiCallback<CreateReservationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -897,7 +900,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createReservationValidateBeforeCall(body, marketplaceIds, progressListener, progressRequestListener);
+        Call call = createReservationValidateBeforeCall(body, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateReservationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -911,7 +914,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createServiceDocumentUploadDestinationCall(ServiceUploadDocument body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createServiceDocumentUploadDestinationCall(ServiceUploadDocument body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -937,10 +940,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -953,7 +956,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createServiceDocumentUploadDestinationValidateBeforeCall(ServiceUploadDocument body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createServiceDocumentUploadDestinationValidateBeforeCall(ServiceUploadDocument body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -961,7 +964,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = createServiceDocumentUploadDestinationCall(body, progressListener, progressRequestListener);
+        Call call = createServiceDocumentUploadDestinationCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -988,7 +991,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateServiceDocumentUploadDestination> createServiceDocumentUploadDestinationWithHttpInfo(ServiceUploadDocument body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createServiceDocumentUploadDestinationValidateBeforeCall(body, null, null);
+        Call call = createServiceDocumentUploadDestinationValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<CreateServiceDocumentUploadDestination>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1002,7 +1005,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createServiceDocumentUploadDestinationAsync(ServiceUploadDocument body, final ApiCallback<CreateServiceDocumentUploadDestination> callback) throws ApiException, LWAException {
+    public Call createServiceDocumentUploadDestinationAsync(ServiceUploadDocument body, final ApiCallback<CreateServiceDocumentUploadDestination> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1023,7 +1026,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createServiceDocumentUploadDestinationValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = createServiceDocumentUploadDestinationValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateServiceDocumentUploadDestination>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1041,7 +1044,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAppointmentSlotsCall(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getAppointmentSlotsCall(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1077,10 +1080,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1093,7 +1096,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getAppointmentSlotsValidateBeforeCall(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getAppointmentSlotsValidateBeforeCall(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'asin' is set
         if (asin == null) {
@@ -1111,7 +1114,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = getAppointmentSlotsCall(asin, storeId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
+        Call call = getAppointmentSlotsCall(asin, storeId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1146,7 +1149,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetAppointmentSlotsResponse> getAppointmentSlotsWithHttpInfo(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getAppointmentSlotsValidateBeforeCall(asin, storeId, marketplaceIds, startTime, endTime, null, null);
+        Call call = getAppointmentSlotsValidateBeforeCall(asin, storeId, marketplaceIds, startTime, endTime, null, null);
         Type localVarReturnType = new TypeToken<GetAppointmentSlotsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1164,7 +1167,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAppointmentSlotsAsync(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime, final ApiCallback<GetAppointmentSlotsResponse> callback) throws ApiException, LWAException {
+    public Call getAppointmentSlotsAsync(String asin, String storeId, List<String> marketplaceIds, String startTime, String endTime, final ApiCallback<GetAppointmentSlotsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1185,7 +1188,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getAppointmentSlotsValidateBeforeCall(asin, storeId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
+        Call call = getAppointmentSlotsValidateBeforeCall(asin, storeId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetAppointmentSlotsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1202,7 +1205,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAppointmmentSlotsByJobIdCall(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getAppointmmentSlotsByJobIdCall(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1235,10 +1238,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1251,7 +1254,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getAppointmmentSlotsByJobIdValidateBeforeCall(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getAppointmmentSlotsByJobIdValidateBeforeCall(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -1264,7 +1267,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = getAppointmmentSlotsByJobIdCall(serviceJobId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
+        Call call = getAppointmmentSlotsByJobIdCall(serviceJobId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1297,7 +1300,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetAppointmentSlotsResponse> getAppointmmentSlotsByJobIdWithHttpInfo(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getAppointmmentSlotsByJobIdValidateBeforeCall(serviceJobId, marketplaceIds, startTime, endTime, null, null);
+        Call call = getAppointmmentSlotsByJobIdValidateBeforeCall(serviceJobId, marketplaceIds, startTime, endTime, null, null);
         Type localVarReturnType = new TypeToken<GetAppointmentSlotsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1314,7 +1317,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getAppointmmentSlotsByJobIdAsync(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime, final ApiCallback<GetAppointmentSlotsResponse> callback) throws ApiException, LWAException {
+    public Call getAppointmmentSlotsByJobIdAsync(String serviceJobId, List<String> marketplaceIds, String startTime, String endTime, final ApiCallback<GetAppointmentSlotsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1335,7 +1338,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getAppointmmentSlotsByJobIdValidateBeforeCall(serviceJobId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
+        Call call = getAppointmmentSlotsByJobIdValidateBeforeCall(serviceJobId, marketplaceIds, startTime, endTime, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetAppointmentSlotsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1352,7 +1355,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFixedSlotCapacityCall(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getFixedSlotCapacityCall(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -1383,10 +1386,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1399,7 +1402,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getFixedSlotCapacityValidateBeforeCall(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getFixedSlotCapacityValidateBeforeCall(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'resourceId' is set
         if (resourceId == null) {
@@ -1417,7 +1420,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = getFixedSlotCapacityCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
+        Call call = getFixedSlotCapacityCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1450,7 +1453,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<FixedSlotCapacity> getFixedSlotCapacityWithHttpInfo(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getFixedSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, null, null);
+        Call call = getFixedSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, null, null);
         Type localVarReturnType = new TypeToken<FixedSlotCapacity>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1467,7 +1470,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getFixedSlotCapacityAsync(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ApiCallback<FixedSlotCapacity> callback) throws ApiException, LWAException {
+    public Call getFixedSlotCapacityAsync(String resourceId, FixedSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ApiCallback<FixedSlotCapacity> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1488,7 +1491,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getFixedSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
+        Call call = getFixedSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<FixedSlotCapacity>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1505,7 +1508,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getRangeSlotCapacityCall(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getRangeSlotCapacityCall(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -1536,10 +1539,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1552,7 +1555,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getRangeSlotCapacityValidateBeforeCall(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getRangeSlotCapacityValidateBeforeCall(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'resourceId' is set
         if (resourceId == null) {
@@ -1570,7 +1573,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = getRangeSlotCapacityCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
+        Call call = getRangeSlotCapacityCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1603,7 +1606,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<RangeSlotCapacity> getRangeSlotCapacityWithHttpInfo(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getRangeSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, null, null);
+        Call call = getRangeSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, null, null);
         Type localVarReturnType = new TypeToken<RangeSlotCapacity>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1620,7 +1623,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getRangeSlotCapacityAsync(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ApiCallback<RangeSlotCapacity> callback) throws ApiException, LWAException {
+    public Call getRangeSlotCapacityAsync(String resourceId, RangeSlotCapacityQuery body, List<String> marketplaceIds, String nextPageToken, final ApiCallback<RangeSlotCapacity> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1641,7 +1644,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getRangeSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
+        Call call = getRangeSlotCapacityValidateBeforeCall(resourceId, body, marketplaceIds, nextPageToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<RangeSlotCapacity>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1655,7 +1658,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getServiceJobByServiceJobIdCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getServiceJobByServiceJobIdCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1682,10 +1685,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1698,7 +1701,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -1706,7 +1709,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = getServiceJobByServiceJobIdCall(serviceJobId, progressListener, progressRequestListener);
+        Call call = getServiceJobByServiceJobIdCall(serviceJobId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1733,7 +1736,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetServiceJobByServiceJobIdResponse> getServiceJobByServiceJobIdWithHttpInfo(String serviceJobId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, null, null);
+        Call call = getServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, null, null);
         Type localVarReturnType = new TypeToken<GetServiceJobByServiceJobIdResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1747,7 +1750,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getServiceJobByServiceJobIdAsync(String serviceJobId, final ApiCallback<GetServiceJobByServiceJobIdResponse> callback) throws ApiException, LWAException {
+    public Call getServiceJobByServiceJobIdAsync(String serviceJobId, final ApiCallback<GetServiceJobByServiceJobIdResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1768,7 +1771,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, progressListener, progressRequestListener);
+        Call call = getServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetServiceJobByServiceJobIdResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1797,7 +1800,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getServiceJobsCall(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getServiceJobsCall(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1855,10 +1858,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1871,7 +1874,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getServiceJobsValidateBeforeCall(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getServiceJobsValidateBeforeCall(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'marketplaceIds' is set
         if (marketplaceIds == null) {
@@ -1879,7 +1882,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = getServiceJobsCall(marketplaceIds, serviceOrderIds, serviceJobStatus, pageToken, pageSize, sortField, sortOrder, createdAfter, createdBefore, lastUpdatedAfter, lastUpdatedBefore, scheduleStartDate, scheduleEndDate, asins, requiredSkills, storeIds, progressListener, progressRequestListener);
+        Call call = getServiceJobsCall(marketplaceIds, serviceOrderIds, serviceJobStatus, pageToken, pageSize, sortField, sortOrder, createdAfter, createdBefore, lastUpdatedAfter, lastUpdatedBefore, scheduleStartDate, scheduleEndDate, asins, requiredSkills, storeIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1936,7 +1939,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetServiceJobsResponse> getServiceJobsWithHttpInfo(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getServiceJobsValidateBeforeCall(marketplaceIds, serviceOrderIds, serviceJobStatus, pageToken, pageSize, sortField, sortOrder, createdAfter, createdBefore, lastUpdatedAfter, lastUpdatedBefore, scheduleStartDate, scheduleEndDate, asins, requiredSkills, storeIds, null, null);
+        Call call = getServiceJobsValidateBeforeCall(marketplaceIds, serviceOrderIds, serviceJobStatus, pageToken, pageSize, sortField, sortOrder, createdAfter, createdBefore, lastUpdatedAfter, lastUpdatedBefore, scheduleStartDate, scheduleEndDate, asins, requiredSkills, storeIds, null, null);
         Type localVarReturnType = new TypeToken<GetServiceJobsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1965,7 +1968,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getServiceJobsAsync(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds, final ApiCallback<GetServiceJobsResponse> callback) throws ApiException, LWAException {
+    public Call getServiceJobsAsync(List<String> marketplaceIds, List<String> serviceOrderIds, List<String> serviceJobStatus, String pageToken, Integer pageSize, String sortField, String sortOrder, String createdAfter, String createdBefore, String lastUpdatedAfter, String lastUpdatedBefore, String scheduleStartDate, String scheduleEndDate, List<String> asins, List<String> requiredSkills, List<String> storeIds, final ApiCallback<GetServiceJobsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1986,7 +1989,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getServiceJobsValidateBeforeCall(marketplaceIds, serviceOrderIds, serviceJobStatus, pageToken, pageSize, sortField, sortOrder, createdAfter, createdBefore, lastUpdatedAfter, lastUpdatedBefore, scheduleStartDate, scheduleEndDate, asins, requiredSkills, storeIds, progressListener, progressRequestListener);
+        Call call = getServiceJobsValidateBeforeCall(marketplaceIds, serviceOrderIds, serviceJobStatus, pageToken, pageSize, sortField, sortOrder, createdAfter, createdBefore, lastUpdatedAfter, lastUpdatedBefore, scheduleStartDate, scheduleEndDate, asins, requiredSkills, storeIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetServiceJobsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2002,7 +2005,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call rescheduleAppointmentForServiceJobByServiceJobIdCall(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call rescheduleAppointmentForServiceJobByServiceJobIdCall(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2030,10 +2033,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2046,7 +2049,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call rescheduleAppointmentForServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call rescheduleAppointmentForServiceJobByServiceJobIdValidateBeforeCall(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -2064,7 +2067,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = rescheduleAppointmentForServiceJobByServiceJobIdCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
+        Call call = rescheduleAppointmentForServiceJobByServiceJobIdCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2095,7 +2098,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SetAppointmentResponse> rescheduleAppointmentForServiceJobByServiceJobIdWithHttpInfo(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = rescheduleAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, appointmentId, body, null, null);
+        Call call = rescheduleAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, appointmentId, body, null, null);
         Type localVarReturnType = new TypeToken<SetAppointmentResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2111,7 +2114,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call rescheduleAppointmentForServiceJobByServiceJobIdAsync(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body, final ApiCallback<SetAppointmentResponse> callback) throws ApiException, LWAException {
+    public Call rescheduleAppointmentForServiceJobByServiceJobIdAsync(String serviceJobId, String appointmentId, RescheduleAppointmentRequest body, final ApiCallback<SetAppointmentResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2132,7 +2135,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = rescheduleAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
+        Call call = rescheduleAppointmentForServiceJobByServiceJobIdValidateBeforeCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SetAppointmentResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2148,7 +2151,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call setAppointmentFulfillmentDataCall(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call setAppointmentFulfillmentDataCall(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2176,10 +2179,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2192,7 +2195,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call setAppointmentFulfillmentDataValidateBeforeCall(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call setAppointmentFulfillmentDataValidateBeforeCall(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'serviceJobId' is set
         if (serviceJobId == null) {
@@ -2210,7 +2213,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = setAppointmentFulfillmentDataCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
+        Call call = setAppointmentFulfillmentDataCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2241,7 +2244,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<String> setAppointmentFulfillmentDataWithHttpInfo(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = setAppointmentFulfillmentDataValidateBeforeCall(serviceJobId, appointmentId, body, null, null);
+        Call call = setAppointmentFulfillmentDataValidateBeforeCall(serviceJobId, appointmentId, body, null, null);
         Type localVarReturnType = new TypeToken<String>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2257,7 +2260,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call setAppointmentFulfillmentDataAsync(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body, final ApiCallback<String> callback) throws ApiException, LWAException {
+    public Call setAppointmentFulfillmentDataAsync(String serviceJobId, String appointmentId, SetAppointmentFulfillmentDataRequest body, final ApiCallback<String> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2278,7 +2281,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = setAppointmentFulfillmentDataValidateBeforeCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
+        Call call = setAppointmentFulfillmentDataValidateBeforeCall(serviceJobId, appointmentId, body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<String>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2294,7 +2297,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call updateReservationCall(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call updateReservationCall(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2323,10 +2326,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2339,7 +2342,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateReservationValidateBeforeCall(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call updateReservationValidateBeforeCall(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'reservationId' is set
         if (reservationId == null) {
@@ -2357,7 +2360,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = updateReservationCall(reservationId, body, marketplaceIds, progressListener, progressRequestListener);
+        Call call = updateReservationCall(reservationId, body, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2388,7 +2391,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<UpdateReservationResponse> updateReservationWithHttpInfo(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = updateReservationValidateBeforeCall(reservationId, body, marketplaceIds, null, null);
+        Call call = updateReservationValidateBeforeCall(reservationId, body, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<UpdateReservationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2404,7 +2407,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call updateReservationAsync(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds, final ApiCallback<UpdateReservationResponse> callback) throws ApiException, LWAException {
+    public Call updateReservationAsync(String reservationId, UpdateReservationRequest body, List<String> marketplaceIds, final ApiCallback<UpdateReservationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2425,7 +2428,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateReservationValidateBeforeCall(reservationId, body, marketplaceIds, progressListener, progressRequestListener);
+        Call call = updateReservationValidateBeforeCall(reservationId, body, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<UpdateReservationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2441,7 +2444,7 @@ public class ServiceApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call updateScheduleCall(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call updateScheduleCall(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -2470,10 +2473,10 @@ public class ServiceApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -2486,7 +2489,7 @@ public class ServiceApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call updateScheduleValidateBeforeCall(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call updateScheduleValidateBeforeCall(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'resourceId' is set
         if (resourceId == null) {
@@ -2504,7 +2507,7 @@ public class ServiceApi {
         }
         
 
-        com.squareup.okhttp.Call call = updateScheduleCall(resourceId, body, marketplaceIds, progressListener, progressRequestListener);
+        Call call = updateScheduleCall(resourceId, body, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -2535,7 +2538,7 @@ public class ServiceApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<UpdateScheduleResponse> updateScheduleWithHttpInfo(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = updateScheduleValidateBeforeCall(resourceId, body, marketplaceIds, null, null);
+        Call call = updateScheduleValidateBeforeCall(resourceId, body, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<UpdateScheduleResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -2551,7 +2554,7 @@ public class ServiceApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call updateScheduleAsync(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds, final ApiCallback<UpdateScheduleResponse> callback) throws ApiException, LWAException {
+    public Call updateScheduleAsync(String resourceId, UpdateScheduleRequest body, List<String> marketplaceIds, final ApiCallback<UpdateScheduleResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -2572,7 +2575,7 @@ public class ServiceApi {
             };
         }
 
-        com.squareup.okhttp.Call call = updateScheduleValidateBeforeCall(resourceId, body, marketplaceIds, progressListener, progressRequestListener);
+        Call call = updateScheduleValidateBeforeCall(resourceId, body, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<UpdateScheduleResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -2636,10 +2639,10 @@ public class ServiceApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new ServiceApi(new ApiClient()
+            return new ServiceApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

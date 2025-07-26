@@ -38,6 +38,9 @@ import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.solicitations.CreateProductReviewAndSellerFeedbackSolicitationResponse;
 import com.amazon.spapi.model.solicitations.GetSolicitationActionsForOrderResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class SolicitationsApi {
     private ApiClient apiClient;
@@ -68,7 +71,7 @@ public class SolicitationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createProductReviewAndSellerFeedbackSolicitationCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createProductReviewAndSellerFeedbackSolicitationCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -97,10 +100,10 @@ public class SolicitationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -113,7 +116,7 @@ public class SolicitationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createProductReviewAndSellerFeedbackSolicitationValidateBeforeCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createProductReviewAndSellerFeedbackSolicitationValidateBeforeCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'amazonOrderId' is set
         if (amazonOrderId == null) {
@@ -126,7 +129,7 @@ public class SolicitationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = createProductReviewAndSellerFeedbackSolicitationCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
+        Call call = createProductReviewAndSellerFeedbackSolicitationCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -155,7 +158,7 @@ public class SolicitationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateProductReviewAndSellerFeedbackSolicitationResponse> createProductReviewAndSellerFeedbackSolicitationWithHttpInfo(String amazonOrderId, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createProductReviewAndSellerFeedbackSolicitationValidateBeforeCall(amazonOrderId, marketplaceIds, null, null);
+        Call call = createProductReviewAndSellerFeedbackSolicitationValidateBeforeCall(amazonOrderId, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<CreateProductReviewAndSellerFeedbackSolicitationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -170,7 +173,7 @@ public class SolicitationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createProductReviewAndSellerFeedbackSolicitationAsync(String amazonOrderId, List<String> marketplaceIds, final ApiCallback<CreateProductReviewAndSellerFeedbackSolicitationResponse> callback) throws ApiException, LWAException {
+    public Call createProductReviewAndSellerFeedbackSolicitationAsync(String amazonOrderId, List<String> marketplaceIds, final ApiCallback<CreateProductReviewAndSellerFeedbackSolicitationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -191,7 +194,7 @@ public class SolicitationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createProductReviewAndSellerFeedbackSolicitationValidateBeforeCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
+        Call call = createProductReviewAndSellerFeedbackSolicitationValidateBeforeCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateProductReviewAndSellerFeedbackSolicitationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -206,7 +209,7 @@ public class SolicitationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSolicitationActionsForOrderCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getSolicitationActionsForOrderCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -235,10 +238,10 @@ public class SolicitationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -251,7 +254,7 @@ public class SolicitationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getSolicitationActionsForOrderValidateBeforeCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getSolicitationActionsForOrderValidateBeforeCall(String amazonOrderId, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'amazonOrderId' is set
         if (amazonOrderId == null) {
@@ -264,7 +267,7 @@ public class SolicitationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getSolicitationActionsForOrderCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getSolicitationActionsForOrderCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -293,7 +296,7 @@ public class SolicitationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetSolicitationActionsForOrderResponse> getSolicitationActionsForOrderWithHttpInfo(String amazonOrderId, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getSolicitationActionsForOrderValidateBeforeCall(amazonOrderId, marketplaceIds, null, null);
+        Call call = getSolicitationActionsForOrderValidateBeforeCall(amazonOrderId, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<GetSolicitationActionsForOrderResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -308,7 +311,7 @@ public class SolicitationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSolicitationActionsForOrderAsync(String amazonOrderId, List<String> marketplaceIds, final ApiCallback<GetSolicitationActionsForOrderResponse> callback) throws ApiException, LWAException {
+    public Call getSolicitationActionsForOrderAsync(String amazonOrderId, List<String> marketplaceIds, final ApiCallback<GetSolicitationActionsForOrderResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -329,7 +332,7 @@ public class SolicitationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getSolicitationActionsForOrderValidateBeforeCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getSolicitationActionsForOrderValidateBeforeCall(amazonOrderId, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetSolicitationActionsForOrderResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -393,10 +396,10 @@ public class SolicitationsApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new SolicitationsApi(new ApiClient()
+            return new SolicitationsApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

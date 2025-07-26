@@ -17,7 +17,7 @@ import com.wimoor.common.service.impl.SystemControllerLog;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.common.user.UserInfoContext;
 import com.wimoor.erp.api.AmazonClientOneFeignManager;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
+import com.wimoor.erp.material.service.IAssemblyFormService;
 import com.wimoor.erp.inventory.pojo.entity.InventoryParameter;
 import com.wimoor.erp.inventory.service.IInventoryFormAgentService;
 import com.wimoor.erp.inventory.service.IInventoryRecordService;

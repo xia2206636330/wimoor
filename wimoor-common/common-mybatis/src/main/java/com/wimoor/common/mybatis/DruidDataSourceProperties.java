@@ -18,6 +18,7 @@ public class DruidDataSourceProperties {
 	private String driverClassName;
 	private String jdbcUrl;
 	private String username;
+	private String dbType;
 	private String password;
 	@Value("${druid.initialSize}")
 	private int initialSize;

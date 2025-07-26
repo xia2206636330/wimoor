@@ -139,7 +139,9 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 	public void changeShipInboundPlan(ShipInboundPlan inplan, List<ShipInboundItem> list) {
 		// TODO Auto-generated method stub
 		ShipFormDTO mydto=getFormDTO( inplan, list) ;
-		this.erpClientOneFeign.updateItemQty(mydto);
+		if(inplan.getInvtype()!=2){
+			this.erpClientOneFeign.updateItemQty(mydto);
+		}
 		this.updateById(inplan);
 	     for(ShipInboundItem item:list) {
 	    	 ShipInboundItem old=iShipInboundItemService.getById(item.getId());
@@ -279,7 +281,6 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 		// TODO Auto-generated method stub
 		if(plan.getInvtype()==1) {
 			this.updateById(plan);
-			shipInboundShipmentRecordV2Service.saveRecord(plan);
 			return null;
 		}
 		AmazonAuthority auth = amazonAuthorityService.getById(plan.getAmazonauthid());
@@ -293,7 +294,6 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 		if(response!=null) {
 			plan.setInboundPlanId(response.getInboundPlanId());
 			this.updateById(plan);
-			shipInboundShipmentRecordV2Service.saveRecord(plan);
 			return iShipInboundOperationService.setOperationID(auth, plan.getId(), response.getOperationId());
 		}
 		return null;
@@ -497,6 +497,7 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 				if(response.getMarketplaceIds()!=null&&response.getMarketplaceIds().size()>0){
 					inboundplan.setMarketplaceid(response.getMarketplaceIds().get(0));
 				}
+				inboundplan.setShipments(response.getShipments().stream().map(item->item.getShipmentId()).collect(Collectors.joining(",")));
 				this.updateById(inboundplan);
 			}
 			return inboundplan;
@@ -567,6 +568,7 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 		plan.setOpttime(AmzDateUtils.getDate(planResult.getLastUpdatedAt()));
 		plan.setOperator(user.getId());
 		plan.setCreator(user.getId());
+		plan.setAmazonauthid(auth.getId());
 		plan.setCreatetime(AmzDateUtils.getDate(planResult.getCreatedAt()));
 		plan.setGroupid(dto.getGroupid());
 		plan.setPlacementOptionId(planResult.getPlacementOptions().get(0).getPlacementOptionId());
@@ -585,11 +587,19 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 		plan.setMarketplaceid(dto.getMarketplaceid());
 		plan.setInvstatus(0);
 		//查询address
-		ShipAddress address = shipAddressService.lambdaQuery().eq(ShipAddress::getShopid, user.getCompanyid())
-				.eq(ShipAddress::getName, planResult.getSourceAddress().getName()).eq(ShipAddress::getGroupid, plan.getGroupid()).one();
-		if(address!=null){
-			plan.setSourceAddress(address.getId());
+		List<ShipAddress> address = shipAddressService.lambdaQuery().eq(ShipAddress::getShopid, user.getCompanyid())
+				.eq(ShipAddress::getName, planResult.getSourceAddress().getName()).eq(ShipAddress::getGroupid, plan.getGroupid()).list();
+		if(address!=null && address.size()>0){
+			for(ShipAddress item:address){
+				if(item.getMarketplaceid()!=null&&item.getMarketplaceid().equals(plan.getMarketplaceid())){
+					plan.setSourceAddress(item.getId());
+				}
+			}
+			if(plan.getSourceAddress()==null){
+				plan.setSourceAddress(address.get(0).getId());
+			}
 		}
+
 		String status = planResult.getStatus();
 		if("SHIPPED".equals(status)){
 			plan.setAuditstatus(8);
@@ -742,6 +752,7 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 			titlemap.put("boxweight", "装箱实际重量(kg)");
 			titlemap.put("boxvolume", "装箱材积重量");
 			titlemap.put("wunit", "重量单位");
+			titlemap.put("boxmeter", "装箱体积(立方米)");
 			titlemap.put("shipmentstatus", "状态");
 			List<Map<String, Object>> list = this.baseMapper.getShipmentReport(params);
 			Sheet sheet = workbook.createSheet("sheet1");
@@ -778,12 +789,13 @@ public class ShipInboundPlanServiceImpl extends ServiceImpl<ShipInboundPlanV2Map
 			titlemap.put("center", "配送中心");
 			titlemap.put("warehouse", "发货仓库");
 			titlemap.put("shiped_date", "发货日期");
-			titlemap.put("arrivalTime", "预计到货日期");
+			titlemap.put("arrivalTime", "到货日期");
 			titlemap.put("channame", "发货渠道");
 			titlemap.put("quantity", "发货数量");
 			titlemap.put("received", "到货数量");
 			titlemap.put("shipmentstatus", "状态");
 			titlemap.put("createtime", "创建日期");
+			titlemap.put("deliveryTime", "预计到货日期");
 			List<Map<String, Object>> list = this.baseMapper.getShipmentDetailReport(params);
 			Sheet sheet = workbook.createSheet("sheet1");
 			// 在索引0的位置创建行（最顶端的行）

@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
--- 主机:                           rm-wz903sa454i2h35ik6o.mysql.rds.aliyuncs.com
--- 服务器版本:                        5.7.28-log - Source distribution
+-- 主机:                           wimoor.rwlb.rds.aliyuncs.com
+-- 服务器版本:                        8.0.36 - Source distribution
 -- 服务器操作系统:                      Linux
 -- HeidiSQL 版本:                  12.6.0.6765
 -- --------------------------------------------------------

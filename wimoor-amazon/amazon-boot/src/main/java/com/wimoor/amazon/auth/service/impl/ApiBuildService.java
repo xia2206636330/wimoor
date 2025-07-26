@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.amazon.spapi.api.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -23,10 +27,6 @@ import com.amazon.spapi.model.tokens.CreateRestrictedDataTokenResponse;
 import com.amazon.spapi.model.tokens.RestrictedResource;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import cn.hutool.core.lang.Assert;
 import lombok.Setter;
@@ -101,7 +101,7 @@ public class ApiBuildService implements InitializingBean {
  
 
 	public LWAAuthorizationCredentials getLWAAuthorizationCredentials(AmazonAuthority auth) {
-		   if(auth.getClientId()!=null) {
+		if(auth.getClientId()!=null) {
 			   LWAAuthorizationCredentials lwaAuthorizationCredentials = LWAAuthorizationCredentials.builder()
 			             //申请app后LWA中的clientId
 			             .clientId(auth.getClientId().trim())
@@ -237,6 +237,17 @@ public class ApiBuildService implements InitializingBean {
 		   initClient(api.getApiClient());
           return api;
 	}
+
+	public CustomerFeedbackApi  getCustomerFeedbackApi(AmazonAuthority auth) {
+		CustomerFeedbackApi api = new CustomerFeedbackApi.Builder()
+				.lwaAuthorizationCredentials(getLWAAuthorizationCredentials(auth))
+				.endpoint(getEndPoint(auth.getAWSRegion()))
+				.rateLimitConfigurationOnRequests(auth)
+				.build();
+		initClient(api.getApiClient());
+		return api;
+	}
+
 	public FbaOutboundApi  getOutboundApi(AmazonAuthority auth) {
 		FbaOutboundApi api = new FbaOutboundApi.Builder()
 				.lwaAuthorizationCredentials(getLWAAuthorizationCredentials(auth))
@@ -404,23 +415,17 @@ public class ApiBuildService implements InitializingBean {
 		        .endpoint(getEndPoint(auth.getAWSRegion()))
 		        .rateLimitConfigurationOnRequests(auth)
 				.build();
-		        initClient(api.getApiClient());
+		        //initClient(api.getApiClient());
         return api;
 	}
 
 	private void initClient(ApiClient client) {
-		client.setConnectTimeout(120000);
-        client.setReadTimeout(120000);
         if(needproxy!=null&&needproxy.equals("true")) {
         	SocketAddress address=new InetSocketAddress("127.0.0.1",1080);
             Proxy proxy= new Proxy(Proxy.Type.SOCKS,address);
-    		client.getHttpClient().setProxy(proxy);
         }
 	}
-	public static void initClient(OkHttpClient okHttpClient) {
-		     okHttpClient.setReadTimeout(120000, TimeUnit.MILLISECONDS);
-		     okHttpClient.setConnectTimeout(120000, TimeUnit.MILLISECONDS);
-	}
+
  
 	 public   RestrictedResource buildRestrictedResource(RestrictedResource.MethodEnum method, String path, List<String> dataElements){
 	     RestrictedResource resource = buildRestrictedResource(method,path);
@@ -476,9 +481,17 @@ public class ApiBuildService implements InitializingBean {
 	             .build(); // Build the request.
 
 	     // Execute the signed request.
-	     OkHttpClient okHttpClient = new OkHttpClient();
+		 OkHttpClient.Builder builder = new OkHttpClient.Builder();
+		 // 设置连接超时时间为10秒
+		 builder.connectTimeout(120000, TimeUnit.SECONDS);
+
+		 // 设置读取超时时间为30秒
+		 builder.readTimeout(120000, TimeUnit.SECONDS);
+
+		 // 设置写入超时时间为30秒（如果你需要进行POST或PUT请求，并且需要设置写入超时）
+		 builder.writeTimeout(120000, TimeUnit.SECONDS);
+	     OkHttpClient okHttpClient = builder.build();
 	     Response response = okHttpClient.newCall(signedRequest).execute();
-	     initClient(okHttpClient);
 	     return response;
 	 }
 

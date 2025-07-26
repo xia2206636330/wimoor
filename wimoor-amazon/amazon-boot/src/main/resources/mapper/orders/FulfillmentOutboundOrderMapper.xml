@@ -26,7 +26,7 @@
   </sql>
   
   <select id="findList" parameterType="com.wimoor.amazon.orders.pojo.dto.OrdersFulfillmentDTO" resultType="com.wimoor.amazon.orders.pojo.entity.FulfillmentOutboundOrder" >
-    SELECT t.`*`  FROM t_amz_fulfillment_order t
+    SELECT t.*  FROM t_amz_fulfillment_order t
     left join t_amazon_auth a on a.id=t.amazonAuthId
     where a.shop_id=#{param.shopid,jdbcType=CHAR} and t.amazonAuthId = #{param.amazonAuthId,jdbcType=CHAR}
 	<if test="param.startDate!=null">

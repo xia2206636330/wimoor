@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.wimoor.amazon.product.service.*;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +23,6 @@ import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.service.IAmazonAuthorityService;
 import com.wimoor.amazon.product.pojo.dto.ProductCatalogItemsDTO;
 import com.wimoor.amazon.product.pojo.entity.AmzProductRefresh;
-import com.wimoor.amazon.product.service.IAmzProductRefreshService;
-import com.wimoor.amazon.product.service.IProductCatalogItemService;
-import com.wimoor.amazon.product.service.IProductListingSmallAndLightService;
-import com.wimoor.amazon.product.service.IProductListingsItemService;
-import com.wimoor.amazon.product.service.IProductProductPriceService;
 import com.wimoor.common.result.Result;
 
 import cn.hutool.core.util.StrUtil;
@@ -56,6 +52,7 @@ public class AmzProductRefreshController {
 	final IAmazonAuthorityService amazonAuthorityService;
 	final IProductCatalogItemService iProductCatalogItemService;
 	final IProductProductPriceService iProductProductPriceService;
+	final IProductInReviewService iProductInReviewService;
 	final IProductListingSmallAndLightService iProductListingSmallAndLightService;
     @ApiOperation(value = "创建对象")
     @GetMapping("/insert")
@@ -132,10 +129,10 @@ public class AmzProductRefreshController {
     		String asin=item.getSummaries().get(0).getAsin();
     		if(StrUtil.isNotBlank(asin)) {
     			this.refreshCatalogBySKUAction(groupid, marketplaceid, asin, sku);
-    		}
+			}
     		//iProductListingSmallAndLightService.refreshSmallAndLight(auth,sku,Arrays.asList(marketplaceid));
     	}
-    	
+
     	return Result.success(item);
     }
     

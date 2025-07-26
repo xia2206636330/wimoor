@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,9 @@ public interface AmazonClientOneFeign {
 
 	@GetMapping("/amazon/api/v1/amzauthority/getSellerIdByGroupId")
 	public Result<String> getSellerIdByGroupIdAction(@RequestParam("groupid") String groupid, @RequestParam("marketplaceid") String marketplaceid);
+
+	@GetMapping("/amazon/api/v1/amzauthority/getAmazonAuthIdByGroupId")
+	public Result<String> getAmazonAuthIdByGroupIdAction(@RequestParam("groupid") String groupid, @RequestParam("marketplaceid") String marketplaceid);
 
 	@PostMapping("/amazon/api/v1/shipForm/create")
 	public Result<String> createShipmentAction(@ApiParam("货件信息") @RequestBody ShipInboundShipmentDTO dto);
@@ -101,4 +105,17 @@ public interface AmazonClientOneFeign {
 
 	@PostMapping("/amazon/api/v1/report/product/productInOpt/getMonthSumNum")
 	public Result<List<Map<String,Object>>> getMonthSumNumAction(@RequestBody Map<String,Object> param);
+
+	@PostMapping("/amazon/api/v1/report/product/productInfo/productList")
+	public Result<?> productListAction(@RequestBody Map<String,Object> query);
+
+	@PostMapping("/amazon/api/v1/settlementSummarySkuMonth/list")
+	public Result<?>  settlementSummarySkuMonthListAction(@RequestBody Map<String,Object> dto);
+
+	@PostMapping("/amazon/api/v1/settlement/getSummaryMonth")
+	public Result<?>  getAmzSummaryMonthAction(@RequestBody Map<String,Object> dto);
+
+	@GetMapping("/amazon/api/v1/exchangeRate/changeCurrency")
+	public Result<?> changeCurrency(@RequestParam("from")String from, @RequestParam("to")String to, @RequestParam("money")BigDecimal money);
+
 }

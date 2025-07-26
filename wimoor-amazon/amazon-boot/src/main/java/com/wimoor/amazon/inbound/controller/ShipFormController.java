@@ -506,7 +506,7 @@ public class ShipFormController {
 			workbook.close();
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -617,7 +617,7 @@ public class ShipFormController {
 			workbook.write(fOut);
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -655,8 +655,6 @@ public class ShipFormController {
 			} catch (EncryptedDocumentException e) {
 				e.printStackTrace();
 			} catch (InvalidFormatException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

@@ -64,7 +64,13 @@ public class AmazonAuthorityController {
 			AmazonAuthority auth = iAmazonAuthorityService.selectByGroupAndMarket(groupid, marketplaceid);
 			return Result.success(auth.getSellerid());
 		}
-
+	@ApiOperation(value = "获取店铺信息")
+	@GetMapping("/getAmazonAuthIdByGroupId")
+	public Result<String> getAmazonAuthIdByGroupIdAction(String groupid,String marketplaceid) {
+		UserInfo userinfo = UserInfoContext.get();
+		AmazonAuthority auth = iAmazonAuthorityService.selectByGroupAndMarket(groupid, marketplaceid);
+		return Result.success(auth.getId());
+	}
 	 	
 	 
 	    @ApiOperation(value = "获取店铺")

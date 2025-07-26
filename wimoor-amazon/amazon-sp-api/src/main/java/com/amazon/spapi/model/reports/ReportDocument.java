@@ -10,26 +10,23 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
-import java.io.IOException;
 import java.util.Objects;
-
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
 /**
  * Information required for the report document.
  */
-@ApiModel(description = "Information required for the report document.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "Information required for the report document.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class ReportDocument {
   @SerializedName("reportDocumentId")
   private String reportDocumentId = null;
@@ -38,10 +35,11 @@ public class ReportDocument {
   private String url = null;
 
   /**
-   * If the report document contents have been compressed, the compression algorithm used is returned in this property and you must decompress the report when you download. Otherwise, you can download the report directly. Refer to [Step 2. Download the report](doc:reports-api-v2021-06-30-retrieve-a-report#step-2-download-the-report) in the use case guide, where sample code is provided.
+   * If the report document contents have been compressed, the compression algorithm used is returned in this property and you must decompress the report when you download. Otherwise, you can download the report directly. Refer to [Step 2. Download the report](https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-retrieve-a-report#step-2-download-the-report) in the use case guide, where sample code is provided.
    */
   @JsonAdapter(CompressionAlgorithmEnum.Adapter.class)
   public enum CompressionAlgorithmEnum {
+    @SerializedName("GZIP")
     GZIP("GZIP");
 
     private String value;
@@ -49,7 +47,6 @@ public class ReportDocument {
     CompressionAlgorithmEnum(String value) {
       this.value = value;
     }
-
     public String getValue() {
       return value;
     }
@@ -58,31 +55,27 @@ public class ReportDocument {
     public String toString() {
       return String.valueOf(value);
     }
-
-    public static CompressionAlgorithmEnum fromValue(String text) {
+    public static CompressionAlgorithmEnum fromValue(String input) {
       for (CompressionAlgorithmEnum b : CompressionAlgorithmEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (b.value.equals(input)) {
           return b;
         }
       }
       return null;
     }
-
     public static class Adapter extends TypeAdapter<CompressionAlgorithmEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final CompressionAlgorithmEnum enumeration) throws IOException {
-        jsonWriter.value(enumeration.getValue());
+        jsonWriter.value(String.valueOf(enumeration.getValue()));
       }
 
       @Override
       public CompressionAlgorithmEnum read(final JsonReader jsonReader) throws IOException {
-        String value = jsonReader.nextString();
-        return CompressionAlgorithmEnum.fromValue(String.valueOf(value));
+        Object value = jsonReader.nextString();
+        return CompressionAlgorithmEnum.fromValue((String)(value));
       }
     }
-  }
-
-  @SerializedName("compressionAlgorithm")
+  }  @SerializedName("compressionAlgorithm")
   private CompressionAlgorithmEnum compressionAlgorithm = null;
 
   public ReportDocument reportDocumentId(String reportDocumentId) {
@@ -94,7 +87,7 @@ public class ReportDocument {
    * The identifier for the report document. This identifier is unique only in combination with a seller ID.
    * @return reportDocumentId
   **/
-  @ApiModelProperty(required = true, value = "The identifier for the report document. This identifier is unique only in combination with a seller ID.")
+  @Schema(required = true, description = "The identifier for the report document. This identifier is unique only in combination with a seller ID.")
   public String getReportDocumentId() {
     return reportDocumentId;
   }
@@ -112,7 +105,7 @@ public class ReportDocument {
    * A presigned URL for the report document. If &#x60;compressionAlgorithm&#x60; is not returned, you can download the report directly from this URL. This URL expires after 5 minutes.
    * @return url
   **/
-  @ApiModelProperty(required = true, value = "A presigned URL for the report document. If `compressionAlgorithm` is not returned, you can download the report directly from this URL. This URL expires after 5 minutes.")
+  @Schema(required = true, description = "A presigned URL for the report document. If `compressionAlgorithm` is not returned, you can download the report directly from this URL. This URL expires after 5 minutes.")
   public String getUrl() {
     return url;
   }
@@ -127,10 +120,10 @@ public class ReportDocument {
   }
 
    /**
-   * If the report document contents have been compressed, the compression algorithm used is returned in this property and you must decompress the report when you download. Otherwise, you can download the report directly. Refer to [Step 2. Download the report](doc:reports-api-v2021-06-30-retrieve-a-report#step-2-download-the-report) in the use case guide, where sample code is provided.
+   * If the report document contents have been compressed, the compression algorithm used is returned in this property and you must decompress the report when you download. Otherwise, you can download the report directly. Refer to [Step 2. Download the report](https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-retrieve-a-report#step-2-download-the-report) in the use case guide, where sample code is provided.
    * @return compressionAlgorithm
   **/
-  @ApiModelProperty(value = "If the report document contents have been compressed, the compression algorithm used is returned in this property and you must decompress the report when you download. Otherwise, you can download the report directly. Refer to [Step 2. Download the report](doc:reports-api-v2021-06-30-retrieve-a-report#step-2-download-the-report) in the use case guide, where sample code is provided.")
+  @Schema(description = "If the report document contents have been compressed, the compression algorithm used is returned in this property and you must decompress the report when you download. Otherwise, you can download the report directly. Refer to [Step 2. Download the report](https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-retrieve-a-report#step-2-download-the-report) in the use case guide, where sample code is provided.")
   public CompressionAlgorithmEnum getCompressionAlgorithm() {
     return compressionAlgorithm;
   }
@@ -184,4 +177,3 @@ public class ReportDocument {
   }
 
 }
-

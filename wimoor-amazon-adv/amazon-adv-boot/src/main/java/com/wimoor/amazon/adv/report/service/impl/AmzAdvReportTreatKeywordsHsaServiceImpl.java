@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.wimoor.amazon.adv.sb.pojo.*;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -19,11 +20,6 @@ import com.wimoor.amazon.adv.report.pojo.AmzAdvRequest;
 import com.wimoor.amazon.adv.report.service.IAmzAdvReportTreatService;
 import com.wimoor.amazon.adv.sb.dao.AmzAdvKeywordsHsaMapper;
 import com.wimoor.amazon.adv.sb.dao.AmzAdvReportKeywordsHsaMapper;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvKeywordsHsa;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportKeywordsHsa;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportKeywordsHsaAttributed;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportKeywordsHsaBrand;
-import com.wimoor.amazon.adv.sb.pojo.AmzAdvReportKeywordsHsaVideo;
 import com.wimoor.common.GeneralUtil;
 
 import cn.hutool.core.util.StrUtil;
@@ -84,7 +80,7 @@ public class AmzAdvReportTreatKeywordsHsaServiceImpl extends AmzAdvReportTreatSe
 	public synchronized void treatReport(AmzAdvProfile profile,AmzAdvRequest request, JSONReader jsonReader) {
 		// TODO Auto-generated method stub
 			final List<AmzAdvReportKeywordsHsa> list = new LinkedList<AmzAdvReportKeywordsHsa>();
-			final List<AmzAdvReportKeywordsHsaAttributed> listAttributed = new LinkedList<AmzAdvReportKeywordsHsaAttributed>();
+			final List<AmzAdvReportKeywordsHsaAttributedAll> listAttributed = new LinkedList<AmzAdvReportKeywordsHsaAttributedAll>();
 			final List<AmzAdvReportKeywordsHsaBrand> listBrand = new LinkedList<AmzAdvReportKeywordsHsaBrand>();
 			final List<AmzAdvReportKeywordsHsaVideo> listVideo = new LinkedList<AmzAdvReportKeywordsHsaVideo>();
 			try {
@@ -93,7 +89,7 @@ public class AmzAdvReportTreatKeywordsHsaServiceImpl extends AmzAdvReportTreatSe
 					String elem = jsonReader.readString();
 					JSONObject item = GeneralUtil.getJsonObject(elem);
 					AmzAdvReportKeywordsHsa amzAdvReportHasKeyword = new AmzAdvReportKeywordsHsa();
-					AmzAdvReportKeywordsHsaAttributed amzAdvReportKeywordsHsaAttributed = new AmzAdvReportKeywordsHsaAttributed();
+					AmzAdvReportKeywordsHsaAttributedAll amzAdvReportKeywordsHsaAttributed = new AmzAdvReportKeywordsHsaAttributedAll();
 					
 					AmzAdvReportKeywordsHsaVideo amzAdvReportHasKeywordVideo = null;
 					AmzAdvReportKeywordsHsaBrand amzAdvReportHasKeywordBrand = null;
@@ -137,11 +133,49 @@ public class AmzAdvReportTreatKeywordsHsaServiceImpl extends AmzAdvReportTreatSe
 						continue;
 					}
 					amzAdvReportKeywordsHsaAttributed.setBydate(amzAdvReportHasKeyword.getBydate());
-					amzAdvReportKeywordsHsaAttributed.setKeywordid(amzAdvReportHasKeyword.getKeywordid());
-					amzAdvReportKeywordsHsaAttributed.setAttributedsales14d(item.getBigDecimal("attributedSales14d"));
-					amzAdvReportKeywordsHsaAttributed.setAttributedsales14dsamesku(item.getBigDecimal("attributedSales14dSameSKU"));
-					amzAdvReportKeywordsHsaAttributed.setAttributedconversions14d(item.getInteger("attributedConversions14d"));
-					amzAdvReportKeywordsHsaAttributed.setAttributedconversions14dsamesku(item.getInteger("attributedConversions14dSameSKU"));
+					amzAdvReportKeywordsHsaAttributed.setKeywordId(amzAdvReportHasKeyword.getKeywordid().toString());
+					amzAdvReportKeywordsHsaAttributed.setAddToCart(item.getInteger("addToCart"));
+					amzAdvReportKeywordsHsaAttributed.setAddToCartClicks(item.getInteger("addToCartClicks"));
+					amzAdvReportKeywordsHsaAttributed.setAddToCartRate(item.getBigDecimal("addToCartRate"));
+					amzAdvReportKeywordsHsaAttributed.setAddToList(item.getInteger("addToList"));
+					amzAdvReportKeywordsHsaAttributed.setAddToListFromClicks(item.getInteger("addToListFromClicks"));
+					amzAdvReportKeywordsHsaAttributed.setQualifiedBorrows(item.getInteger("qualifiedBorrows"));
+					amzAdvReportKeywordsHsaAttributed.setQualifiedBorrowsFromClicks(item.getInteger("qualifiedBorrowsFromClicks"));
+					amzAdvReportKeywordsHsaAttributed.setRoyaltyQualifiedBorrows(item.getInteger("royaltyQualifiedBorrows"));
+					amzAdvReportKeywordsHsaAttributed.setRoyaltyQualifiedBorrowsFromClicks(item.getInteger("royaltyQualifiedBorrowsFromClicks"));
+					amzAdvReportKeywordsHsaAttributed.setBrandedSearches(item.getInteger("brandedSearches"));
+					amzAdvReportKeywordsHsaAttributed.setBrandedSearchesClicks(item.getInteger("brandedSearchesClicks"));
+					amzAdvReportKeywordsHsaAttributed.setCampaignBudgetAmount(item.getBigDecimal("campaignBudgetAmount"));
+					amzAdvReportKeywordsHsaAttributed.setCampaignBudgetCurrencyCode(item.getString("campaignBudgetCurrencyCode"));
+					amzAdvReportKeywordsHsaAttributed.setDetailPageViews(item.getInteger("detailPageViews"));
+					amzAdvReportKeywordsHsaAttributed.setDetailPageViewsClicks(item.getInteger("detailPageViewsClicks"));
+					amzAdvReportKeywordsHsaAttributed.setECPAddToCart(item.getBigDecimal("eCPAddToCart"));
+					amzAdvReportKeywordsHsaAttributed.setKeywordBid(item.getBigDecimal("keywordBid"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandDetailPageViewRate(item.getBigDecimal("newToBrandDetailPageViewRate"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandDetailPageViews(item.getInteger("newToBrandDetailPageViews"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandDetailPageViewsClicks(item.getInteger("newToBrandDetailPageViewsClicks"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandECPDetailPageView(item.getBigDecimal("newToBrandECPDetailPageView"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandPurchases(item.getInteger("newToBrandPurchases"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandPurchasesClicks(item.getInteger("newToBrandPurchasesClicks"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandPurchasesPercentage(item.getBigDecimal("newToBrandPurchasesPercentage"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandPurchasesRate(item.getBigDecimal("newToBrandPurchasesRate"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandSales(item.getBigDecimal("newToBrandSales"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandSalesClicks(item.getInteger("newToBrandSalesClicks"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandSalesPercentage(item.getBigDecimal("newToBrandSalesPercentage"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandUnitsSold(item.getInteger("newToBrandUnitsSold"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandUnitsSoldClicks(item.getInteger("newToBrandUnitsSoldClicks"));
+					amzAdvReportKeywordsHsaAttributed.setNewToBrandUnitsSoldPercentage(item.getBigDecimal("newToBrandUnitsSoldPercentage"));
+					amzAdvReportKeywordsHsaAttributed.setPurchases(item.getInteger("purchases"));
+					amzAdvReportKeywordsHsaAttributed.setPurchasesClicks(item.getInteger("purchasesClicks"));
+					amzAdvReportKeywordsHsaAttributed.setPurchasesPromoted(item.getInteger("purchasesPromoted"));
+					amzAdvReportKeywordsHsaAttributed.setSales(item.getBigDecimal("sales"));
+					amzAdvReportKeywordsHsaAttributed.setSalesClicks(item.getInteger("salesClicks"));
+					amzAdvReportKeywordsHsaAttributed.setSalesPromoted(item.getBigDecimal("salesPromoted"));
+					amzAdvReportKeywordsHsaAttributed.setTopOfSearchImpressionShare(item.getBigDecimal("topOfSearchImpressionShare"));
+					amzAdvReportKeywordsHsaAttributed.setUnitsSold(item.getInteger("unitsSold"));
+					amzAdvReportKeywordsHsaAttributed.setOpttime(new Date());
+
+
 					 if(request.getCreativeType()!=null&&"video".equals(request.getCreativeType())) {
 		                	amzAdvReportHasKeywordVideo=	new AmzAdvReportKeywordsHsaVideo();
 		                	amzAdvReportHasKeywordVideo.setKeywordid(amzAdvReportHasKeyword.getKeywordid());

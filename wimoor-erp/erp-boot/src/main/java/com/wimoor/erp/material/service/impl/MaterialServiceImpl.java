@@ -50,8 +50,8 @@ import com.wimoor.common.service.impl.PictureServiceImpl;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AdminClientOneFeignManager;
 import com.wimoor.erp.api.AmazonClientOneFeignManager;
-import com.wimoor.erp.assembly.pojo.entity.Assembly;
-import com.wimoor.erp.assembly.service.IAssemblyService;
+import com.wimoor.erp.material.pojo.entity.Assembly;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.common.pojo.entity.ERPBizException;
 import com.wimoor.erp.customer.service.ICustomerService;
 import com.wimoor.erp.inventory.mapper.InventoryMapper;
@@ -181,17 +181,18 @@ public class MaterialServiceImpl extends  ServiceImpl<MaterialMapper,Material> i
 	    	e.printStackTrace();
 	    }
 	    if(list!=null && list.getRecords().size()>0) {
-	    	Calendar c = Calendar.getInstance();
+
 	    	Boolean withoutTags=params.get("withoutTags")==null?false:(boolean) params.get("withoutTags");
 			Boolean withPriceHis=params.get("withPriceHis")==null?false:(boolean) params.get("withPriceHis");
 	    	 for(int i=0;i<list.getRecords().size();i++) {
 	    		 Map<String, Object> item = list.getRecords().get(i);
 	    		 String mid=item.get("id").toString();
+				 Calendar c = Calendar.getInstance();
+				 if (item.get("delivery_cycle") != null) {
+					 c.add(Calendar.DATE, Integer.parseInt(item.get("delivery_cycle").toString()));
+				 }
+				 item.put("deliverycycledate",c.getTime());
 	    		 if(withPriceHis==true) {
-	    			 if (item.get("delivery_cycle") != null) {
-	 					c.add(Calendar.DATE, Integer.parseInt(item.get("delivery_cycle").toString()));
-	 				 }
-	 	    		 item.put("deliverycycledate",c.getTime());
 	 	    		 List<Map<String, Object>> historylist = this.selectProPriceHisById(mid);
 	 	    		 String pricestr="";
 	 	    		 if(historylist!=null && historylist.size()>0) {
@@ -512,6 +513,7 @@ public class MaterialServiceImpl extends  ServiceImpl<MaterialMapper,Material> i
 		Material  material= this.baseMapper.selectOne(queryWrapper);
 		if(material==null) {
 			  material = new Material();
+			  material.setId(warehouseService.getUUID());
 			  isupdate=false;
 		}else {
 			if(material.isDelete()) {
@@ -603,7 +605,7 @@ public class MaterialServiceImpl extends  ServiceImpl<MaterialMapper,Material> i
 		if(pkgdim!=null) {
 			material.setPkgdimensions(pkgdim.getId());
 		}else {
-			material.setBoxdimensions(null);
+			material.setPkgdimensions(null);
 		}
 		//组装周期
 		if (materialvo.getAssemblyTime() != null) {
@@ -1189,7 +1191,11 @@ public Map<String, Object> getRealityPrice(String materialid){
 					String filePath = PictureServiceImpl.materialImgPath + userinfo.getCompanyid();
 					int len = filename.lastIndexOf(".");
 					String imgtype=filename.substring(len, filename.length());
-					filename=materialid+"-"+System.currentTimeMillis()+imgtype;
+					if(materialid!=null){
+						filename=materialid+"-"+System.currentTimeMillis()+imgtype;
+					}else{
+						filename=System.currentTimeMillis()+imgtype;
+					}
 					picture = pictureService.uploadPicture(inputStream, null, filePath, filename,oldpictureid);
 					if(picture!=null) {
 					   return picture.getId();

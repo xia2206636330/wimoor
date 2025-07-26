@@ -1223,7 +1223,7 @@ public ShipInboundShipmenSummarytVo getUnSyncShipment(String groupid, String mar
 		shipment.setOperator(user.getId());
 		shipment.setOpttime(new Date());
 		shipment.setShipedDate(new Date());
-		
+
 		List<ShipInboundItem> itemlist = shipInboundItemService.getItemByShipment(shipmentid);
 		List<InventoryParameter> list=new ArrayList<InventoryParameter>();
      	AmazonAuthority auth=null;
@@ -1247,12 +1247,12 @@ public ShipInboundShipmenSummarytVo getUnSyncShipment(String groupid, String mar
            		      }
        		       }
        	        }
-       		  if(auth!=null && market!=null && plan!=null&&!"updateself".equals(operateType)) {
-       			iFulfillmentInboundService.updateInboundShipment(auth, market, plan, shipment);
-       		  }
-       		  if(auth!=null && market!=null && plan!=null&&!"updateself".equals(operateType)) {
-       			saveTransTrance(user,shipment,null,null,null);
-       		  }
+       		  //if(auth!=null && market!=null && plan!=null&&!"updateself".equals(operateType)) {
+       			//iFulfillmentInboundService.updateInboundShipment(auth, market, plan, shipment);
+       		  //}
+       		  //if(auth!=null && market!=null && plan!=null&&!"updateself".equals(operateType)) {
+       		  //	saveTransTrance(user,shipment,null,null,null);
+       		  //}
         	 
         	  boolean isupdate =this.lambdaUpdate().set(ShipInboundShipment::getStatus, shipment.getStatus())
 	        				.set(ShipInboundShipment::getStatus5date, shipment.getStatus5date())

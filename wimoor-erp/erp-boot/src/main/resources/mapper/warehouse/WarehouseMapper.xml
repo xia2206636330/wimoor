@@ -32,12 +32,18 @@
     </select>
 	<select id="findByCondition" resultType="com.wimoor.erp.warehouse.pojo.entity.Warehouse" parameterType="java.lang.String">
 		select w.id, w.name,t.name ftype,w.flevel,w.number,w.address,w.remark,w.findex findex,d.name addressid,
-			   w.shopid,w.parentid,u.name operator,w.opttime,w.stocking_cycle,w.isdefault,w.ishungry,w.groupid,w.country
+			   w.shopid,w.parentid,u.name operator,w.opttime,w.stocking_cycle,w.isdefault,w.ishungry,w.groupid,w.country,w.disabled
 		from t_erp_warehouse w
 		left join t_erp_warehouse_type t on t.id=w.ftype
 		left join t_erp_warehouse_address d on d.id=w.addressid
 		left join t_userinfo u on u.id=w.operator
-		where w.shopid=#{shopid,jdbcType=CHAR} and w.disabled ='0'
+		where w.shopid=#{shopid,jdbcType=CHAR}
+		  <if test="showhide==null">
+			  and w.disabled =0
+		  </if>
+		<if test="showhide!=null">
+			and w.disabled =1
+		</if>
 		<if test="search != null">
 			and (w.name like #{search,jdbcType=CHAR} or w.number like #{search,jdbcType=CHAR})
 		</if>
@@ -118,10 +124,10 @@
 		left join t_userinfo u on u.id=w.operator
 		where w.shopid=#{shopid,jdbcType=CHAR} and w.disabled ='0'
 			and w.ftype like #{ftype,jdbcType=CHAR}
-			<if test="groupid">
+			<if test="groupid!=null">
 			and (w.groupid = #{groupid,jdbcType=CHAR} or w.groupid is null)
 			</if>
-			<if test="country">
+			<if test="country!=null">
 			   and (w.country = #{country,jdbcType=CHAR})
 			</if>
 			) v

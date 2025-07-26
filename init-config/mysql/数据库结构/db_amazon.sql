@@ -1,4 +1,9 @@
- 
+-- --------------------------------------------------------
+-- 主机:                           wimoor.rwlb.rds.aliyuncs.com
+-- 服务器版本:                        8.0.36 - Source distribution
+-- 服务器操作系统:                      Linux
+-- HeidiSQL 版本:                  12.6.0.6765
+-- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -9,15 +14,9 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
--- 导出 db_amazon 的数据库结构
-CREATE DATABASE IF NOT EXISTS `db_amazon` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db_amazon`;
-
 -- 导出  事件 db_amazon.autoRefreshInsert 结构
 DELIMITER //
-CREATE EVENT `autoRefreshInsert` ON SCHEDULE EVERY 1 DAY STARTS '2024-06-14 16:46:08' ON COMPLETION PRESERVE ENABLE DO BEGIN
-
+CREATE EVENT `autoRefreshInsert` ON SCHEDULE EVERY 1 DAY STARTS '2025-04-08 17:47:39' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
 INSERT ignore into t_amz_product_refresh 
 		SELECT i.id,i.amazonauthid,
 		str_to_date('1949-10-01 00:00:00', '%Y-%m-%d %H:%i:%s'),
@@ -31,12 +30,7 @@ INSERT ignore into t_amz_product_refresh
 		AND i.invalid=0  
 		AND a.createtime>DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
 		AND r.pid IS NULL ;
-END//
-DELIMITER ;
-
--- 导出  事件 db_amazon.delete_request 结构
-DELIMITER //
-CREATE EVENT `delete_request` ON SCHEDULE EVERY 1 DAY STARTS '2024-06-14 16:46:33' ON COMPLETION PRESERVE ENABLE DO BEGIN
+		
 
 delete from t_report_requestrecord WHERE reportType IN(
 'GET_FBA_FULFILLMENT_LONGTERM_STORAGE_FEE_CHARGES_DATA',
@@ -78,43 +72,14 @@ WHERE o.pid IS NULL
 AND m.id IS NOT NULL
 AND m.owner IS NOT NULL	;
 
+
 END//
 DELIMITER ;
 
 -- 导出  事件 db_amazon.opt_owner 结构
 DELIMITER //
-CREATE EVENT `opt_owner` ON SCHEDULE EVERY 1 HOUR STARTS '2024-06-14 08:48:19' ON COMPLETION PRESERVE ENABLE DO BEGIN
+CREATE EVENT `opt_owner` ON SCHEDULE EVERY 1 DAY STARTS '2025-04-08 17:49:39' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
 
-update t_product_info  i
-LEFT JOIN t_amazon_auth a ON a.id=i.amazonAuthId
-LEFT JOIN t_product_in_opt o ON o.pid=i.id
-LEFT JOIN db_erp.t_erp_material m ON m.sku=IFNULL(o.msku,i.sku) AND m.shopid=a.shop_id AND m.isDelete=0
-SET o.`owner`=m.`owner`
-WHERE o.`owner` IS NULL AND m.`owner` IS NOT NULL ;
-
-
-INSERT INTO  `t_product_in_opt` (	`pid` ,	`msku`,	`owner`)
-SELECT i.id,m.sku,m.`owner`
-FROM t_product_info i
-LEFT JOIN t_amazon_auth a ON a.id=i.amazonAuthId
-LEFT JOIN t_product_in_opt o ON o.pid=i.id
-LEFT JOIN db_erp.t_erp_material m ON m.sku=i.sku AND m.shopid=a.shop_id AND m.isdelete=0
-WHERE o.pid IS NULL
-AND m.id IS NOT NULL
-AND m.owner IS NOT NULL	;
-
-INSERT ignore into t_amz_product_refresh 
-		SELECT i.id,i.amazonauthid,
-		str_to_date('1949-10-01 00:00:00', '%Y-%m-%d %H:%i:%s'),
-		str_to_date('1949-10-01 00:00:00', '%Y-%m-%d %H:%i:%s'),
-		str_to_date('1949-10-01 00:00:00', '%Y-%m-%d %H:%i:%s'),
-		i.sku,i.asin,i.marketplaceid,i.isparent,i.invalid
-		FROM t_product_info i
-		LEFT JOIN t_amz_product_refresh r ON r.pid=i.id
-		LEFT JOIN t_amazon_auth a ON a.id=i.amazonauthid
-		WHERE a.`disable`=0 
-		AND i.invalid=0  
-		AND r.pid IS NULL ;
 		
 UPDATE t_erp_ship_inbounditem t
 LEFT JOIN t_erp_ship_inboundshipment s ON s.ShipmentId=t.ShipmentId
@@ -158,6 +123,13 @@ UPDATE  t_erp_ship_v2_inboundshipment s
 LEFT JOIN t_erp_ship_inboundshipment p ON p.ShipmentId=s.shipment_confirmation_id
 SET s.shipmentstatus=p.ShipmentStatus ,s.`status`=8
 WHERE p.ShipmentStatus='CLOSED' AND p.ShipmentStatus!=s.shipmentstatus;
+
+
+UPDATE  t_erp_ship_v2_inboundshipment s
+LEFT JOIN t_erp_ship_inboundshipment p ON p.ShipmentId=s.shipment_confirmation_id
+SET p.shipmentstatus=s.ShipmentStatus ,s.`status`=0 ,p.`status`=0
+WHERE s.shipmentstatus='CANCELLED' AND (p.ShipmentStatus!='CANCELLED'  OR s.`status`!=0 OR p.`status`!=0)
+AND s.opttime>DATE_SUB(NOW(),INTERVAL  12 MONTH) AND p.ShipmentId=s.shipment_confirmation_id;
 
 UPDATE  t_erp_ship_inboundshipment s  
 LEFT join t_erp_ship_v2_inboundshipment v ON v.shipment_confirmation_id=s.ShipmentId 
@@ -246,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `t_amazon_declare_rate` (
   `shopid` bigint unsigned NOT NULL,
   `rate` float unsigned DEFAULT NULL,
   PRIMARY KEY (`shopid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='申报金额比例';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='申报金额比例';
 
 -- 数据导出被取消选择。
 
@@ -346,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_coupon_asin` (
   `asin` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`couponid`,`asin`),
   KEY `asin` (`asin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -373,7 +345,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_coupon_performance_report` (
   `sales` decimal(20,6) DEFAULT NULL,
   `refreshtime` datetime DEFAULT NULL,
   PRIMARY KEY (`couponid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -390,6 +362,46 @@ CREATE TABLE IF NOT EXISTS `t_amz_dimensions` (
   `weight_units` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- 数据导出被取消选择。
+
+-- 导出  表 db_amazon.t_amz_epr_monthly_report 结构
+CREATE TABLE IF NOT EXISTS `t_amz_epr_monthly_report` (
+  `sellerid` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `report_period_start` date NOT NULL,
+  `report_period_end` date NOT NULL,
+  `asin` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `amazon_marketplace` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `ship_to_country` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `ship_to_country_code` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `registration_number` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+  `epr_category` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `epr_subcategory1` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `epr_subcategory2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `epr_subcategory3` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `epr_subcategory4` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `gl_product_group_description` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+  `product_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `total_units_sold` int DEFAULT NULL,
+  `units_per_asin` int DEFAULT NULL,
+  `battery_embedded` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `item_weight_without_package_kg` decimal(10,2) DEFAULT NULL,
+  `item_weight_with_package_kg` decimal(10,2) DEFAULT NULL,
+  `total_reported_weight_kg` decimal(10,2) DEFAULT NULL,
+  `item_width_cm` decimal(10,2) DEFAULT NULL,
+  `package_width_cm` decimal(10,2) DEFAULT NULL,
+  `item_height_cm` decimal(10,2) DEFAULT NULL,
+  `package_height_cm` decimal(10,2) DEFAULT NULL,
+  `paper_kg` decimal(10,2) DEFAULT NULL,
+  `glass_kg` decimal(10,2) DEFAULT NULL,
+  `aluminum_kg` decimal(10,2) DEFAULT NULL,
+  `steel_kg` decimal(10,2) DEFAULT NULL,
+  `plastic_kg` decimal(10,2) DEFAULT NULL,
+  `wood_kg` decimal(10,2) DEFAULT NULL,
+  `other_kg` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`sellerid`,`report_period_start`,`report_period_end`,`asin`,`ship_to_country_code`,`epr_category`),
+  KEY `sellerid_report_period_start_report_period_end_epr_category` (`sellerid`,`report_period_start`,`report_period_end`,`epr_category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- 数据导出被取消选择。
 
@@ -428,8 +440,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_fbm_returns_report` (
   `safet_claim_reimbursement_amount` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `reason` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `status` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `amazonauthid` bigint unsigned NOT NULL DEFAULT '0',
-  `refreshtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `amazonauthid` bigint unsigned NOT NULL,
+  `refreshtime` datetime DEFAULT NULL,
   PRIMARY KEY (`sellerid`,`sku`,`order_id`),
   KEY `sku` (`sku`,`return_date`),
   KEY `order_id` (`order_id`),
@@ -448,7 +460,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_fin_account` (
   `financial_event_group_end` datetime DEFAULT NULL,
   `fund_transfer_date` datetime DEFAULT NULL,
   `processing_status` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `trace_id` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `trace_id` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `account_tail` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `converted_total` decimal(15,2) DEFAULT NULL,
   `beginning_balance` decimal(15,2) DEFAULT NULL,
@@ -578,11 +590,11 @@ CREATE TABLE IF NOT EXISTS `t_amz_fulfillment_order` (
   `featureConstraints` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `amazonauthid` bigint unsigned DEFAULT NULL,
   `refreshtime` datetime DEFAULT NULL,
-  PRIMARY KEY (`sellerFulfillmentOrderId`) USING BTREE,
+  PRIMARY KEY (`sellerFulfillmentOrderId`),
+  KEY `refreshtime` (`refreshtime`),
   KEY `amazonauthid` (`amazonauthid`),
-  KEY `fulfillmentOrderStatus` (`fulfillmentOrderStatus`),
-  KEY `refreshtime` (`refreshtime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  KEY `fulfillmentOrderStatus` (`fulfillmentOrderStatus`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -603,9 +615,9 @@ CREATE TABLE IF NOT EXISTS `t_amz_fulfillment_order_items` (
   `perUnitPrice` decimal(20,6) DEFAULT NULL,
   `perUnitTax` decimal(20,6) DEFAULT NULL,
   `perUnitDeclaredValue` decimal(20,6) DEFAULT NULL,
-  PRIMARY KEY (`sellerFulfillmentOrderId`,`sellerFulfillmentOrderItemId`) USING BTREE,
+  PRIMARY KEY (`sellerFulfillmentOrderId`,`sellerFulfillmentOrderItemId`),
   KEY `sellerSku` (`sellerSku`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -615,8 +627,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_fulfillment_order_payment` (
   `paymentTransactionId` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `paymentMode` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `paymentDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`sellerFulfillmentOrderId`,`paymentTransactionId`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`sellerFulfillmentOrderId`,`paymentTransactionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -628,8 +640,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_fulfillment_order_return_authorization` (
   `returnToAddress` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `amazonRmaId` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `rmaPageURL` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`sellerFulfillmentOrderId`,`returnAuthorizationId`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`sellerFulfillmentOrderId`,`returnAuthorizationId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -646,8 +658,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_fulfillment_order_return_item` (
   `returnAuthorizationId` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '',
   `returnReceivedCondition` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '',
   `fulfillmentCenterId` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '',
-  PRIMARY KEY (`sellerReturnItemId`,`sellerFulfillmentOrderItemId`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`sellerReturnItemId`,`sellerFulfillmentOrderItemId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -661,7 +673,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_fulfillment_order_shipment` (
   `estimatedArrivalDate` datetime DEFAULT NULL,
   `shippingNotes` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`sellerFulfillmentOrderId`,`amazonShipmentId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -996,7 +1008,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_order_feedback` (
   `amazonauthid` bigint unsigned DEFAULT NULL,
   `refreshtime` datetime DEFAULT NULL,
   PRIMARY KEY (`amazon_order_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1470,6 +1482,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_product_sales_plan_ship_item` (
   `batchnumber` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `amount` int DEFAULT NULL,
   `aftersalesday` int DEFAULT NULL,
+  `isdefault` bit(1) DEFAULT (1),
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1496,6 +1509,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_product_sales_plan_ship_item_history` (
   `batchnumber` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `amount` int DEFAULT NULL,
   `aftersalesday` int DEFAULT NULL,
+  `isdefault` bit(1) DEFAULT (1),
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1516,8 +1530,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_promotions_asin` (
   `product_units_sold` int DEFAULT NULL,
   `product_revenue` decimal(20,6) DEFAULT NULL,
   `product_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`promotionid`,`asin`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`promotionid`,`asin`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1539,8 +1553,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_promotions_performance_report` (
   `created_date_time` datetime DEFAULT NULL,
   `last_updated_date_time` datetime DEFAULT NULL,
   `refreshtime` datetime DEFAULT NULL,
-  PRIMARY KEY (`promotionid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`promotionid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1580,7 +1594,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_returns_detailed_disposition` (
   `name` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1591,7 +1605,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_returns_reason` (
   `description` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `type` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1611,11 +1625,10 @@ CREATE TABLE IF NOT EXISTS `t_amz_returns_report` (
   `status` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `license_plate_number` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `customer_comments` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`sellerid`,`sku`,`order_id`,`license_plate_number`),
-  KEY `sku` (`sku`,`return_date`),
+  PRIMARY KEY (`sellerid`,`return_date`,`sku`,`order_id`,`license_plate_number`) USING BTREE,
   KEY `order_id` (`order_id`),
   KEY `return_date` (`return_date`),
-  KEY `return_date_sellerid_marketplaceid` (`sellerid`,`marketplaceid`,`return_date`)
+  KEY `sku` (`sku`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -1637,7 +1650,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_returns_status` (
   `code` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `name` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `SELLABLE` bit(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -1753,8 +1766,8 @@ CREATE TABLE IF NOT EXISTS `t_amz_rpt_inventory_summary` (
   `disposed` int DEFAULT NULL,
   `otherEvents` int DEFAULT NULL,
   `unknownEvents` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `byday_msku_location_authid` (`authid`,`byday`,`disposition`,`location`,`msku`)
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `byday_msku_location_authid` (`authid`,`byday`,`disposition`,`location`,`msku`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -1832,9 +1845,9 @@ CREATE TABLE IF NOT EXISTS `t_amz_rpt_orders_fulfilled_shipments_report` (
   `estimated_arrival_date` datetime DEFAULT NULL,
   `fulfillment_center_id` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `fulfillment_channel` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`amazon_order_id`,`shipment_item_id`) USING BTREE,
-  KEY `authid_sku_sales_channel` (`amazonauthid`,`sales_channel`,`sku`,`shipment_date`) USING BTREE,
-  KEY `amazonauthid_shipment_date` (`amazonauthid`,`shipment_date`) USING BTREE
+  PRIMARY KEY (`amazon_order_id`,`shipment_item_id`),
+  KEY `authid_sku_sales_channel` (`amazonauthid`,`sales_channel`,`sku`,`shipment_date`),
+  KEY `amazonauthid_shipment_date` (`amazonauthid`,`shipment_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2264,7 +2277,7 @@ CREATE TABLE IF NOT EXISTS `t_amz_settlement_summary_sku` (
   `local_return_tax` decimal(20,8) DEFAULT NULL,
   `profit_local_shipmentfee` decimal(20,8) DEFAULT NULL,
   `profit_marketfee` decimal(20,8) DEFAULT NULL,
-  `profit_vat` decimal(20,8) DEFAULT NULL,
+  `profit_vat` decimal(20,8) DEFAULT NULL COMMENT '不再使用计算器配置，直接使用MarketplaceFacilitatorVAT-Principal',
   `profit_companytax` decimal(20,8) DEFAULT NULL,
   `profit_customstax` decimal(20,8) DEFAULT NULL,
   `profit_exchangelost` decimal(20,8) DEFAULT NULL COMMENT 'profit_lastrate',
@@ -2622,6 +2635,112 @@ CREATE TABLE IF NOT EXISTS `t_amz_submitfeed_queue` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon.t_amz_vat_transaction 结构
+CREATE TABLE IF NOT EXISTS `t_amz_vat_transaction` (
+  `id` bigint unsigned NOT NULL,
+  `amazonAuthid` bigint unsigned NOT NULL,
+  `unique_account_identifier` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `activity_period` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `activity_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `sales_channel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `marketplace` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `program_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `transaction_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `transaction_event_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `activity_transaction_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `tax_calculation_date` date DEFAULT NULL,
+  `transaction_depart_date` date DEFAULT NULL,
+  `transaction_arrival_date` date DEFAULT NULL,
+  `transaction_complete_date` date NOT NULL,
+  `seller_sku` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `asin` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `item_manufacture_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `qty` int DEFAULT NULL,
+  `item_weight` decimal(10,2) DEFAULT NULL,
+  `total_activity_weight` decimal(10,2) DEFAULT NULL,
+  `cost_price_of_items` decimal(10,2) DEFAULT NULL,
+  `price_of_items_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `promo_price_of_items_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `total_price_of_items_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `ship_charge_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `promo_ship_charge_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `total_ship_charge_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `gift_wrap_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `promo_gift_wrap_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `total_gift_wrap_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `total_activity_value_amt_vat_excl` decimal(10,2) DEFAULT NULL,
+  `price_of_items_vat_rate_percent` decimal(10,2) DEFAULT NULL,
+  `price_of_items_vat_amt` decimal(10,2) DEFAULT NULL,
+  `promo_price_of_items_vat_amt` decimal(10,2) DEFAULT NULL,
+  `total_price_of_items_vat_amt` decimal(10,2) DEFAULT NULL,
+  `ship_charge_vat_rate_percent` decimal(10,2) DEFAULT NULL,
+  `ship_charge_vat_amt` decimal(10,2) DEFAULT NULL,
+  `promo_ship_charge_vat_amt` decimal(10,2) DEFAULT NULL,
+  `total_ship_charge_vat_amt` decimal(10,2) DEFAULT NULL,
+  `gift_wrap_vat_rate_percent` decimal(10,2) DEFAULT NULL,
+  `gift_wrap_vat_amt` decimal(10,2) DEFAULT NULL,
+  `promo_gift_wrap_vat_amt` decimal(10,2) DEFAULT NULL,
+  `total_gift_wrap_vat_amt` decimal(10,2) DEFAULT NULL,
+  `total_activity_value_vat_amt` decimal(10,2) DEFAULT NULL,
+  `price_of_items_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `promo_price_of_items_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `total_price_of_items_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `ship_charge_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `promo_ship_charge_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `total_ship_charge_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `gift_wrap_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `promo_gift_wrap_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `total_gift_wrap_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `total_activity_value_amt_vat_incl` decimal(10,2) DEFAULT NULL,
+  `transaction_currency_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `commodity_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `statistical_code_depart` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `statistical_code_arrival` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `commodity_code_supplementary_unit` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `item_qty_supplementary_unit` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `total_activity_supplementary_unit` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL,
+  `product_tax_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `depature_city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `departure_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `departure_post_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `arrival_city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `arrival_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `arrival_post_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `sale_depart_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `sale_arrival_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `transportation_mode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `delivery_conditions` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `seller_depart_vat_number_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `seller_depart_country_vat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `seller_arrival_vat_number_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `seller_arrival_country_vat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `transaction_seller_vat_number_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `transaction_seller_vat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `buyer_vat_number_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `buyer_vat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `vat_calculation_imputation_country` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `taxable_jurisdiction` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `taxable_jurisdiction_level` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `vat_inv_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `vat_inv_converted_amt` decimal(10,2) DEFAULT NULL,
+  `vat_inv_currency_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `vat_inv_exchange_rate` decimal(10,2) DEFAULT NULL,
+  `vat_inv_exchange_rate_date` date DEFAULT NULL,
+  `export_outside_eu` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `invoice_url` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `buyer_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `arrival_address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `supplier_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `supplier_vat_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `tax_reporting_scheme` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `tax_collection_responsibility` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  PRIMARY KEY (`transaction_complete_date`,`id`) USING BTREE,
+  UNIQUE KEY `transaction_event_id_activity_transaction_id` (`transaction_event_id`,`activity_transaction_id`,`seller_sku`),
+  KEY `amazonAuthid` (`amazonAuthid`,`transaction_complete_date`,`transaction_type`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon.t_authority 结构
 CREATE TABLE IF NOT EXISTS `t_authority` (
   `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
@@ -2818,7 +2937,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_inboundbox` (
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `shipmentid_boxnum` (`shipmentid`,`boxnum`) USING BTREE
+  UNIQUE KEY `shipmentid_boxnum` (`shipmentid`,`boxnum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2867,10 +2986,10 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_inbounditem` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index 3` (`SellerSKU`,`ShipmentId`),
   KEY `idx_ShipmentId_QuantityReceived_QuantityShipped` (`ShipmentId`,`QuantityReceived`,`QuantityShipped`),
+  KEY `msku` (`msku`),
   KEY `SellerSKU_amazonauthid_marketplaceid_ReceivedDate` (`amazonauthid`,`marketplaceid`,`SellerSKU`,`ReceivedDate`),
   KEY `Index 4` (`ShipmentId`),
-  KEY `FK_t_erp_ship_inboundplanitem_t_erp_ship_inboundplan` (`inboundplanid`),
-  KEY `msku` (`msku`)
+  KEY `FK_t_erp_ship_inboundplanitem_t_erp_ship_inboundplan` (`inboundplanid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -2969,7 +3088,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_inboundshipment_record` (
   `operator` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ShipmentId` (`shipmentid`)
-) ENGINE=InnoDB AUTO_INCREMENT=877627 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=927977 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3049,7 +3168,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_shipment_template_file` (
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `createdate` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3079,7 +3198,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_destination_address` (
   `stateOrProvinceCode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `postalCode` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '邮政编码',
   `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`code`) USING BTREE
+  PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3101,8 +3220,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundbox` (
   `package_status` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `shipmentid_boxnum` (`formid`,`boxnum`) USING BTREE
+  PRIMARY KEY (`id`),
+  KEY `shipmentid_boxnum` (`formid`,`boxnum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3113,9 +3232,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundcase` (
   `boxid` bigint unsigned DEFAULT NULL,
   `sku` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `quantity` int DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `shipmentid` (`boxid`,`sku`) USING BTREE,
-  KEY `sku` (`sku`) USING BTREE
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `shipmentid` (`boxid`,`sku`),
+  KEY `sku` (`sku`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3135,7 +3254,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inbounditem` (
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `appendtime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   KEY `msku` (`msku`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
@@ -3149,9 +3268,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundoperation` (
   `operation` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `operation_problem` varchar(8000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`operationid`) USING BTREE,
-  KEY `key` (`formid`,`operationid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`operationid`),
+  KEY `key` (`formid`,`operationid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3173,7 +3292,7 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan` (
   `auditime` datetime DEFAULT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `shipments` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '货件ids',
+  `shipments` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '货件ids',
   `pre_shipping_date` date DEFAULT NULL COMMENT '预计出库时间',
   `shipping_date` date DEFAULT NULL,
   `shipping_solution` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'SEND 亚马逊合作承运商:AMAZON_PARTNERED_CARRIER; 非合作承运商:USE_YOUR_OWN_CARRIER',
@@ -3184,17 +3303,18 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan` (
   `transportation_token` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `check_inv` bigint unsigned DEFAULT NULL,
   `submitbox` bit(1) DEFAULT b'0',
+  `areCasesRequired` bit(1) DEFAULT b'0',
   `createtime` datetime DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `number_shopid` (`number`,`shopid`),
-  KEY `marketplaceid_warehouseid_shopid` (`shopid`,`marketplaceid`) USING BTREE,
-  KEY `warehouseid` (`warehouseid`) USING BTREE,
-  KEY `idx_amazongroupid_marketplaceid_shopid` (`groupid`,`marketplaceid`,`shopid`) USING BTREE,
-  KEY `Index 3` (`shopid`,`createtime`) USING BTREE,
-  KEY `amazonauthid` (`amazonauthid`)
+  KEY `warehouseid` (`warehouseid`),
+  KEY `marketplaceid_warehouseid_shopid` (`shopid`,`marketplaceid`),
+  KEY `Index 3` (`shopid`,`createtime`),
+  KEY `amazonauthid` (`amazonauthid`),
+  KEY `idx_amazongroupid_marketplaceid_shopid` (`groupid`,`marketplaceid`,`shopid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3207,8 +3327,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan_delivery_options` (
   `editable_until` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `end_date` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `start_date` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`shipmentid`,`delivery_window_option_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`shipmentid`,`delivery_window_option_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3221,9 +3341,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan_packing_options` (
   `contents` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `opttime` datetime DEFAULT NULL,
   `operator` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`packing_option_id`,`inbound_plan_id`) USING BTREE,
-  KEY `formid` (`formid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`packing_option_id`,`inbound_plan_id`),
+  KEY `formid` (`formid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3235,10 +3355,10 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan_packing_options_group_item
   `formid` bigint unsigned NOT NULL,
   `packing_option_id` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `quantity` int DEFAULT NULL,
-  PRIMARY KEY (`packing_group_id`,`inbound_plan_id`,`sku`) USING BTREE,
-  KEY `packing_option_id` (`packing_option_id`) USING BTREE,
-  KEY `formid` (`formid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`packing_group_id`,`inbound_plan_id`,`sku`),
+  KEY `formid` (`formid`),
+  KEY `packing_option_id` (`packing_option_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3251,9 +3371,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan_placement_options` (
   `contents` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `opttime` datetime DEFAULT NULL,
   `operator` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`placement_option_id`,`inbound_plan_id`) USING BTREE,
-  KEY `formid` (`formid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`placement_option_id`,`inbound_plan_id`),
+  KEY `formid` (`formid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3267,9 +3387,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundplan_transportation_options` (
   `contents` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `opttime` datetime DEFAULT NULL,
   `operator` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`shipment_id`,`transportation_option_id`,`placement_option_id`) USING BTREE,
-  KEY `formid` (`formid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`shipment_id`,`transportation_option_id`,`placement_option_id`),
+  KEY `formid` (`formid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3308,17 +3428,18 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundshipment` (
   `start_receive_date` datetime DEFAULT NULL,
   `pro_number` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `transport_status` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `transportation_token` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `sync_inv` tinyint DEFAULT '0' COMMENT '1代表没有扣库存，2代表已经扣库存',
   `check_inv` bigint unsigned DEFAULT NULL,
   `ignorerec` bit(1) DEFAULT b'0' COMMENT '忽略收货异常',
   `isquote` bit(1) DEFAULT b'0',
-  PRIMARY KEY (`shipmentid`) USING BTREE,
-  KEY `Index 3` (`status`) USING BTREE,
-  KEY `DestinationFulfillmentCenterId` (`destination`) USING BTREE,
-  KEY `Index 2` (`formid`) USING BTREE,
-  KEY `idx_inboundplanid_status_shipeddate_refreshtime` (`formid`,`status`,`shiped_date`,`refreshtime`) USING BTREE,
-  KEY `shipment_confirmation_id` (`shipment_confirmation_id`) USING BTREE,
-  KEY `idx_inboundplanid_status_refreshtime` (`formid`,`shipmentstatus`,`refreshtime`) USING BTREE
+  PRIMARY KEY (`shipmentid`),
+  KEY `idx_inboundplanid_status_refreshtime` (`formid`,`shipmentstatus`,`refreshtime`),
+  KEY `shipment_confirmation_id` (`shipment_confirmation_id`),
+  KEY `Index 2` (`formid`),
+  KEY `Index 3` (`status`),
+  KEY `idx_inboundplanid_status_shipeddate_refreshtime` (`formid`,`status`,`shiped_date`,`refreshtime`),
+  KEY `DestinationFulfillmentCenterId` (`destination`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3341,9 +3462,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundshipment_box` (
   `package_status` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `shipmentid_boxnum` (`formid`,`boxnum`) USING BTREE,
-  KEY `shipmentid` (`shipmentid`) USING BTREE
+  PRIMARY KEY (`id`),
+  KEY `shipmentid` (`shipmentid`),
+  KEY `shipmentid_boxnum` (`formid`,`boxnum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3362,8 +3483,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundshipment_boxitem` (
   `confirm_quantity` int DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `boxid` (`boxid`) USING BTREE
+  PRIMARY KEY (`id`),
+  KEY `boxid` (`boxid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3384,8 +3505,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundshipment_customs` (
   `opttime` datetime DEFAULT NULL,
   `creator` bigint unsigned DEFAULT NULL,
   `createtime` datetime DEFAULT NULL,
-  PRIMARY KEY (`itemid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='海关表';
+  PRIMARY KEY (`itemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='海关表';
 
 -- 数据导出被取消选择。
 
@@ -3396,8 +3517,8 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundshipment_delivery` (
   `editable_until` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `end_date` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `start_date` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`delivery_window_option_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+  PRIMARY KEY (`delivery_window_option_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3424,9 +3545,9 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inboundshipment_item` (
   `prepinstructions` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `shipmentid_sku` (`shipmentid`,`sku`),
-  KEY `shipmentid` (`shipmentid`) USING BTREE
+  KEY `shipmentid` (`shipmentid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3439,9 +3560,10 @@ CREATE TABLE IF NOT EXISTS `t_erp_ship_v2_inbound_record` (
   `status` int NOT NULL COMMENT '-1,已驳回；0取消货件；1,待审核；2，配货（已确认货件）；3，装箱；4，物流信息确认；5已发货；6，已完成发货',
   `opttime` datetime DEFAULT NULL,
   `operator` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `key` (`formid`,`status`,`shipmentid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=35088 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+  PRIMARY KEY (`id`),
+  KEY `key` (`formid`,`status`) USING BTREE,
+  KEY `shipmentid_status` (`shipmentid`,`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=159375 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -3548,7 +3670,7 @@ CREATE TABLE IF NOT EXISTS `t_exchangerate_his` (
   `isnewest` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`),
   KEY `index_name` (`name`,`byday`)
-) ENGINE=InnoDB AUTO_INCREMENT=482261 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='汇率';
+) ENGINE=InnoDB AUTO_INCREMENT=486207 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='汇率';
 
 -- 数据导出被取消选择。
 
@@ -3720,10 +3842,10 @@ CREATE TABLE IF NOT EXISTS `t_fba_reimbursements_fee_report` (
   `marketplaceid` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `amazonauthid` bigint unsigned NOT NULL,
   `lastupdate` datetime DEFAULT NULL,
-  PRIMARY KEY (`amazonauthid`,`approval_date`,`id`) USING BTREE,
-  UNIQUE KEY `reimbursement_id_amazon_order_id_sku` (`sku`,`amazon_order_id`,`reimbursement_id`,`reason`) USING BTREE,
-  KEY `marketplaceid` (`marketplaceid`) USING BTREE,
-  KEY `reimbursement_id` (`amazon_order_id`) USING BTREE
+  PRIMARY KEY (`amazonauthid`,`approval_date`,`id`),
+  UNIQUE KEY `reimbursement_id_amazon_order_id_sku` (`sku`,`amazon_order_id`,`reimbursement_id`,`reason`),
+  KEY `marketplaceid` (`marketplaceid`),
+  KEY `reimbursement_id` (`amazon_order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3762,9 +3884,9 @@ CREATE TABLE IF NOT EXISTS `t_fba_storage_fee_report` (
   `average_quantity_customer_orders` decimal(20,6) DEFAULT NULL,
   `amazonauthid` bigint unsigned NOT NULL,
   `lastupdate` datetime DEFAULT NULL,
-  PRIMARY KEY (`amazonauthid`,`country`,`month`,`asin`,`fulfillment_center`,`fnsku`) USING BTREE,
-  KEY `idkey` (`id`) USING BTREE,
-  KEY `asinkey` (`asin`,`fnsku`,`fulfillment_center`,`month`) USING BTREE
+  PRIMARY KEY (`amazonauthid`,`country`,`month`,`asin`,`fulfillment_center`,`fnsku`),
+  KEY `idkey` (`id`),
+  KEY `asinkey` (`asin`,`fnsku`,`fulfillment_center`,`month`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3795,7 +3917,7 @@ CREATE TABLE IF NOT EXISTS `t_fba_storage_fee_report_archive` (
   `utilization_surcharge_rate` decimal(10,2) DEFAULT NULL,
   `currency` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `monthly_storage_fee` decimal(20,6) DEFAULT NULL COMMENT 'estimated_monthly_storage_fee',
-  `dangerous_goods_storage_type` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `dangerous_goods_storage_type` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `eligible_for_inventory_discount` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `qualifies_for_inventory_discount` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `total_incentive_fee_amount` decimal(20,6) DEFAULT NULL,
@@ -3803,9 +3925,9 @@ CREATE TABLE IF NOT EXISTS `t_fba_storage_fee_report_archive` (
   `average_quantity_customer_orders` decimal(20,6) DEFAULT NULL,
   `amazonauthid` bigint unsigned NOT NULL,
   `lastupdate` datetime DEFAULT NULL,
-  PRIMARY KEY (`amazonauthid`,`country`,`month`,`asin`,`fulfillment_center`,`fnsku`) USING BTREE,
-  KEY `idkey` (`id`) USING BTREE,
-  KEY `asinkey` (`asin`,`fnsku`,`fulfillment_center`,`month`) USING BTREE
+  PRIMARY KEY (`amazonauthid`,`country`,`month`,`asin`,`fulfillment_center`,`fnsku`),
+  KEY `idkey` (`id`),
+  KEY `asinkey` (`asin`,`fnsku`,`fulfillment_center`,`month`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3836,7 +3958,7 @@ CREATE TABLE IF NOT EXISTS `t_fba_storage_fee_report_excel` (
   `utilization_surcharge_rate` decimal(10,2) DEFAULT NULL,
   `currency` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `monthly_storage_fee` decimal(20,6) DEFAULT NULL COMMENT 'estimated_monthly_storage_fee',
-  `dangerous_goods_storage_type` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `dangerous_goods_storage_type` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `eligible_for_inventory_discount` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `qualifies_for_inventory_discount` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `total_incentive_fee_amount` decimal(20,6) DEFAULT NULL,
@@ -3844,7 +3966,7 @@ CREATE TABLE IF NOT EXISTS `t_fba_storage_fee_report_excel` (
   `average_quantity_customer_orders` decimal(20,6) DEFAULT NULL,
   `amazonauthid` bigint unsigned NOT NULL,
   `lastupdate` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -3866,7 +3988,7 @@ CREATE TABLE IF NOT EXISTS `t_fixed_closingfee` (
 -- 导出  表 db_amazon.t_holiday 结构
 CREATE TABLE IF NOT EXISTS `t_holiday` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `shopid` bigint NOT NULL DEFAULT '0',
+  `shopid` bigint unsigned NOT NULL DEFAULT '0',
   `day` date DEFAULT NULL COMMENT '日期',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '节日名称',
   `type` tinyint(1) DEFAULT NULL COMMENT '节假日类型(0 工作日、1 周末、2 节日、3 调休)',
@@ -3875,9 +3997,9 @@ CREATE TABLE IF NOT EXISTS `t_holiday` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '更新者',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
+  PRIMARY KEY (`id`),
   KEY `shopid` (`shopid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1882361149880598579 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='节假日表';
+) ENGINE=InnoDB AUTO_INCREMENT=1945757654443974749 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='节假日表';
 
 -- 数据导出被取消选择。
 
@@ -4066,8 +4188,8 @@ CREATE TABLE IF NOT EXISTS `t_inventory_status` (
   `sku` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `marketplaceid` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `amazonAuthId` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Index 2` (`byday`,`asin`,`marketplaceid`,`amazonAuthId`)
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `Index 2` (`byday`,`asin`,`marketplaceid`,`amazonAuthId`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
@@ -4145,7 +4267,7 @@ CREATE TABLE IF NOT EXISTS `t_orders_financial` (
   `posted_date` datetime DEFAULT NULL COMMENT '出账时间',
   PRIMARY KEY (`id`),
   KEY `amazon_order_id` (`amazon_order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=162931 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=183397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -4440,10 +4562,10 @@ CREATE TABLE IF NOT EXISTS `t_orders_report_download` (
 
 -- 导出  表 db_amazon.t_orders_reviews_customer 结构
 CREATE TABLE IF NOT EXISTS `t_orders_reviews_customer` (
-  `amazon_order_id` char(50) NOT NULL,
+  `amazon_order_id` char(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `shopid` bigint unsigned DEFAULT NULL,
-  `remark` varchar(50) DEFAULT NULL,
-  `picture` varchar(500) DEFAULT NULL,
+  `remark` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `picture` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `opttime` datetime DEFAULT NULL,
   PRIMARY KEY (`amazon_order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
@@ -4643,6 +4765,17 @@ CREATE TABLE IF NOT EXISTS `t_product_category` (
 
 -- 数据导出被取消选择。
 
+-- 导出  表 db_amazon.t_product_customs_setting 结构
+CREATE TABLE IF NOT EXISTS `t_product_customs_setting` (
+  `shopid` bigint unsigned NOT NULL,
+  `marketplaceid` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `price_type` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `rate` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`shopid`,`marketplaceid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- 数据导出被取消选择。
+
 -- 导出  表 db_amazon.t_product_follow 结构
 CREATE TABLE IF NOT EXISTS `t_product_follow` (
   `id` bigint unsigned NOT NULL,
@@ -4740,7 +4873,7 @@ CREATE TABLE IF NOT EXISTS `t_product_info_status_define` (
   `remark` char(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `shopid_name` (`shopid`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 -- 数据导出被取消选择。
 
@@ -4973,16 +5106,16 @@ CREATE TABLE IF NOT EXISTS `t_product_in_review_detail` (
 CREATE TABLE IF NOT EXISTS `t_product_in_review_order` (
   `amazonauthid` bigint unsigned NOT NULL,
   `purchase_date` datetime NOT NULL,
-  `orderid` char(30) NOT NULL,
+  `orderid` char(30) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `pid` bigint unsigned DEFAULT NULL,
-  `reviewid` char(36) DEFAULT NULL,
-  `asin` char(15) DEFAULT NULL,
-  `marketplaceid` char(15) DEFAULT NULL,
-  `email` char(100) DEFAULT NULL,
-  `sku` char(50) DEFAULT NULL,
-  `sales_channel` char(50) DEFAULT NULL,
+  `reviewid` char(36) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `asin` char(15) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `marketplaceid` char(15) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `email` char(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `sku` char(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `sales_channel` char(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `review_star_rating` float DEFAULT NULL,
-  `review_title` varchar(2000) DEFAULT NULL,
+  `review_title` varchar(2000) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `review_date` date DEFAULT NULL,
   PRIMARY KEY (`amazonauthid`,`purchase_date`,`orderid`),
   KEY `marketplaceid` (`marketplaceid`,`sku`)

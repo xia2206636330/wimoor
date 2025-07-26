@@ -122,6 +122,8 @@ public class Warehouse  extends ErpBaseEntity{
     @TableField(exist = false)
     private String parentname;
 
+    @TableField(exist = false)
+    private Boolean isbind;
 
 	public Boolean getIsstocktaking() {
 		if(isstocktaking==null)return false;

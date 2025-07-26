@@ -1,5 +1,6 @@
 package com.wimoor.amazon.inbound.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -118,7 +119,7 @@ public class ShipInboundReportController {
 			workbook.close();
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

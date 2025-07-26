@@ -445,7 +445,7 @@
 	count(if(shipment.status='-1',true,null )) problem
 	FROM t_erp_ship_v2_inboundshipment shipment
 	left join t_erp_ship_v2_inboundplan plan on plan.id=shipment.formid
-	left join ( select box.shipmentid,count(box.id) boxnum from t_erp_ship_v2_inboundshipment_box box ) boxv on boxv.shipmentid=shipment.shipmentid
+	left join ( select box.shipmentid,count(box.id) boxnum from t_erp_ship_v2_inboundshipment_box box group by box.shipmentid) boxv on boxv.shipmentid=shipment.shipmentid
 	left join t_marketplace mkp on mkp.marketplaceid=plan.marketplaceid
 	left join t_erp_warehouse w on plan.warehouseid=w.id
 	left join t_erp_ship_inboundtrans trans on trans.shipmentid=shipment.shipment_confirmation_id
@@ -726,7 +726,7 @@
 			count(if(shipment.status='-1',true,null )) problem
 			FROM t_erp_ship_v2_inboundshipment shipment
 			left join t_erp_ship_v2_inboundplan plan on plan.id=shipment.formid
-			left join ( select box.shipmentid,count(box.id) boxnum from t_erp_ship_v2_inboundshipment_box box ) boxv on boxv.shipmentid=shipment.shipmentid
+			left join ( select box.shipmentid,count(box.id) boxnum from t_erp_ship_v2_inboundshipment_box box group by box.shipmentid) boxv on boxv.shipmentid=shipment.shipmentid
 			left join t_marketplace mkp on mkp.marketplaceId=plan.marketplaceid
 			left join t_erp_warehouse w on plan.warehouseid=w.id
 			left join t_erp_ship_inboundtrans trans on trans.shipmentid=shipment.shipment_confirmation_id

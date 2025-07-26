@@ -40,6 +40,9 @@ import com.amazon.spapi.model.fbasmallandlight.SmallAndLightEnrollment;
 import com.amazon.spapi.model.fbasmallandlight.SmallAndLightFeePreviewRequest;
 import com.amazon.spapi.model.fbasmallandlight.SmallAndLightFeePreviews;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class SmallAndLightApi {
     private ApiClient apiClient;
@@ -70,7 +73,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call deleteSmallAndLightEnrollmentBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call deleteSmallAndLightEnrollmentBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -99,10 +102,10 @@ public class SmallAndLightApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -115,7 +118,7 @@ public class SmallAndLightApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call deleteSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call deleteSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'sellerSKU' is set
         if (sellerSKU == null) {
@@ -128,7 +131,7 @@ public class SmallAndLightApi {
         }
         
 
-        com.squareup.okhttp.Call call = deleteSmallAndLightEnrollmentBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = deleteSmallAndLightEnrollmentBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -155,7 +158,7 @@ public class SmallAndLightApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<Void> deleteSmallAndLightEnrollmentBySellerSKUWithHttpInfo(String sellerSKU, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = deleteSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
+        Call call = deleteSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
         return apiClient.execute(call);
     }
 
@@ -169,7 +172,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call deleteSmallAndLightEnrollmentBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<Void> callback) throws ApiException, LWAException {
+    public Call deleteSmallAndLightEnrollmentBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<Void> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -190,7 +193,7 @@ public class SmallAndLightApi {
             };
         }
 
-        com.squareup.okhttp.Call call = deleteSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = deleteSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         apiClient.executeAsync(call, callback);
         return call;
     }
@@ -204,7 +207,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSmallAndLightEligibilityBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getSmallAndLightEligibilityBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -233,10 +236,10 @@ public class SmallAndLightApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -249,7 +252,7 @@ public class SmallAndLightApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getSmallAndLightEligibilityBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getSmallAndLightEligibilityBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'sellerSKU' is set
         if (sellerSKU == null) {
@@ -262,7 +265,7 @@ public class SmallAndLightApi {
         }
         
 
-        com.squareup.okhttp.Call call = getSmallAndLightEligibilityBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getSmallAndLightEligibilityBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -291,7 +294,7 @@ public class SmallAndLightApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SmallAndLightEligibility> getSmallAndLightEligibilityBySellerSKUWithHttpInfo(String sellerSKU, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getSmallAndLightEligibilityBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
+        Call call = getSmallAndLightEligibilityBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<SmallAndLightEligibility>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -306,7 +309,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSmallAndLightEligibilityBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<SmallAndLightEligibility> callback) throws ApiException, LWAException {
+    public Call getSmallAndLightEligibilityBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<SmallAndLightEligibility> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -327,7 +330,7 @@ public class SmallAndLightApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getSmallAndLightEligibilityBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getSmallAndLightEligibilityBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SmallAndLightEligibility>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -342,7 +345,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSmallAndLightEnrollmentBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getSmallAndLightEnrollmentBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -371,10 +374,10 @@ public class SmallAndLightApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -387,7 +390,7 @@ public class SmallAndLightApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'sellerSKU' is set
         if (sellerSKU == null) {
@@ -400,7 +403,7 @@ public class SmallAndLightApi {
         }
         
 
-        com.squareup.okhttp.Call call = getSmallAndLightEnrollmentBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getSmallAndLightEnrollmentBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -429,7 +432,7 @@ public class SmallAndLightApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SmallAndLightEnrollment> getSmallAndLightEnrollmentBySellerSKUWithHttpInfo(String sellerSKU, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
+        Call call = getSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<SmallAndLightEnrollment>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -444,7 +447,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSmallAndLightEnrollmentBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<SmallAndLightEnrollment> callback) throws ApiException, LWAException {
+    public Call getSmallAndLightEnrollmentBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<SmallAndLightEnrollment> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -465,7 +468,7 @@ public class SmallAndLightApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = getSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SmallAndLightEnrollment>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -479,7 +482,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSmallAndLightFeePreviewCall(SmallAndLightFeePreviewRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getSmallAndLightFeePreviewCall(SmallAndLightFeePreviewRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -505,10 +508,10 @@ public class SmallAndLightApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -521,7 +524,7 @@ public class SmallAndLightApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getSmallAndLightFeePreviewValidateBeforeCall(SmallAndLightFeePreviewRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getSmallAndLightFeePreviewValidateBeforeCall(SmallAndLightFeePreviewRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -529,7 +532,7 @@ public class SmallAndLightApi {
         }
         
 
-        com.squareup.okhttp.Call call = getSmallAndLightFeePreviewCall(body, progressListener, progressRequestListener);
+        Call call = getSmallAndLightFeePreviewCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -556,7 +559,7 @@ public class SmallAndLightApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SmallAndLightFeePreviews> getSmallAndLightFeePreviewWithHttpInfo(SmallAndLightFeePreviewRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getSmallAndLightFeePreviewValidateBeforeCall(body, null, null);
+        Call call = getSmallAndLightFeePreviewValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<SmallAndLightFeePreviews>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -570,7 +573,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSmallAndLightFeePreviewAsync(SmallAndLightFeePreviewRequest body, final ApiCallback<SmallAndLightFeePreviews> callback) throws ApiException, LWAException {
+    public Call getSmallAndLightFeePreviewAsync(SmallAndLightFeePreviewRequest body, final ApiCallback<SmallAndLightFeePreviews> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -591,7 +594,7 @@ public class SmallAndLightApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getSmallAndLightFeePreviewValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = getSmallAndLightFeePreviewValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SmallAndLightFeePreviews>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -606,7 +609,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call putSmallAndLightEnrollmentBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call putSmallAndLightEnrollmentBySellerSKUCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -635,10 +638,10 @@ public class SmallAndLightApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -651,7 +654,7 @@ public class SmallAndLightApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call putSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call putSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(String sellerSKU, List<String> marketplaceIds, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'sellerSKU' is set
         if (sellerSKU == null) {
@@ -664,7 +667,7 @@ public class SmallAndLightApi {
         }
         
 
-        com.squareup.okhttp.Call call = putSmallAndLightEnrollmentBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = putSmallAndLightEnrollmentBySellerSKUCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         return call;
 
     }
@@ -693,7 +696,7 @@ public class SmallAndLightApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<SmallAndLightEnrollment> putSmallAndLightEnrollmentBySellerSKUWithHttpInfo(String sellerSKU, List<String> marketplaceIds) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = putSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
+        Call call = putSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, null, null);
         Type localVarReturnType = new TypeToken<SmallAndLightEnrollment>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -708,7 +711,7 @@ public class SmallAndLightApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call putSmallAndLightEnrollmentBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<SmallAndLightEnrollment> callback) throws ApiException, LWAException {
+    public Call putSmallAndLightEnrollmentBySellerSKUAsync(String sellerSKU, List<String> marketplaceIds, final ApiCallback<SmallAndLightEnrollment> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -729,7 +732,7 @@ public class SmallAndLightApi {
             };
         }
 
-        com.squareup.okhttp.Call call = putSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
+        Call call = putSmallAndLightEnrollmentBySellerSKUValidateBeforeCall(sellerSKU, marketplaceIds, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<SmallAndLightEnrollment>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -793,10 +796,10 @@ public class SmallAndLightApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new SmallAndLightApi(new ApiClient()
+            return new SmallAndLightApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

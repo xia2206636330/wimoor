@@ -46,6 +46,9 @@ import com.amazon.spapi.model.notifications.GetDestinationsResponse;
 import com.amazon.spapi.model.notifications.GetSubscriptionByIdResponse;
 import com.amazon.spapi.model.notifications.GetSubscriptionResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class NotificationsApi {
     private ApiClient apiClient;
@@ -75,7 +78,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createDestinationCall(CreateDestinationRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createDestinationCall(CreateDestinationRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -101,10 +104,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -117,7 +120,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createDestinationValidateBeforeCall(CreateDestinationRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createDestinationValidateBeforeCall(CreateDestinationRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -125,7 +128,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = createDestinationCall(body, progressListener, progressRequestListener);
+        Call call = createDestinationCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -152,7 +155,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateDestinationResponse> createDestinationWithHttpInfo(CreateDestinationRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createDestinationValidateBeforeCall(body, null, null);
+        Call call = createDestinationValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<CreateDestinationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -166,7 +169,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createDestinationAsync(CreateDestinationRequest body, final ApiCallback<CreateDestinationResponse> callback) throws ApiException, LWAException {
+    public Call createDestinationAsync(CreateDestinationRequest body, final ApiCallback<CreateDestinationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -187,7 +190,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createDestinationValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = createDestinationValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateDestinationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -202,7 +205,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createSubscriptionCall(CreateSubscriptionRequest body, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createSubscriptionCall(CreateSubscriptionRequest body, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -229,10 +232,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -245,7 +248,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createSubscriptionValidateBeforeCall(CreateSubscriptionRequest body, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createSubscriptionValidateBeforeCall(CreateSubscriptionRequest body, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -258,7 +261,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = createSubscriptionCall(body, notificationType, progressListener, progressRequestListener);
+        Call call = createSubscriptionCall(body, notificationType, progressListener, progressRequestListener);
         return call;
 
     }
@@ -287,7 +290,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateSubscriptionResponse> createSubscriptionWithHttpInfo(CreateSubscriptionRequest body, String notificationType) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createSubscriptionValidateBeforeCall(body, notificationType, null, null);
+        Call call = createSubscriptionValidateBeforeCall(body, notificationType, null, null);
         Type localVarReturnType = new TypeToken<CreateSubscriptionResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -302,7 +305,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createSubscriptionAsync(CreateSubscriptionRequest body, String notificationType, final ApiCallback<CreateSubscriptionResponse> callback) throws ApiException, LWAException {
+    public Call createSubscriptionAsync(CreateSubscriptionRequest body, String notificationType, final ApiCallback<CreateSubscriptionResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -323,7 +326,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createSubscriptionValidateBeforeCall(body, notificationType, progressListener, progressRequestListener);
+        Call call = createSubscriptionValidateBeforeCall(body, notificationType, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateSubscriptionResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -337,7 +340,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call deleteDestinationCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call deleteDestinationCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -364,10 +367,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -380,7 +383,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call deleteDestinationValidateBeforeCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call deleteDestinationValidateBeforeCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'destinationId' is set
         if (destinationId == null) {
@@ -388,7 +391,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = deleteDestinationCall(destinationId, progressListener, progressRequestListener);
+        Call call = deleteDestinationCall(destinationId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -415,7 +418,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<DeleteDestinationResponse> deleteDestinationWithHttpInfo(String destinationId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = deleteDestinationValidateBeforeCall(destinationId, null, null);
+        Call call = deleteDestinationValidateBeforeCall(destinationId, null, null);
         Type localVarReturnType = new TypeToken<DeleteDestinationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -429,7 +432,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call deleteDestinationAsync(String destinationId, final ApiCallback<DeleteDestinationResponse> callback) throws ApiException, LWAException {
+    public Call deleteDestinationAsync(String destinationId, final ApiCallback<DeleteDestinationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -450,7 +453,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = deleteDestinationValidateBeforeCall(destinationId, progressListener, progressRequestListener);
+        Call call = deleteDestinationValidateBeforeCall(destinationId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<DeleteDestinationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -465,7 +468,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call deleteSubscriptionByIdCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call deleteSubscriptionByIdCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -493,10 +496,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -509,7 +512,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call deleteSubscriptionByIdValidateBeforeCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call deleteSubscriptionByIdValidateBeforeCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'subscriptionId' is set
         if (subscriptionId == null) {
@@ -522,7 +525,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = deleteSubscriptionByIdCall(subscriptionId, notificationType, progressListener, progressRequestListener);
+        Call call = deleteSubscriptionByIdCall(subscriptionId, notificationType, progressListener, progressRequestListener);
         return call;
 
     }
@@ -551,7 +554,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<DeleteSubscriptionByIdResponse> deleteSubscriptionByIdWithHttpInfo(String subscriptionId, String notificationType) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = deleteSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, null, null);
+        Call call = deleteSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, null, null);
         Type localVarReturnType = new TypeToken<DeleteSubscriptionByIdResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -566,7 +569,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call deleteSubscriptionByIdAsync(String subscriptionId, String notificationType, final ApiCallback<DeleteSubscriptionByIdResponse> callback) throws ApiException, LWAException {
+    public Call deleteSubscriptionByIdAsync(String subscriptionId, String notificationType, final ApiCallback<DeleteSubscriptionByIdResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -587,7 +590,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = deleteSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, progressListener, progressRequestListener);
+        Call call = deleteSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<DeleteSubscriptionByIdResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -601,7 +604,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getDestinationCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getDestinationCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -628,10 +631,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -644,7 +647,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getDestinationValidateBeforeCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getDestinationValidateBeforeCall(String destinationId, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'destinationId' is set
         if (destinationId == null) {
@@ -652,7 +655,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getDestinationCall(destinationId, progressListener, progressRequestListener);
+        Call call = getDestinationCall(destinationId, progressListener, progressRequestListener);
         return call;
 
     }
@@ -679,7 +682,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetDestinationResponse> getDestinationWithHttpInfo(String destinationId) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getDestinationValidateBeforeCall(destinationId, null, null);
+        Call call = getDestinationValidateBeforeCall(destinationId, null, null);
         Type localVarReturnType = new TypeToken<GetDestinationResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -693,7 +696,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getDestinationAsync(String destinationId, final ApiCallback<GetDestinationResponse> callback) throws ApiException, LWAException {
+    public Call getDestinationAsync(String destinationId, final ApiCallback<GetDestinationResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -714,7 +717,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getDestinationValidateBeforeCall(destinationId, progressListener, progressRequestListener);
+        Call call = getDestinationValidateBeforeCall(destinationId, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetDestinationResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -727,7 +730,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getDestinationsCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getDestinationsCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -753,10 +756,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -769,10 +772,10 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getDestinationsValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getDestinationsValidateBeforeCall(final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
 
-        com.squareup.okhttp.Call call = getDestinationsCall(progressListener, progressRequestListener);
+        Call call = getDestinationsCall(progressListener, progressRequestListener);
         return call;
 
     }
@@ -797,7 +800,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetDestinationsResponse> getDestinationsWithHttpInfo() throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getDestinationsValidateBeforeCall(null, null);
+        Call call = getDestinationsValidateBeforeCall(null, null);
         Type localVarReturnType = new TypeToken<GetDestinationsResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -810,7 +813,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getDestinationsAsync(final ApiCallback<GetDestinationsResponse> callback) throws ApiException, LWAException {
+    public Call getDestinationsAsync(final ApiCallback<GetDestinationsResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -831,7 +834,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getDestinationsValidateBeforeCall(progressListener, progressRequestListener);
+        Call call = getDestinationsValidateBeforeCall(progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetDestinationsResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -846,7 +849,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSubscriptionCall(String notificationType, String payloadVersion, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getSubscriptionCall(String notificationType, String payloadVersion, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -875,10 +878,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -891,7 +894,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getSubscriptionValidateBeforeCall(String notificationType, String payloadVersion, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getSubscriptionValidateBeforeCall(String notificationType, String payloadVersion, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'notificationType' is set
         if (notificationType == null) {
@@ -899,7 +902,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getSubscriptionCall(notificationType, payloadVersion, progressListener, progressRequestListener);
+        Call call = getSubscriptionCall(notificationType, payloadVersion, progressListener, progressRequestListener);
         return call;
 
     }
@@ -928,7 +931,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetSubscriptionResponse> getSubscriptionWithHttpInfo(String notificationType, String payloadVersion) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getSubscriptionValidateBeforeCall(notificationType, payloadVersion, null, null);
+        Call call = getSubscriptionValidateBeforeCall(notificationType, payloadVersion, null, null);
         Type localVarReturnType = new TypeToken<GetSubscriptionResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -943,7 +946,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSubscriptionAsync(String notificationType, String payloadVersion, final ApiCallback<GetSubscriptionResponse> callback) throws ApiException, LWAException {
+    public Call getSubscriptionAsync(String notificationType, String payloadVersion, final ApiCallback<GetSubscriptionResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -964,7 +967,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getSubscriptionValidateBeforeCall(notificationType, payloadVersion, progressListener, progressRequestListener);
+        Call call = getSubscriptionValidateBeforeCall(notificationType, payloadVersion, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetSubscriptionResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -979,7 +982,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSubscriptionByIdCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getSubscriptionByIdCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -1007,10 +1010,10 @@ public class NotificationsApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -1023,7 +1026,7 @@ public class NotificationsApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getSubscriptionByIdValidateBeforeCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getSubscriptionByIdValidateBeforeCall(String subscriptionId, String notificationType, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'subscriptionId' is set
         if (subscriptionId == null) {
@@ -1036,7 +1039,7 @@ public class NotificationsApi {
         }
         
 
-        com.squareup.okhttp.Call call = getSubscriptionByIdCall(subscriptionId, notificationType, progressListener, progressRequestListener);
+        Call call = getSubscriptionByIdCall(subscriptionId, notificationType, progressListener, progressRequestListener);
         return call;
 
     }
@@ -1065,7 +1068,7 @@ public class NotificationsApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetSubscriptionByIdResponse> getSubscriptionByIdWithHttpInfo(String subscriptionId, String notificationType) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, null, null);
+        Call call = getSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, null, null);
         Type localVarReturnType = new TypeToken<GetSubscriptionByIdResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -1080,7 +1083,7 @@ public class NotificationsApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getSubscriptionByIdAsync(String subscriptionId, String notificationType, final ApiCallback<GetSubscriptionByIdResponse> callback) throws ApiException, LWAException {
+    public Call getSubscriptionByIdAsync(String subscriptionId, String notificationType, final ApiCallback<GetSubscriptionByIdResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -1101,7 +1104,7 @@ public class NotificationsApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, progressListener, progressRequestListener);
+        Call call = getSubscriptionByIdValidateBeforeCall(subscriptionId, notificationType, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetSubscriptionByIdResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -1165,10 +1168,10 @@ public class NotificationsApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new NotificationsApi(new ApiClient()
+            return new NotificationsApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

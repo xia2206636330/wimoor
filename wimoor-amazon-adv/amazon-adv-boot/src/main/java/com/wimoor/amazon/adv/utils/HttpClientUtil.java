@@ -618,7 +618,21 @@ public class HttpClientUtil {
 				read = new BufferedReader(new InputStreamReader(ungzip, "UTF-8"));
 				jsonReader = new JSONReader(read);
                 result = handler.readSnapshotJSON(profile, record, jsonReader);
-            } else {
+            }else if(400==resp.getStatusLine().getStatusCode()){
+				String respContent = null;
+				HttpEntity he = (resp == null ? null : resp.getEntity());
+				Header header = resp.getFirstHeader("x-amzn-ErrorType");
+				try {
+					respContent = (he == null ? null : EntityUtils.toString(he, "UTF-8"));
+					if(respContent != null&& respContent.contains("ExpiredToken")) {
+                         throw new BaseException(respContent,BaseException.Expired);
+					}
+				} catch (ParseException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
 				httpGet.abort();
 				if(resp != null){
 					int code = resp.getStatusLine().getStatusCode();

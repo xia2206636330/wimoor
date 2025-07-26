@@ -85,7 +85,11 @@ public class ShipInboundPlanQuotaV2Controller {
 		    List<MaterialVO> list=new LinkedList<MaterialVO>();
 		    for(ShipInboundItemVo item:vo.getItemlist()) {
 		    	MaterialVO e=new MaterialVO();
-		    	e.setAmount(item.getQuantity());
+				if(item.getConfirmQuantity()!=null){
+					e.setAmount(item.getConfirmQuantity());
+				}else{
+					e.setAmount(item.getQuantity());
+				}
 		    	Map<String, Object> extendInfo=new HashMap<String,Object>();
 		    	extendInfo.put("sellersku", item.getSku());
 				e.setExtendInfo(extendInfo);
@@ -206,9 +210,18 @@ public class ShipInboundPlanQuotaV2Controller {
 				    		entry.put(item.getMsku(), e);
 				    	}
 				    	if(e.getAmount()!=null) {
-				    		e.setAmount(item.getQuantity()+e.getAmount());
+							if(item.getConfirmQuantity()!=null){
+								e.setAmount(item.getConfirmQuantity()+e.getAmount());
+							}else{
+								e.setAmount(item.getQuantity()+e.getAmount());
+							}
 				    	}else {
-				    		e.setAmount(item.getQuantity());
+							if(item.getConfirmQuantity()!=null){
+								e.setAmount(item.getConfirmQuantity());
+							}else{
+								e.setAmount(item.getQuantity());
+							}
+
 				    	}
 				    	if(e.getExtendInfo()==null) {
 				    		Map<String, Object> extendInfo=new HashMap<String,Object>();
@@ -390,7 +403,11 @@ public class ShipInboundPlanQuotaV2Controller {
 			 List<ShipLabelDto> dto=new ArrayList<ShipLabelDto>();
 			    for(ShipInboundItemVo item:vo.getItemlist()) {
 			    	ShipLabelDto e=new ShipLabelDto();
-			    	e.setAmount(item.getQuantity());
+					if(item.getConfirmQuantity()!=null){
+						e.setAmount(item.getConfirmQuantity());
+					}else{
+						e.setAmount(item.getQuantity());
+					}
 			    	e.setSku(item.getSku());
 			    	e.setAmazonauthid(vo.getAmazonauthid());
 			    	e.setGroupid(vo.getAmazongroupid());
@@ -408,7 +425,11 @@ public class ShipInboundPlanQuotaV2Controller {
 		 List<ShipLabelDto> dto=new ArrayList<ShipLabelDto>();
 		    for(ShipInboundItemVo item:vo.getItemlist()) {
 		    	ShipLabelDto e=new ShipLabelDto();
-		    	e.setAmount(item.getQuantity());
+				if(item.getConfirmQuantity()!=null){
+					e.setAmount(item.getConfirmQuantity());
+				}else{
+					e.setAmount(item.getQuantity());
+				}
 		    	e.setSku(item.getSku());
 		    	e.setAmazonauthid(vo.getAmazonauthid());
 		    	e.setGroupid(vo.getAmazongroupid());

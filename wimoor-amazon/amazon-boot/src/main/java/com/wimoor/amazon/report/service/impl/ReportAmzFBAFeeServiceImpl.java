@@ -3,14 +3,15 @@ package com.wimoor.amazon.report.service.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import com.amazon.spapi.model.reports.CreateReportSpecification;
+import com.wimoor.amazon.auth.pojo.entity.Marketplace;
+import com.wimoor.amazon.util.AmzDateUtils;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,8 +31,39 @@ public class ReportAmzFBAFeeServiceImpl extends ReportServiceImpl{
 	private IMarketplaceService marketplaceService;
 	@Resource
 	private IFBAEstimatedFeeService iFBAEstimatedFeeService;
-	
- 
+
+	public  void   requestReport(AmazonAuthority amazonAuthority, Calendar cstart, Calendar cend, Boolean ignore) {
+		List<Marketplace> marketlist = marketplaceService.findbyauth(amazonAuthority.getId());
+		boolean iseu=false;
+		for(Marketplace market:marketlist) {
+			CreateReportSpecification body=new CreateReportSpecification();
+			body.setReportType(myReportType());
+			body.setDataStartTime(AmzDateUtils.getOffsetDateTimeUTC(cstart));
+			body.setDataEndTime(AmzDateUtils.getOffsetDateTimeUTC(cend));
+			if(market.getRegion().equals("EU")) {
+				if(iseu) {
+					return;
+				}else {
+					iseu=true;
+				}
+			}
+			List<String> list=new ArrayList<String>();
+			list.add(market.getMarketplaceid());
+			amazonAuthority.setMarketPlace(market);
+			if(ignore==null||ignore==false) {
+				Map<String,Object> param=new HashMap<String,Object>();
+				param.put("sellerid", amazonAuthority.getSellerid());
+				param.put("reporttype", this.myReportType());
+				param.put("marketplacelist", list);
+				Date lastupdate= iReportRequestRecordService.lastUpdateRequestByType(param);
+				if(lastupdate!=null&&GeneralUtil.distanceOfHour(lastupdate, new Date())<16) {
+					continue;
+				}
+			}
+			body.setMarketplaceIds(list);
+			callCreateAPI(this, body, amazonAuthority, market,cstart.getTime(),cend.getTime());
+		}
+	}
 	//按区域申请的报表
 	public String treatResponse(AmazonAuthority amazonAuthority,BufferedReader br)  {
 		StringBuffer mlog = new StringBuffer();
@@ -135,16 +167,22 @@ public class ReportAmzFBAFeeServiceImpl extends ReportServiceImpl{
 								}
 							   if(fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitSe()==null) {
 									fBAEstimatedFee.setMarketplaceid("A2NODRKZP88ZB9");
+								    resetTotal(fBAEstimatedFee, fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitDe());
 							    }	else if(fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitEs()==null) {
 									fBAEstimatedFee.setMarketplaceid("A1RKKUPIHCS9HS");
+								    resetTotal(fBAEstimatedFee, fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitDe());
 								}else if(fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitIt()==null) {
 									fBAEstimatedFee.setMarketplaceid("APJ6JRA9NG5V4");
+								    resetTotal(fBAEstimatedFee, fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitDe());
 								}else if(fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitFr()==null) {
 									fBAEstimatedFee.setMarketplaceid("A13V1IB3VIYZZH");
+								    resetTotal(fBAEstimatedFee, fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitIt());
 								}else if(fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitDe()==null) {
 									fBAEstimatedFee.setMarketplaceid("A1PA6795UKMFR9");
+								    resetTotal(fBAEstimatedFee, fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitIt());
 								}else if(fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitUk()==null) {
 									fBAEstimatedFee.setMarketplaceid("A1F83G8C2ARO7P");
+									resetTotal(fBAEstimatedFee, fBAEstimatedFee.getExpectedEfnFulfilmentFeePerUnitIt());
 								}
 							
 						}
@@ -190,7 +228,13 @@ public class ReportAmzFBAFeeServiceImpl extends ReportServiceImpl{
 	}
        return mlog.toString();
 	}
-	
+
+	private void resetTotal(FBAEstimatedFee fBAEstimatedFee, BigDecimal otherCountryFbaFee) {
+		if(otherCountryFbaFee!=null&&fBAEstimatedFee.getEstimatedFeeTotal().equals(fBAEstimatedFee.getEstimatedReferralFeePerUnit())) {
+			fBAEstimatedFee.setEstimatedFeeTotal(fBAEstimatedFee.getEstimatedReferralFeePerUnit().add(otherCountryFbaFee));
+		}
+	}
+
 	private BigDecimal getBigDecimalValue(String[] info, Map<String, Integer> titleList, String key) {
 		// TODO Auto-generated method stub
 		Integer position = titleList.get(key);

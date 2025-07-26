@@ -106,7 +106,13 @@ public class ShipInboundTransServiceImpl extends  ServiceImpl<ShipInboundTransMa
 		titlemap.put("shipmentfee", "货件运费");
 		titlemap.put("skufee", "SKU分摊费用");
 		titlemap.put("skufeeavg", "SKU单件费用");
-		List<Map<String, Object>> list = this.baseMapper.transFeeSharedDetail(params);
+		List<Map<String, Object>> list =null;
+		if(params.get("ftype")==null){
+			list=this.baseMapper.transFeeSharedDetail(params);
+		}else{
+			list=this.baseMapper.transFeeSharedDetailNew(params);
+		}
+
 		Sheet sheet = workbook.createSheet("sheet1");
 		// 在索引0的位置创建行（最顶端的行）
 		Row trow = sheet.createRow(0);
@@ -175,7 +181,12 @@ public class ShipInboundTransServiceImpl extends  ServiceImpl<ShipInboundTransMa
 	    }
 	 
 	public IPage<Map<String, Object>> getShipmentFeeDetailReport(Page<?> page,Map<String, Object> param) {
-		IPage<Map<String, Object>> list = this.baseMapper.transFeeSharedDetail(page,param);
+		IPage<Map<String, Object>> list =null;
+		 if(param.get("ftype")==null){
+			 list=this.baseMapper.transFeeSharedDetail(page,param);
+		 }else{
+			 list=this.baseMapper.transFeeSharedDetailNew(page,param);
+		 }
 		if(list!=null && list.getRecords().size()>0) {
 			for(int i=0;i<list.getRecords().size();i++) {
 				Map<String, Object> map = list.getRecords().get(i);

@@ -8,13 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.wimoor.erp.assembly.service.IAssemblyFormEntryService;
-import com.wimoor.erp.purchase.pojo.dto.PurchaseTimeDTO;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import com.wimoor.erp.material.service.IAssemblyFormEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,8 +18,8 @@ import com.wimoor.erp.api.AmazonClientOneFeignManager;
 import com.wimoor.erp.assembly.pojo.vo.AssemblyVO;
 import com.wimoor.common.GeneralUtil;
 import com.wimoor.common.result.Result;
-import com.wimoor.erp.assembly.service.IAssemblyFormService;
-import com.wimoor.erp.assembly.service.IAssemblyService;
+import com.wimoor.erp.material.service.IAssemblyFormService;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.inventory.service.IInventoryService;
 import com.wimoor.erp.material.service.IMaterialService;
 import com.wimoor.erp.material.service.IStepWisePriceService;
@@ -195,14 +189,20 @@ public class PurchasePlanItemServiceImpl extends  ServiceImpl<PurchasePlanItemMa
 									map.put("inbound", inv.get("inbound"));
 								}
 								if (needprocess!= null ) {
-									if(inv!=null){
-										Integer fulfillable=inv.get("fulfillable")!=null?Integer.parseInt(inv.get("fulfillable").toString()):0;
-										Integer inbound=inv.get("inbound")!=null?Integer.parseInt(inv.get("inbound").toString()):0;
-										if(fulfillable+inbound<needprocess){
-											map.put("moreqty", 0);
-										}else{
-											map.put("moreqty", fulfillable+inbound-needprocess);
-										}
+									Integer fulfillable=inv!=null&&inv.get("fulfillable")!=null?Integer.parseInt(inv.get("fulfillable").toString()):0;
+									Integer inbound=inv!=null&&inv.get("inbound")!=null?Integer.parseInt(inv.get("inbound").toString()):0;
+									if(fulfillable+inbound<needprocess){
+										map.put("moreqty", 0);
+									}else{
+										map.put("moreqty", fulfillable+inbound-needprocess);
+									}
+								}else{
+									Integer fulfillable=inv!=null&&inv.get("fulfillable")!=null?Integer.parseInt(inv.get("fulfillable").toString()):0;
+									Integer inbound=inv!=null&&inv.get("inbound")!=null?Integer.parseInt(inv.get("inbound").toString()):0;
+									if(fulfillable+inbound<=0){
+										map.put("moreqty", 0);
+									}else{
+										map.put("moreqty", fulfillable+inbound);
 									}
 								}
 							} else {
@@ -222,6 +222,14 @@ public class PurchasePlanItemServiceImpl extends  ServiceImpl<PurchasePlanItemMa
 											map.put("moreqty", 0);
 										}else{
 											map.put("moreqty", fulfillable+inbound-needprocess);
+										}
+									}else{
+										Integer fulfillable=inv.get("fulfillable")!=null?Integer.parseInt(inv.get("fulfillable").toString()):0;
+										Integer inbound=inv.get("inbound")!=null?Integer.parseInt(inv.get("inbound").toString()):0;
+										if(fulfillable+inbound<0){
+											map.put("moreqty", 0);
+										}else{
+											map.put("moreqty", fulfillable+inbound);
 										}
 									}
 								}

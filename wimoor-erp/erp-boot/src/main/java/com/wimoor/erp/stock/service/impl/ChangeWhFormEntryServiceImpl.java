@@ -28,6 +28,11 @@ public class ChangeWhFormEntryServiceImpl extends  ServiceImpl<ChangeWhFormEntry
 		this.baseMapper.delete(queryWrapper);
 	}
 
+
+	@Override
+	public Map<String, Object> getByFromMaterial(Map<String, Object> subparam) {
+		return this.baseMapper.getByFromMaterial(subparam);
+	}
 	public List<Map<String, Object>> findFormDetailByFormid(String formid) {
 		List<Map<String, Object>> list = this.baseMapper.findFormDetailByFormid(formid);
 //		if(list.size()>0) {
@@ -43,9 +48,7 @@ public class ChangeWhFormEntryServiceImpl extends  ServiceImpl<ChangeWhFormEntry
 //		}
 		return list;
 	}
-	public Map<String,Object> getChangeAmount(Map<String,Object> param){
-		return this.baseMapper.getChangeAmount(param);
-	}
+
 	public List<ChangeWhFormEntry> selectByFormid(String formid) {
 		return this.baseMapper.selectByFormid(formid);
 	}

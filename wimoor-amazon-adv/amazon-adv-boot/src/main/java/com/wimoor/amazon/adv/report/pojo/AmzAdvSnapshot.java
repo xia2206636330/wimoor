@@ -65,7 +65,11 @@ public class AmzAdvSnapshot {
 	
 	@Column(name="opttime")
     private Date opttime;
-	
+
+	@Column(name="expires")
+	private Date expires;
+
+
 	@Column(name="treat_number")
     private Integer treatnumber;
 	
@@ -146,6 +150,14 @@ public class AmzAdvSnapshot {
     public void setOpttime(Date opttime) {
         this.opttime = opttime;
     }
+
+	public Date getExpires() {
+		return expires;
+	}
+
+	public void setExpires(Date expires) {
+		this.expires = expires;
+	}
 
 	public String getLocation() {
 		return location;

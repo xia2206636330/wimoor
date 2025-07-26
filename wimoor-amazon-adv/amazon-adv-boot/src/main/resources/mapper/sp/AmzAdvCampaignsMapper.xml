@@ -232,10 +232,10 @@
 		</if>
 	 
 		<if test="bytime =='Daily'">
-			group by date_format(v.bydate,'%y-%m-%d')
+			group by date_format(v.bydate,'%m-%d')
 		</if>
 		<if test="bytime =='Weekly'">
-			group by date_format(subdate(v.bydate,date_format(v.bydate,'%w')-7),'%y-%m-%d')
+			group by date_format(subdate(v.bydate,date_format(v.bydate,'%w')-7),'%m-%d')
 		</if>
 		<if test="bytime =='Monthly'">
 			group by concat( year(v.bydate) ,'-' ,month(v.bydate))

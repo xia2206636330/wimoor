@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 import org.threeten.bp.OffsetDateTime;
 
 import com.amazon.spapi.SellingPartnerAPIAA.LWAAccessTokenCache;
@@ -75,7 +78,7 @@ public class FbaInventoryApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getInventorySummariesCall(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call getInventorySummariesCall(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = null;
 
         // create path and map variables
@@ -117,10 +120,10 @@ public class FbaInventoryApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -133,7 +136,7 @@ public class FbaInventoryApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call getInventorySummariesValidateBeforeCall(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call getInventorySummariesValidateBeforeCall(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'granularityType' is set
         if (granularityType == null) {
@@ -151,7 +154,7 @@ public class FbaInventoryApi {
         }
         
 
-        com.squareup.okhttp.Call call = getInventorySummariesCall(granularityType, granularityId, marketplaceIds, details, startDateTime, sellerSkus, sellerSku, nextToken, progressListener, progressRequestListener);
+        Call call = getInventorySummariesCall(granularityType, granularityId, marketplaceIds, details, startDateTime, sellerSkus, sellerSku, nextToken, progressListener, progressRequestListener);
         return call;
 
     }
@@ -192,7 +195,7 @@ public class FbaInventoryApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<GetInventorySummariesResponse> getInventorySummariesWithHttpInfo(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = getInventorySummariesValidateBeforeCall(granularityType, granularityId, marketplaceIds, details, startDateTime, sellerSkus, sellerSku, nextToken, null, null);
+        Call call = getInventorySummariesValidateBeforeCall(granularityType, granularityId, marketplaceIds, details, startDateTime, sellerSkus, sellerSku, nextToken, null, null);
         Type localVarReturnType = new TypeToken<GetInventorySummariesResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -213,7 +216,7 @@ public class FbaInventoryApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call getInventorySummariesAsync(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken, final ApiCallback<GetInventorySummariesResponse> callback) throws ApiException, LWAException {
+    public Call getInventorySummariesAsync(String granularityType, String granularityId, List<String> marketplaceIds, Boolean details, OffsetDateTime startDateTime, List<String> sellerSkus, String sellerSku, String nextToken, final ApiCallback<GetInventorySummariesResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -234,7 +237,7 @@ public class FbaInventoryApi {
             };
         }
 
-        com.squareup.okhttp.Call call = getInventorySummariesValidateBeforeCall(granularityType, granularityId, marketplaceIds, details, startDateTime, sellerSkus, sellerSku, nextToken, progressListener, progressRequestListener);
+        Call call = getInventorySummariesValidateBeforeCall(granularityType, granularityId, marketplaceIds, details, startDateTime, sellerSkus, sellerSku, nextToken, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<GetInventorySummariesResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -298,10 +301,9 @@ public class FbaInventoryApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new FbaInventoryApi(new ApiClient()
+            return new FbaInventoryApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
-                .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                .setBasePath(endpoint));
         }
     }
 }

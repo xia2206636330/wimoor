@@ -40,8 +40,8 @@ public class AmzOrderSolicitationsServiceImpl implements IAmzOrderSolicitationsS
 		 String errormsg="";
 		   try {
 			 CreateProductReviewAndSellerFeedbackSolicitationResponse response = api.createProductReviewAndSellerFeedbackSolicitation(orderid, Arrays.asList(marketplaceid));
-			 if(response.getErrors()!=null&&response.getErrors().size()>0) {
-				 for(Error error:response.getErrors()) {
+			 if(response.getErrors()!=null&&response.getErrors().getErrors().size()>0) {
+				 for(Error error:response.getErrors().getErrors()) {
 					 errormsg=errormsg+ error.getMessage();
 				 }
 			 }else {

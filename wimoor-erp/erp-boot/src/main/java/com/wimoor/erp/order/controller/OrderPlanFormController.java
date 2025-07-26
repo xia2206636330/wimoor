@@ -1,32 +1,25 @@
 package com.wimoor.erp.order.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.wimoor.common.mvc.BizException;
 import com.wimoor.common.pojo.entity.BasePageQuery;
 import com.wimoor.common.result.Result;
 import com.wimoor.common.service.ISerialNumService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.common.user.UserInfoContext;
-import com.wimoor.erp.order.pojo.entity.Order;
-import com.wimoor.erp.order.pojo.entity.OrderPlan;
-import com.wimoor.erp.order.pojo.entity.OrderPlanForm;
-import com.wimoor.erp.order.pojo.entity.OrderPlatform;
-import com.wimoor.erp.order.service.IOrderPlanFormService;
-import com.wimoor.erp.order.service.IOrderPlanService;
+import com.wimoor.erp.order.pojo.entity.OrderShipPlanForm;
+import com.wimoor.erp.order.service.IOrderShipPlanFormService;
+import com.wimoor.erp.order.service.IOrderShipPlanService;
 import com.wimoor.erp.order.service.IOrderPlatformService;
 import com.wimoor.erp.order.service.IOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +31,13 @@ import java.util.Map;
 public class OrderPlanFormController {
     private final IOrderService orderService;
     private final IOrderPlatformService orderPlatformService;
-    private final IOrderPlanService orderPlanService;
+    private final IOrderShipPlanService orderPlanService;
     private final ISerialNumService iSerialNumService;
-    private final IOrderPlanFormService orderPlanFormService;
+    private final IOrderShipPlanFormService orderPlanFormService;
 
     @PostMapping("/savePlanFrom")
     @Transactional
-    public Result<?> savePlanFromAction(@RequestBody OrderPlanForm dto)   {
+    public Result<?> savePlanFromAction(@RequestBody OrderShipPlanForm dto)   {
         UserInfo user = UserInfoContext.get();
         dto.setShopid(user.getCompanyid());
         String sernum="";
@@ -110,7 +103,7 @@ public class OrderPlanFormController {
     public Result<?> removeAction(@RequestBody List<String> ids)   {
         UserInfo user = UserInfoContext.get();
         for(String id:ids){
-            OrderPlanForm form = orderPlanFormService.getById(id);
+            OrderShipPlanForm form = orderPlanFormService.getById(id);
             if(form.getAuditstatus()==1){
                 form.setAuditstatus(0);
                 form.setAudittime(new Date());
@@ -123,10 +116,11 @@ public class OrderPlanFormController {
     }
 
     @PostMapping("/done")
+    @Transactional
     public Result<?> doneAction(@RequestBody List<String> ids)   {
         UserInfo user = UserInfoContext.get();
         for(String id:ids){
-            OrderPlanForm form = orderPlanFormService.getById(id);
+            OrderShipPlanForm form = orderPlanFormService.getById(id);
             if(form.getAuditstatus()==1){
                 form.setAuditstatus(2);
                 form.setAudittime(new Date());
@@ -138,6 +132,26 @@ public class OrderPlanFormController {
         return Result.success();
     }
 
+    @PostMapping("/doneOut")
+    @Transactional
+    public Result<?> doneOutAction(@RequestBody List<String> ids)   {
+        UserInfo user = UserInfoContext.get();
+        for(String id:ids){
+            OrderShipPlanForm form = orderPlanFormService.getById(id);
+            if(form.getAuditstatus()==1){
+                form.setAuditstatus(2);
+                form.setAudittime(new Date());
+                form.setOpttime(new Date());
+                form.setOperator(user.getId());
+                orderPlanFormService.updateById(form);
+            }
+            if(form.getIsout()==null||form.getIsout()==false){
+                orderPlanFormService.outEntry(form);
+            }
+
+        }
+        return Result.success();
+    }
 
     @ApiOperation(value = "下载feedfile文件")
     @GetMapping("/downloadOrderPlanForm")

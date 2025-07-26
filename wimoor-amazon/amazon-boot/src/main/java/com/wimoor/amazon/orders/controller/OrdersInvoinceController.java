@@ -177,10 +177,12 @@ public class OrdersInvoinceController{
 			String year=c.get(Calendar.YEAR)+"";
 			vatvoice = serialNumService.findSerialNumber(shopid, year.substring(0,2));
 			obj.put("vatNo", vatvoice);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		if (!obj.isEmpty()) {
+		} catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (!obj.isEmpty()) {
 			return Result.success(obj);
 		} else {
 			return null;

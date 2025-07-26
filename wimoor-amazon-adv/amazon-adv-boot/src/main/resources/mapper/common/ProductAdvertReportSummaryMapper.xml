@@ -60,25 +60,25 @@
 		SELECT 
 		pf.sellerId,
 		UUID_SHORT(),
-		pf.marketplaceId,
+		max(pf.marketplaceId) marketplaceId,
 		'sd' ctype,
 		s.sku,
-		s.asin,
+		max(s.asin) asin,
 		p.bydate,
 		sum(p.clicks) clicks,
 		SUM(p.impressions) impressions, 
 		sum(p.clicks)/SUM(p.impressions) ctr,
-		pf.currencyCode currency,
+		max(pf.currencyCode) currency,
 		SUM(p.cost) spend,
 		SUM(p.cost)/sum(p.clicks) cpc,
-		sum(p.cost)/sum(a.attributedSales7d) ACOS,
-		sum(a.attributedSales7d)/sum(p.cost) roas,
-		SUM(a.attributedConversions7d) orders,
-		sum(a.attributedUnitsOrdered7d) units,
-		SUM(a.attributedSales7d)/sum(p.clicks) spc ,
-		SUM(a.attributedSales7d) totalsales
+		sum(p.cost)/sum(a.sales) ACOS,
+		sum(a.sales)/sum(p.cost) roas,
+		SUM(a.purchases) orders,
+		sum(a.unitsSold) units,
+		SUM(a.sales)/sum(p.clicks) spc ,
+		SUM(a.sales) totalsales
 		 from t_amz_adv_rpt2_sd_productads p
-		LEFT JOIN t_amz_adv_rpt2_sd_productads_attributed a ON a.adId=p.adId AND a.bydate=p.bydate
+		LEFT JOIN t_amz_adv_rpt2_sd_productads_attributed_all a ON a.adId=p.adId AND a.bydate=p.bydate
 		LEFT JOIN t_amz_adv_productads_sd s ON s.adId=p.adId 
 		LEFT JOIN t_amz_adv_profile pf ON pf.id=s.profileid
 		where p.profileid=#{profileid,jdbcType=CHAR} 
@@ -98,15 +98,15 @@
 		SELECT 
 		pf.sellerId,
 		UUID_SHORT(),
-		pf.marketplaceId,
+		max(pf.marketplaceId) marketplaceId,
 		'sp' ctype,
 		s.sku,
-		s.asin,
+		max(s.asin) asin,
 		p.bydate,
 		sum(p.clicks) clicks,
 		SUM(p.impressions) impressions, 
 		sum(p.clicks)/SUM(p.impressions) ctr,
-		pf.currencyCode currency,
+		max(pf.currencyCode) currency,
 		SUM(p.cost) spend,
 		SUM(p.cost)/sum(p.clicks) cpc,
 		sum(p.cost)/sum(a.attributedSales7d) ACOS,
@@ -138,7 +138,7 @@
 		  marketplaceid marketplaceid,
 		  ctype,
 		  DATE_SUB(bydate ,INTERVAL WEEKDAY(bydate) + 0 DAY) bydate,
-		  asin asin, sku sku,currency,
+		  max(asin) asin, sku sku,max(currency) currency,
 		  SUM(impressions) impressions,
 		  SUM(clicks) clicks,
 		  SUM(ctr)/count(0) ctr,
@@ -167,7 +167,7 @@
 		  marketplaceid marketplaceid,
 		  ctype,
 		  DATE_ADD(bydate,interval -day(bydate)+1 day) bydate,
-		  asin asin, sku sku,currency,
+		  max(asin) asin, sku sku,max(currency) currency,
 		  SUM(impressions) impressions,
 		  SUM(clicks) clicks,
 		  SUM(ctr)/count(0) ctr,

@@ -10,21 +10,23 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
 import java.util.Objects;
-
+import java.util.Arrays;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
 /**
- * The response for the getReports operation.
+ * The response for the &#x60;getReports&#x60; operation.
  */
-@ApiModel(description = "The response for the getReports operation.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "The response for the `getReports` operation.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class GetReportsResponse {
   @SerializedName("reports")
   private ReportList reports = null;
@@ -38,10 +40,10 @@ public class GetReportsResponse {
   }
 
    /**
-   * The reports.
+   * Get reports
    * @return reports
   **/
-  @ApiModelProperty(required = true, value = "The reports.")
+  @Schema(required = true, description = "")
   public ReportList getReports() {
     return reports;
   }
@@ -56,10 +58,10 @@ public class GetReportsResponse {
   }
 
    /**
-   * Returned when the number of results exceeds pageSize. To get the next page of results, call getReports with this token as the only parameter.
+   * Returned when the number of results exceeds &#x60;pageSize&#x60;. To get the next page of results, call &#x60;getReports&#x60; with this token as the only parameter.
    * @return nextToken
   **/
-  @ApiModelProperty(value = "Returned when the number of results exceeds pageSize. To get the next page of results, call getReports with this token as the only parameter.")
+  @Schema(description = "Returned when the number of results exceeds `pageSize`. To get the next page of results, call `getReports` with this token as the only parameter.")
   public String getNextToken() {
     return nextToken;
   }
@@ -111,4 +113,3 @@ public class GetReportsResponse {
   }
 
 }
-

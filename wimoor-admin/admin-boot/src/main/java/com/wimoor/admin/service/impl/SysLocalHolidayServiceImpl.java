@@ -151,22 +151,25 @@ public class SysLocalHolidayServiceImpl extends ServiceImpl<SysLocalHolidayMappe
         Integer year = holidayInfo.getYear()==null?Integer.valueOf(dateTimeNow("yyyy")):holidayInfo.getYear();
         String result = getHoliday(year);
         JSONObject parse = (JSONObject)JSONObject.parse(result);
-        JSONObject holidayJson = (JSONObject)parse.get("holiday");
-        Map<String, Object> map = holidayJson.toJavaObject(Map.class);
-        List<SysLocalHoliday > holidayList =  selectHolidayInfoListByYear(year);
-        for (SysLocalHoliday holiday: holidayList) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String key = entry.getKey();
-                if(holiday.getKeyDate().equals(key)){
-                    JSONObject valueJson = (JSONObject)JSONObject.parse(String.valueOf(entry.getValue()));
-                    Boolean holidayFlag = (Boolean)valueJson.get("holiday");
-                    String name = (String)valueJson.get("name");
-                    holiday.setType(holidayFlag?2:3);
-                    holiday.setName(name);
-                    this.baseMapper.updateById(holiday);
+        if(parse!=null&&parse.get("holiday")!=null){
+            JSONObject holidayJson = (JSONObject)parse.get("holiday");
+            Map<String, Object> map = holidayJson.toJavaObject(Map.class);
+            List<SysLocalHoliday > holidayList =  selectHolidayInfoListByYear(year);
+            for (SysLocalHoliday holiday: holidayList) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    String key = entry.getKey();
+                    if(holiday.getKeyDate().equals(key)){
+                        JSONObject valueJson = (JSONObject)JSONObject.parse(String.valueOf(entry.getValue()));
+                        Boolean holidayFlag = (Boolean)valueJson.get("holiday");
+                        String name = (String)valueJson.get("name");
+                        holiday.setType(holidayFlag?2:3);
+                        holiday.setName(name);
+                        this.baseMapper.updateById(holiday);
+                    }
                 }
             }
         }
+
 
     }
 

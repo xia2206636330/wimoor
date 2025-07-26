@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface ErpDispatchOverseaFormEntryMapper extends BaseMapper<ErpDispatchOverseaFormEntry> {
 
 	List<Map<String, Object>> selectByFormid(@Param("formid")String formid);
-
+	List<Map<String, Object>> getPrintLabel(@Param("formid")String formid);
 	List<Map<String, Object>> findFormDetailByFormid(@Param("formid")String formid, @Param("warehouseid")String warehouseid,
 			@Param("warehouseid2")String warehouseid2,@Param("shopid")String shopid);
 }

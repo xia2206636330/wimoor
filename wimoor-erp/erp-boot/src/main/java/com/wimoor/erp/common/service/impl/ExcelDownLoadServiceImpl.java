@@ -19,8 +19,8 @@ import com.wimoor.common.mvc.BizException;
 import com.wimoor.common.service.ISerialNumService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AmazonClientOneFeignManager;
-import com.wimoor.erp.assembly.mapper.AssemblyMapper;
-import com.wimoor.erp.assembly.pojo.entity.Assembly;
+import com.wimoor.erp.material.mapper.AssemblyMapper;
+import com.wimoor.erp.material.pojo.entity.Assembly;
 import com.wimoor.erp.common.service.IExcelDownLoadService;
 import com.wimoor.erp.customer.mapper.CustomerMapper;
 import com.wimoor.erp.customer.pojo.entity.Customer;
@@ -124,7 +124,9 @@ public class ExcelDownLoadServiceImpl implements IExcelDownLoadService{
 				}
 				customer.setFtype(ftype);
 				customer.setContacts(contacts);
-				customer.setPhone_num(phone.toString());
+				if(phone!=null){
+					customer.setPhone_num(phone.toString());
+				}
 				customer.setContact_info(otherContact);
 				customer.setAddress(address);
 				customer.setOperator(user.getId());
@@ -135,7 +137,9 @@ public class ExcelDownLoadServiceImpl implements IExcelDownLoadService{
 				customer.setName(name);
 				customer.setFtype(ftype);
 				customer.setContacts(contacts);
-				customer.setPhone_num(phone.toString());
+				if(phone!=null){
+					customer.setPhone_num(phone.toString());
+				}
 				customer.setContact_info(otherContact);
 				customer.setAddress(address);
 				customer.setOperator(user.getId());

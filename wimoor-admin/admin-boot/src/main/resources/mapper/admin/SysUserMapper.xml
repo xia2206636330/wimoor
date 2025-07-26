@@ -96,7 +96,7 @@
        </select>
        
       <select id="findOwnerAll" resultType="java.util.Map" parameterType="java.lang.String">
-        SELECT  u.id,u.account,i.name from t_user u  
+        SELECT  u.id,i.name from t_user u
 		LEFT JOIN t_userinfo i ON i.id=u.id
 		WHERE u.`disable`=0 AND u.losingEffect>NOW() AND u.logicDelete=0
 		AND exists( SELECT user_id FROM t_user_shop WHERE  shop_id=#{shopid,jdbcType=CHAR}

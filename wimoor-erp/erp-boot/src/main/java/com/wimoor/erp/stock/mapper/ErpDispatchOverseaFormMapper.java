@@ -26,8 +26,8 @@ public interface ErpDispatchOverseaFormMapper extends BaseMapper<ErpDispatchOver
 	IPage<Map<String, Object>> findByCondition(Page<?>  page,@Param("params")Map<String,Object> map);
 
 	Map<String, Object> findById(@Param("id")String id);
-	List<Map<String, Object>> getShipArrivalTimeRecord(
-														@Param("shopid") String shopid,
+	List<Map<String, Object>> getShipArrivalTimeRecord(@Param("shopid") String shopid,
+														@Param("warehouseid") String warehouseid,
 														@Param("country") String country, 
 														@Param("sku") String sku, 
 														@Param("groupid") String groupid

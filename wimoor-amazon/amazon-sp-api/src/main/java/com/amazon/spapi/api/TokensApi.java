@@ -38,6 +38,9 @@ import com.amazon.spapi.client.StringUtil;
 import com.amazon.spapi.model.tokens.CreateRestrictedDataTokenRequest;
 import com.amazon.spapi.model.tokens.CreateRestrictedDataTokenResponse;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.Call;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 public class TokensApi {
     private ApiClient apiClient;
@@ -67,7 +70,7 @@ public class TokensApi {
      * @throws ApiException If fail to serialize the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createRestrictedDataTokenCall(CreateRestrictedDataTokenRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    public Call createRestrictedDataTokenCall(CreateRestrictedDataTokenRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         Object localVarPostBody = body;
 
         // create path and map variables
@@ -93,10 +96,10 @@ public class TokensApi {
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
         if(progressListener != null) {
-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
+            apiClient.addNetworkInterceptor(new Interceptor() {
                 @Override
-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
+                public Response intercept(Interceptor.Chain chain) throws IOException {
+                    Response originalResponse = chain.proceed(chain.request());
                     return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                     .build();
@@ -109,7 +112,7 @@ public class TokensApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call createRestrictedDataTokenValidateBeforeCall(CreateRestrictedDataTokenRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
+    private Call createRestrictedDataTokenValidateBeforeCall(CreateRestrictedDataTokenRequest body, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException, LWAException {
         
         // verify the required parameter 'body' is set
         if (body == null) {
@@ -117,7 +120,7 @@ public class TokensApi {
         }
         
 
-        com.squareup.okhttp.Call call = createRestrictedDataTokenCall(body, progressListener, progressRequestListener);
+        Call call = createRestrictedDataTokenCall(body, progressListener, progressRequestListener);
         return call;
 
     }
@@ -144,7 +147,7 @@ public class TokensApi {
      * @throws LWAException If calls to fetch LWA access token fails
      */
     public ApiResponse<CreateRestrictedDataTokenResponse> createRestrictedDataTokenWithHttpInfo(CreateRestrictedDataTokenRequest body) throws ApiException,LWAException {
-        com.squareup.okhttp.Call call = createRestrictedDataTokenValidateBeforeCall(body, null, null);
+        Call call = createRestrictedDataTokenValidateBeforeCall(body, null, null);
         Type localVarReturnType = new TypeToken<CreateRestrictedDataTokenResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
@@ -158,7 +161,7 @@ public class TokensApi {
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @throws LWAException If calls to fetch LWA access token fails
      */
-    public com.squareup.okhttp.Call createRestrictedDataTokenAsync(CreateRestrictedDataTokenRequest body, final ApiCallback<CreateRestrictedDataTokenResponse> callback) throws ApiException, LWAException {
+    public Call createRestrictedDataTokenAsync(CreateRestrictedDataTokenRequest body, final ApiCallback<CreateRestrictedDataTokenResponse> callback) throws ApiException, LWAException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -179,7 +182,7 @@ public class TokensApi {
             };
         }
 
-        com.squareup.okhttp.Call call = createRestrictedDataTokenValidateBeforeCall(body, progressListener, progressRequestListener);
+        Call call = createRestrictedDataTokenValidateBeforeCall(body, progressListener, progressRequestListener);
         Type localVarReturnType = new TypeToken<CreateRestrictedDataTokenResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
@@ -243,10 +246,10 @@ public class TokensApi {
                  lwaAuthorizationSigner = new LWAAuthorizationSigner(lwaAuthorizationCredentials,lwaAccessTokenCache);
             }
 
-            return new TokensApi(new ApiClient()
+            return new TokensApi(new ApiClient(rateLimitConfiguration)
                 .setLWAAuthorizationSigner(lwaAuthorizationSigner)
                 .setBasePath(endpoint)
-                .setRateLimiter(rateLimitConfiguration));
+                );
         }
     }
 }

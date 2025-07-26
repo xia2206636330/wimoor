@@ -17,6 +17,7 @@ import com.amazon.spapi.model.fulfillmentinboundV20240320.GeneratePlacementOptio
 import com.amazon.spapi.model.fulfillmentinboundV20240320.Incentive;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.Item;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.ListPlacementOptionsResponse;
+import com.amazon.spapi.model.fulfillmentinboundV20240320.ListTransportationOptionsResponse;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.LtlTrackingDetailInput;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.PlacementOption;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.Shipment;
@@ -24,8 +25,10 @@ import com.amazon.spapi.model.fulfillmentinboundV20240320.ShipmentDestination;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.SpdTrackingDetailInput;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.SpdTrackingItemInput;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.TrackingDetailsInput;
+import com.amazon.spapi.model.fulfillmentinboundV20240320.TransportationOption;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.UpdateShipmentTrackingDetailsRequest;
 import com.amazon.spapi.model.fulfillmentinboundV20240320.UpdateShipmentTrackingDetailsResponse;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -169,6 +172,10 @@ public class ShipInboundShipmentServiceImpl extends  ServiceImpl<ShipInboundShip
 	ErpClientOneFeignManager erpClientOneFeign;
 	@Autowired
 	QuoteClientOneFeignManager quoteClientOneFeign;
+    @Autowired
+	@Lazy
+	IShipInboundTransportationService iShipInboundTransportationService;
+
 	@Override
 	public IPage<ShipInboundShipmenSummarytVo> findByTraceCondition(ShipInboundShipmenSummaryDTO dto) {
 		// TODO Auto-generated method stub
@@ -411,12 +418,33 @@ public ShipInboundOperation confirmPlacementOption(UserInfo user,String planid, 
 		if(operation!=null) {
 			return operation;
 		}
-		ConfirmPlacementOptionResponse response = iInboundApiHandlerService.confirmPlacementOption(auth,plan.getInboundPlanId(),placementOptionId);
-		if(response!=null) {
-			return iShipInboundOperationService.setOperationID(auth, plan.getId(), response.getOperationId());
-		}else {
-			return null;
+		try {
+			ConfirmPlacementOptionResponse response = iInboundApiHandlerService.confirmPlacementOption(auth, plan.getInboundPlanId(), placementOptionId);
+			if (response != null) {
+				return iShipInboundOperationService.setOperationID(auth, plan.getId(), response.getOperationId());
+			} else {
+				return null;
+			}
+		} catch (BizException e) {
+			if (e.getMessage().contains("placement option is already confirmed")) {
+				ShipInboundOperation operation2 = iShipInboundOperationService.getOperation(auth, plan.getId(), "confirmPlacementOption");
+				if (operation2 == null) {
+					operation2 = new ShipInboundOperation();
+					operation2.setOperationStatus("SUCCESS");
+					operation2.setFormid(plan.getId());
+					operation2.setOperation("confirmPlacementOption");
+					operation2.setOpttime(new Date());
+					operation2.setOperationid(UUID.randomUUID().toString());
+					iShipInboundOperationService.save(operation2);
+					return operation2;
+				} else {
+					return operation2;
+				}
+			} else {
+				throw e;
+			}
 		}
+
 	}else {
 		return null;
 	}
@@ -517,7 +545,7 @@ public ListShipmentItemsResponse getshipmentItems(ShipmentItemsDTO dto) {
 		LambdaQueryWrapper<ShipInboundShipmentItem> query=new LambdaQueryWrapper<ShipInboundShipmentItem>();
 		query.eq(ShipInboundShipmentItem::getShipmentid, dto.getShipmentid());
 		List<ShipInboundShipmentItem> itemlist = shipInboundShipmentItemV2Mapper.selectList(query);
-		if(ship!=null&&itemlist.size()>0) {
+		if(ship!=null&&itemlist.size()>0&&itemlist.get(0).getQuantity()>0) {
 			ListShipmentItemsResponse response =new ListShipmentItemsResponse();
             for(ShipInboundShipmentItem item:itemlist){
 				Item entity=new Item();
@@ -551,6 +579,33 @@ public ListShipmentBoxesResponse listShipmentBoxes(ShipmentItemsDTO dto) {
 	ShipInboundPlan plan = shipInboundPlanV2Service.getById(dto.getFormid());
 	if(plan!=null) {
 		AmazonAuthority auth=amazonAuthorityService.selectByGroupAndMarket(plan.getGroupid(), plan.getMarketplaceid());
+		if(dto.getPaginationToken()==null && (dto.getNeedsync()==null||dto.getNeedsync()==false)){
+			LambdaQueryWrapper<ShipInboundShipmentBox> query=new LambdaQueryWrapper<ShipInboundShipmentBox>();
+			query.eq(ShipInboundShipmentBox::getShipmentid, dto.getShipmentid());
+			List<ShipInboundShipmentBox> list = this.shipInboundShipmentBoxMapper.selectList(query);
+			List<ShipInboundShipmentBoxItem> boxitems = this.shipInboundShipmentBoxItemMapper.findByShipment(dto.getShipmentid());
+			if(list!=null&&list.size()>0){
+				ListShipmentBoxesResponse response=new ListShipmentBoxesResponse();
+				List<Box> boxs=new ArrayList<Box>();
+				for (ShipInboundShipmentBox boxitem:list) {
+					Box e=new Box();
+					e.setBoxId(boxitem.getId());
+					e.setQuantity(1);
+					for(ShipInboundShipmentBoxItem item:boxitems){
+						if(item.getBoxid().equals(boxitem.getId())){
+							Item eitem=new Item();
+							eitem.setMsku(item.getSku());
+							eitem.setQuantity(item.getQuantity());
+							e.addItemsItem(eitem);
+						}
+					}
+					boxs.add(e);
+				}
+				response.setBoxes(boxs);
+				return response;
+			}
+		}
+
 		  ListShipmentBoxesResponse response = iInboundApiHandlerService.listShipmentBoxes(auth, plan.getInboundPlanId(),dto.getShipmentid(),dto.getPageSize(),dto.getPaginationToken());
 		if(response!=null) {
 			return response;
@@ -571,6 +626,9 @@ public String saveShipment(ShipInboundPlan inplan, List<String> shipmentids) {
 	// TODO Auto-generated method stub
 	AmazonAuthority auth=amazonAuthorityService.selectByGroupAndMarket(inplan.getGroupid(), inplan.getMarketplaceid());
 	String placementOptionId=null;
+	if(shipmentids==null || shipmentids.size()==0){
+		throw new BizException("没找到需要同步的货件！");
+	}
 	for(String shipmentid:shipmentids) {
         Shipment shipment=asyncShipmentList(auth,inplan,shipmentid);
 		ShipmentItemsDTO dto=new ShipmentItemsDTO();
@@ -593,6 +651,7 @@ public String saveShipment(ShipInboundPlan inplan, List<String> shipmentids) {
 	return placementOptionId;
 }
 private void asyncShipmentBox(ShipmentItemsDTO boxdto,Shipment shipment){
+	boxdto.setNeedsync(true);
 	ListShipmentBoxesResponse boxs = this.listShipmentBoxes(boxdto);
 	List<ShipInboundShipmentBox> boxlist = shipInboundShipmentBoxMapper.selectList(new LambdaQueryWrapper<ShipInboundShipmentBox>().eq(ShipInboundShipmentBox::getShipmentid, boxdto.getShipmentid()));
 	int i=0;
@@ -719,6 +778,29 @@ private String saveShipmentDelivery(Shipment shipment){
 	}
 	return null;
 }
+public void setTranStyle(ShipInboundShipment ship){
+	TransportationDTO dto = new TransportationDTO();
+	dto.setShipmentid(ship.getShipmentid());
+	dto.setInboundPlanId(ship.getInboundplanid());
+	dto.setPlacementOptionId(ship.getPlacementOptionId());
+	dto.setFormid(ship.getFormid());
+	ListTransportationOptionsResponse re=iShipInboundTransportationService.listTransportationOptions(dto);
+	do{
+		if(re.getTransportationOptions()!=null&&re.getTransportationOptions().size()>0){
+			for(TransportationOption transportationOption:re.getTransportationOptions()){
+				if(transportationOption.getTransportationOptionId().equals(ship.getTransportationOptionId())){
+					if(transportationOption.getShippingMode()!=null&&transportationOption.getShippingMode().contains("GROUND_SMALL_PARCEL")){
+						ship.setTranstyle("SP");
+					}
+					if(transportationOption.getShippingMode()!=null&&transportationOption.getShippingMode().contains("FREIGHT_LTL")){
+						ship.setTranstyle("LTL");
+					}
+				}
+			}
+		}
+		re=iShipInboundTransportationService.listTransportationOptions(dto);
+	}while(re!=null&&re.getPagination()!=null&&re.getPagination().getNextToken()!=null);
+}
 	public Shipment asyncShipmentList(AmazonAuthority auth,ShipInboundPlan inplan,String shipmentid) {
 		Shipment shipment = iInboundApiHandlerService.getShipment(auth, inplan.getInboundPlanId(), shipmentid);
 		String addressCode=saveDestinationAddress(shipment);
@@ -760,6 +842,9 @@ private String saveShipmentDelivery(Shipment shipment){
 			if(inplan.getInvtype()==2 && ship.getStatus()!=8&& ship.getStatus()!=0){
 				ship.setStatus(7);
 			}
+			if(ship.getTransportationOptionId()!=null&&ship.getTranstyle()==null){
+				setTranStyle(ship);
+			}
 			this.save(ship);
 		}else {
 			oldOne.setDestination(addressCode);
@@ -778,9 +863,11 @@ private String saveShipmentDelivery(Shipment shipment){
 			if(shipment.getStatus()!=null&&shipment.getStatus().equals("CLOSED")){
 				oldOne.setStatus(8);
 			}
+			if(oldOne.getTransportationOptionId()!=null&&oldOne.getTranstyle()==null){
+				setTranStyle(oldOne);
+			}
 			this.updateById(oldOne);
 		}
-
         return shipment;
 	}
 
@@ -954,7 +1041,15 @@ public ListDeliveryWindowOptionsResponse listDeliveryWindowOptions(DeliveryWindo
 				option.setEndDate(AmzDateUtils.getDate(deliveryWindowOption.getEndDate()));
 				option.setStartDate(AmzDateUtils.getDate(deliveryWindowOption.getStartDate()));
                 option.setAvailabilityType(deliveryWindowOption.getAvailabilityType());
-				shipInboundPlanDeliveryOptionsMapper.insert(option);
+				LambdaQueryWrapper<ShipInboundPlanDeliveryOptions> query = new LambdaQueryWrapper<ShipInboundPlanDeliveryOptions>();
+				query.eq(ShipInboundPlanDeliveryOptions::getShipmentid, option.getShipmentid());
+				query.eq(ShipInboundPlanDeliveryOptions::getDeliveryWindowOptionId, option.getDeliveryWindowOptionId());
+				ShipInboundPlanDeliveryOptions old = shipInboundPlanDeliveryOptionsMapper.selectOne(query);
+				if(old!=null){
+					shipInboundPlanDeliveryOptionsMapper.update(option, query);
+				}else{
+					shipInboundPlanDeliveryOptionsMapper.insert(option);
+				}
 			}
 		}
 	}
@@ -1095,7 +1190,7 @@ public ShipInboundOperation handleUpdateTraceInfo(ShipInboundShipment ship,List<
 		AmazonAuthority auth=amazonAuthorityService.selectByGroupAndMarket(inplan.getGroupid(), inplan.getMarketplaceid());
 		UpdateShipmentTrackingDetailsRequest body=new UpdateShipmentTrackingDetailsRequest();
 		TrackingDetailsInput tracking=new TrackingDetailsInput();
-	   if(ship.getTranstyle().equals("SP")){
+	   if(ship.getTranstyle()==null||ship.getTranstyle().equals("SP")){
 		SpdTrackingDetailInput sptracking=new SpdTrackingDetailInput();
 		List<SpdTrackingItemInput> spdTrackingItems=new ArrayList<SpdTrackingItemInput>();
 		for(ShipInboundShipmentBox box:boxinfo) {
@@ -1302,7 +1397,8 @@ public void updateFeeByShipment(List<ShipInboundShipmentItem> list) {
 				}
 			}
 		    shipmentdto.setStatus(0);
-			shipmentdto.setRemark(shipment.getRemark());
+			String remark=StrUtil.isNotBlank(shipment.getRemark())?shipment.getRemark():plan.getRemark();
+			shipmentdto.setRemark(remark);
 			shipmentdto.setGroupname(data.getGroupname());
 			if(user.getUserinfo()!=null){
 				if(user.getUserinfo().get("name")!=null){
@@ -1483,6 +1579,13 @@ public void updateFeeByShipment(List<ShipInboundShipmentItem> list) {
 			}
 		}
 
+	}
+
+	@Override
+	public void ignoreShipment(UserInfo user, String shipmentid) {
+		ShipInboundShipment shipment = this.baseMapper.selectById(shipmentid);
+		shipment.setIgnorerec(true);
+		this.updateById(shipment);
 	}
 }
 

@@ -89,6 +89,9 @@ public class ShipPlanVo  {
 	 Integer days;
 	 @ApiModelProperty(value = "备注")
 	 String remark;
+
+	@ApiModelProperty(value = "货件ID列表")
+	String shipments;
 	 
 	 @ApiModelProperty(value = "计划状态")
 	 Integer auditstatus;
@@ -100,6 +103,10 @@ public class ShipPlanVo  {
 	 Date shippingDate;
 	 @ApiModelProperty(value = "计划SubID")
 	 String plansubid;
+
+	@ApiModelProperty(value = "后台计划id")
+	String planid;
+
 	 
 	 @ApiModelProperty(value = "操作时间")
 	 Date opttime;

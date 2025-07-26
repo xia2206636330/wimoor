@@ -10,30 +10,26 @@
  * Do not edit the class manually.
  */
 
-
 package com.amazon.spapi.model.reports;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-import org.threeten.bp.OffsetDateTime;
-
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.threeten.bp.OffsetDateTime;
 /**
  * Detailed information about the report.
  */
-@ApiModel(description = "Detailed information about the report.")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2024-01-30T15:19:03.036+08:00")
+@Schema(description = "Detailed information about the report.")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2025-07-17T17:44:03.075337400+08:00[Asia/Shanghai]")
+
 public class Report {
   @SerializedName("marketplaceIds")
   private List<String> marketplaceIds = null;
@@ -61,14 +57,15 @@ public class Report {
    */
   @JsonAdapter(ProcessingStatusEnum.Adapter.class)
   public enum ProcessingStatusEnum {
+    @SerializedName("CANCELLED")
     CANCELLED("CANCELLED"),
-    
+    @SerializedName("DONE")
     DONE("DONE"),
-    
+    @SerializedName("FATAL")
     FATAL("FATAL"),
-    
+    @SerializedName("IN_PROGRESS")
     IN_PROGRESS("IN_PROGRESS"),
-    
+    @SerializedName("IN_QUEUE")
     IN_QUEUE("IN_QUEUE");
 
     private String value;
@@ -76,7 +73,6 @@ public class Report {
     ProcessingStatusEnum(String value) {
       this.value = value;
     }
-
     public String getValue() {
       return value;
     }
@@ -85,31 +81,27 @@ public class Report {
     public String toString() {
       return String.valueOf(value);
     }
-
-    public static ProcessingStatusEnum fromValue(String text) {
+    public static ProcessingStatusEnum fromValue(String input) {
       for (ProcessingStatusEnum b : ProcessingStatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (b.value.equals(input)) {
           return b;
         }
       }
       return null;
     }
-
     public static class Adapter extends TypeAdapter<ProcessingStatusEnum> {
       @Override
       public void write(final JsonWriter jsonWriter, final ProcessingStatusEnum enumeration) throws IOException {
-        jsonWriter.value(enumeration.getValue());
+        jsonWriter.value(String.valueOf(enumeration.getValue()));
       }
 
       @Override
       public ProcessingStatusEnum read(final JsonReader jsonReader) throws IOException {
-        String value = jsonReader.nextString();
-        return ProcessingStatusEnum.fromValue(String.valueOf(value));
+        Object value = jsonReader.nextString();
+        return ProcessingStatusEnum.fromValue((String)(value));
       }
     }
-  }
-
-  @SerializedName("processingStatus")
+  }  @SerializedName("processingStatus")
   private ProcessingStatusEnum processingStatus = null;
 
   @SerializedName("processingStartTime")
@@ -138,7 +130,7 @@ public class Report {
    * A list of marketplace identifiers for the report.
    * @return marketplaceIds
   **/
-  @ApiModelProperty(value = "A list of marketplace identifiers for the report.")
+  @Schema(description = "A list of marketplace identifiers for the report.")
   public List<String> getMarketplaceIds() {
     return marketplaceIds;
   }
@@ -156,7 +148,7 @@ public class Report {
    * The identifier for the report. This identifier is unique only in combination with a seller ID.
    * @return reportId
   **/
-  @ApiModelProperty(required = true, value = "The identifier for the report. This identifier is unique only in combination with a seller ID.")
+  @Schema(required = true, description = "The identifier for the report. This identifier is unique only in combination with a seller ID.")
   public String getReportId() {
     return reportId;
   }
@@ -174,7 +166,7 @@ public class Report {
    * The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.
    * @return reportType
   **/
-  @ApiModelProperty(required = true, value = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
+  @Schema(required = true, description = "The report type. Refer to [Report Type Values](https://developer-docs.amazon.com/sp-api/docs/report-type-values) for more information.")
   public String getReportType() {
     return reportType;
   }
@@ -192,7 +184,7 @@ public class Report {
    * The start of a date and time range used for selecting the data to report.
    * @return dataStartTime
   **/
-  @ApiModelProperty(value = "The start of a date and time range used for selecting the data to report.")
+  @Schema(description = "The start of a date and time range used for selecting the data to report.")
   public OffsetDateTime getDataStartTime() {
     return dataStartTime;
   }
@@ -210,7 +202,7 @@ public class Report {
    * The end of a date and time range used for selecting the data to report.
    * @return dataEndTime
   **/
-  @ApiModelProperty(value = "The end of a date and time range used for selecting the data to report.")
+  @Schema(description = "The end of a date and time range used for selecting the data to report.")
   public OffsetDateTime getDataEndTime() {
     return dataEndTime;
   }
@@ -228,7 +220,7 @@ public class Report {
    * The identifier of the report schedule that created this report (if any). This identifier is unique only in combination with a seller ID.
    * @return reportScheduleId
   **/
-  @ApiModelProperty(value = "The identifier of the report schedule that created this report (if any). This identifier is unique only in combination with a seller ID.")
+  @Schema(description = "The identifier of the report schedule that created this report (if any). This identifier is unique only in combination with a seller ID.")
   public String getReportScheduleId() {
     return reportScheduleId;
   }
@@ -246,7 +238,7 @@ public class Report {
    * The date and time when the report was created.
    * @return createdTime
   **/
-  @ApiModelProperty(required = true, value = "The date and time when the report was created.")
+  @Schema(required = true, description = "The date and time when the report was created.")
   public OffsetDateTime getCreatedTime() {
     return createdTime;
   }
@@ -264,7 +256,7 @@ public class Report {
    * The processing status of the report.
    * @return processingStatus
   **/
-  @ApiModelProperty(required = true, value = "The processing status of the report.")
+  @Schema(required = true, description = "The processing status of the report.")
   public ProcessingStatusEnum getProcessingStatus() {
     return processingStatus;
   }
@@ -279,10 +271,10 @@ public class Report {
   }
 
    /**
-   * The date and time when the report processing started, in ISO 8601 date time format.
+   * The date and time when the report processing started, in &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; date time format.
    * @return processingStartTime
   **/
-  @ApiModelProperty(value = "The date and time when the report processing started, in ISO 8601 date time format.")
+  @Schema(description = "The date and time when the report processing started, in <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> date time format.")
   public OffsetDateTime getProcessingStartTime() {
     return processingStartTime;
   }
@@ -297,10 +289,10 @@ public class Report {
   }
 
    /**
-   * The date and time when the report processing completed, in ISO 8601 date time format.
+   * The date and time when the report processing completed, in &lt;a href&#x3D;&#x27;https://developer-docs.amazon.com/sp-api/docs/iso-8601&#x27;&gt;ISO 8601&lt;/a&gt; date time format.
    * @return processingEndTime
   **/
-  @ApiModelProperty(value = "The date and time when the report processing completed, in ISO 8601 date time format.")
+  @Schema(description = "The date and time when the report processing completed, in <a href='https://developer-docs.amazon.com/sp-api/docs/iso-8601'>ISO 8601</a> date time format.")
   public OffsetDateTime getProcessingEndTime() {
     return processingEndTime;
   }
@@ -315,10 +307,10 @@ public class Report {
   }
 
    /**
-   * The identifier for the report document. Pass this into the getReportDocument operation to get the information you will need to retrieve the report document&#39;s contents.
+   * The identifier for the report document. Pass this into the &#x60;getReportDocument&#x60; operation to get the information you will need to retrieve the report document&#x27;s contents.
    * @return reportDocumentId
   **/
-  @ApiModelProperty(value = "The identifier for the report document. Pass this into the getReportDocument operation to get the information you will need to retrieve the report document's contents.")
+  @Schema(description = "The identifier for the report document. Pass this into the `getReportDocument` operation to get the information you will need to retrieve the report document's contents.")
   public String getReportDocumentId() {
     return reportDocumentId;
   }
@@ -388,4 +380,3 @@ public class Report {
   }
 
 }
-

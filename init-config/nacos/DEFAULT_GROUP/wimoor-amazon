@@ -13,6 +13,7 @@ aws:
   sqsFifoArn: arn:aws:sqs:us-west-2:123456789:mysqs.fifo
   accessKeyId: ABCDEFGHIJKOPQRSTUVWXYZ
   secretKey: 1a2b3d4c5d6e7f1234564fdsafdsa1fd2fdsaf12ds3a4f5ew6
+  region: us-west-2
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

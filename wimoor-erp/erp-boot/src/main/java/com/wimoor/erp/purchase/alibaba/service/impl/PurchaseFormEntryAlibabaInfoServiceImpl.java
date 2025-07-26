@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.util.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -177,6 +178,9 @@ public class PurchaseFormEntryAlibabaInfoServiceImpl  extends ServiceImpl<Purcha
 						String logisticsBillNo = logisticsItems.getJSONObject(j).getString("logisticsBillNo");// 物流编号
 						QueryWrapper<PurchaseFormEntryLogistics> queryWrapper = new QueryWrapper<PurchaseFormEntryLogistics>();
 						queryWrapper.eq("entryid", purchaseEntryid);
+						if(StrUtil.isBlank(logisticsBillNo)){
+							continue;
+						}
 						PurchaseFormEntryLogistics logistics=new PurchaseFormEntryLogistics();
 						logistics.setEntryid(purchaseEntryid);
 						logistics.setLogisticsid(logisticsBillNo);

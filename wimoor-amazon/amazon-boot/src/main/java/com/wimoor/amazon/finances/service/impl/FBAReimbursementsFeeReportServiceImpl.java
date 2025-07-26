@@ -44,6 +44,7 @@ public class FBAReimbursementsFeeReportServiceImpl extends ServiceImpl<FBAReimbu
 		titlemap.put("approval_date", "费用时间");
 		titlemap.put("amazon_order_id", "订单ID");
 		titlemap.put("reimbursement_id", "报销ID");
+		titlemap.put("reason", "报销原因");
 		titlemap.put("amount_per_unit", "单个金额");
 		titlemap.put("amount_total", "总金额");
 		titlemap.put("currency_unit", "币种");

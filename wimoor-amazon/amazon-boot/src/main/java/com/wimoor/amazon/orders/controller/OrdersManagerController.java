@@ -1,5 +1,6 @@
 package com.wimoor.amazon.orders.controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -226,7 +227,7 @@ public class OrdersManagerController{
 				workbook.close();
 				fOut.flush();
 				fOut.close();
-			} catch (Exception e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 	}
@@ -341,7 +342,7 @@ public class OrdersManagerController{
 					workbook.close();
 					fOut.flush();
 					fOut.close();
-				} catch (Exception e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 	}

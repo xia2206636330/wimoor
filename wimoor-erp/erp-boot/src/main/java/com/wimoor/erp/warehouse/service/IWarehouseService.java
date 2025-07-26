@@ -10,12 +10,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.common.pojo.entity.ERPBizException;
+import com.wimoor.erp.warehouse.pojo.dto.WarehouseDTO;
 import com.wimoor.erp.warehouse.pojo.entity.Warehouse;
 
 public interface IWarehouseService extends IService<Warehouse> {
 
 	//展示页面
-	public IPage<Warehouse> findByCondition(Page<?> page,String search, String shopid, String ftype,String parentid );
+	public IPage<Warehouse> findByCondition(UserInfo userinfo , WarehouseDTO dto );
 	//所有fba仓库
 	String selectTypeByName(String ftypename);
 
@@ -43,7 +44,8 @@ public interface IWarehouseService extends IService<Warehouse> {
 	Integer saveQuality(String wname,String sernum,String parentid);
 	
 	Integer saveScrap(String wname,String sernum,String parentid);
-	
+
+	String checkDeleteWarehouse(String id);
 	Integer deleteInfoById(String id) throws ERPBizException;
 	
 	Integer saveMyware(Warehouse wh) throws ERPBizException, Exception;

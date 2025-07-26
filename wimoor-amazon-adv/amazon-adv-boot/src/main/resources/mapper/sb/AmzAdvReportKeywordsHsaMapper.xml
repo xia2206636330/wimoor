@@ -71,21 +71,93 @@
 	</insert>
 	
 		<insert id="insertBatchAttributed" parameterType="java.util.List">
-		replace into t_amz_adv_rpt2_hsa_keywords_attributed (
-			`keywordId`,
-			`bydate`,
-			`attributedSales14d`,
-			`attributedSales14dSameSKU`,
-			`attributedConversions14d`,
-			`attributedConversions14dSameSKU`) values
+		replace into t_amz_adv_rpt2_hsa_keywords_attributed_all (
+			keywordId,
+			bydate,
+			addToCart,
+			addToCartClicks,
+			addToCartRate,
+			addToList,
+			addToListFromClicks,
+			qualifiedBorrows,
+			qualifiedBorrowsFromClicks,
+			royaltyQualifiedBorrows,
+			royaltyQualifiedBorrowsFromClicks,
+			brandedSearches,
+			brandedSearchesClicks,
+			campaignBudgetAmount,
+			campaignBudgetCurrencyCode,
+			detailPageViews,
+			detailPageViewsClicks,
+			eCPAddToCart,
+			keywordBid,
+			newToBrandDetailPageViewRate,
+			newToBrandDetailPageViews,
+			newToBrandDetailPageViewsClicks,
+			newToBrandECPDetailPageView,
+			newToBrandPurchases,
+			newToBrandPurchasesClicks,
+			newToBrandPurchasesPercentage,
+			newToBrandPurchasesRate,
+			newToBrandSales,
+			newToBrandSalesClicks,
+			newToBrandSalesPercentage,
+			newToBrandUnitsSold,
+			newToBrandUnitsSoldClicks,
+			newToBrandUnitsSoldPercentage,
+			purchases,
+			purchasesClicks,
+			purchasesPromoted,
+			sales,
+			salesClicks,
+			salesPromoted,
+			topOfSearchImpressionShare,
+			unitsSold,
+			opttime) values
 		<foreach collection="list" item="adv" index="index" separator=",">
 			(
-			#{adv.keywordid,jdbcType=BIGINT},
+			#{adv.keywordId,jdbcType=BIGINT},
 			#{adv.bydate,jdbcType=DATE},
-			#{adv.attributedsales14d,jdbcType=DECIMAL},
-		    #{adv.attributedsales14dsamesku,jdbcType=DECIMAL},
-			#{adv.attributedconversions14d,jdbcType=INTEGER},
-			#{adv.attributedconversions14dsamesku,jdbcType=INTEGER}
+			#{adv.addToCart,jdbcType=INTEGER},
+			#{adv.addToCartClicks,jdbcType=INTEGER},
+			#{adv.addToCartRate,jdbcType=DECIMAL},
+			#{adv.addToList,jdbcType=INTEGER},
+			#{adv.addToListFromClicks,jdbcType=INTEGER},
+			#{adv.qualifiedBorrows,jdbcType=INTEGER},
+			#{adv.qualifiedBorrowsFromClicks,jdbcType=INTEGER},
+			#{adv.royaltyQualifiedBorrows,jdbcType=INTEGER},
+			#{adv.royaltyQualifiedBorrowsFromClicks,jdbcType=INTEGER},
+			#{adv.brandedSearches,jdbcType=INTEGER},
+			#{adv.brandedSearchesClicks,jdbcType=INTEGER},
+			#{adv.campaignBudgetAmount,jdbcType=DECIMAL},
+			#{adv.campaignBudgetCurrencyCode,jdbcType=CHAR},
+			#{adv.detailPageViews,jdbcType=INTEGER},
+			#{adv.detailPageViewsClicks,jdbcType=INTEGER},
+			#{adv.eCPAddToCart,jdbcType=DECIMAL},
+			#{adv.keywordBid,jdbcType=DECIMAL},
+			#{adv.newToBrandDetailPageViewRate,jdbcType=DECIMAL},
+			#{adv.newToBrandDetailPageViews,jdbcType=INTEGER},
+			#{adv.newToBrandDetailPageViewsClicks,jdbcType=INTEGER},
+			#{adv.newToBrandECPDetailPageView,jdbcType=DECIMAL},
+			#{adv.newToBrandPurchases,jdbcType=INTEGER},
+			#{adv.newToBrandPurchasesClicks,jdbcType=INTEGER},
+			#{adv.newToBrandPurchasesPercentage,jdbcType=DECIMAL},
+			#{adv.newToBrandPurchasesRate,jdbcType=DECIMAL},
+			#{adv.newToBrandSales,jdbcType=DECIMAL},
+			#{adv.newToBrandSalesClicks,jdbcType=INTEGER},
+			#{adv.newToBrandSalesPercentage,jdbcType=DECIMAL},
+			#{adv.newToBrandUnitsSold,jdbcType=INTEGER},
+			#{adv.newToBrandUnitsSoldClicks,jdbcType=INTEGER},
+			#{adv.newToBrandUnitsSoldPercentage,jdbcType=DECIMAL},
+			#{adv.purchases,jdbcType=INTEGER},
+			#{adv.purchasesClicks,jdbcType=INTEGER},
+			#{adv.purchasesPromoted,jdbcType=INTEGER},
+			#{adv.sales,jdbcType=DECIMAL},
+			#{adv.salesClicks,jdbcType=INTEGER},
+			#{adv.salesPromoted,jdbcType=DECIMAL},
+			#{adv.topOfSearchImpressionShare,jdbcType=DECIMAL},
+			#{adv.unitsSold,jdbcType=INTEGER},
+			#{adv.opttime,jdbcType=TIMESTAMP}
 			)
 		</foreach>
 	</insert>
@@ -159,18 +231,18 @@
 			sum(t.impressions) impressions, sum(t.clicks) clicks, sum(t.cost) Spend,
 			ifnull((sum(t.clicks) / sum(t.impressions)),0) 'Click Thru Rate (CTR)',
 			ifnull((sum(t.cost) / sum(t.clicks)),0) 'Cost Per Click (CPC)',
-			ifnull(sum(a.attributedSales14d),0) '14 Day Total Sales',
+			ifnull(sum(a.sales),0) '14 Day Total Sales',
 			case when ifnull(sum(t.cost),0) > 0 
-			and ifnull(sum(a.attributedSales14d),0) = 0
+			and ifnull(sum(a.sales),0) = 0
 			then 0
-			else ifnull((sum(t.cost) / sum(a.attributedSales14d)),0)
+			else ifnull((sum(t.cost) / sum(a.sales)),0)
 			end 'Total Advertising Cost of Sales (ACoS)',
-			ifnull((sum(a.attributedSales14d) / sum(t.cost)),0) 'Total Return on Advertising Spend (RoAS)',
-			ifnull(sum(a.attributedConversions14d),0) '14 Day Total Orders',
-			ifnull(sum(a.attributedConversions14d),0) '14 Day Total Units',
-			ifnull((sum(a.attributedConversions14d) / sum(t.clicks)),0) '14 Day Conversion Rate'
+			ifnull((sum(a.sales) / sum(t.cost)),0) 'Total Return on Advertising Spend (RoAS)',
+			ifnull(sum(a.purchases),0) '14 Day Total Orders',
+			ifnull(sum(a.unitsSold),0) '14 Day Total Units',
+			ifnull((sum(a.purchases) / sum(t.clicks)),0) '14 Day Conversion Rate'
 		from t_amz_adv_rpt2_hsa_keywords t
-		left join t_amz_adv_rpt2_hsa_keywords_attributed a on a.bydate=t.bydate and a.keywordId=t.keywordId
+		left join t_amz_adv_rpt2_hsa_keywords_attributed_all a on a.bydate=t.bydate and a.keywordId=t.keywordId
 		left join t_amz_adv_keywords k on k.keywordId=t.keywordId
 		left join t_amz_adv_campaigns_hsa c  on c.campaignId=k.campaignId and c.profileid=t.profileid
 		where t.profileid = #{profileid,jdbcType=CHAR}

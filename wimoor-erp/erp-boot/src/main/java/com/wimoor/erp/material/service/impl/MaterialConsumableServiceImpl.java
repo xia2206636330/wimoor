@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
+import com.wimoor.erp.stock.mapper.OutwhFormConsumableMapper;
+import com.wimoor.erp.stock.pojo.entity.OutwhFormConsumable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
@@ -55,6 +57,7 @@ public class MaterialConsumableServiceImpl extends ServiceImpl<MaterialConsumabl
 	final IWarehouseService warehouseService;
 	final ISerialNumService serialNumService;
 	final AmazonClientOneFeignManager amazonClientOneFeignManager;
+	final OutwhFormConsumableMapper outwhFormConsumableMapper;
 	@Lazy
 	@Autowired
 	IInventoryService inventoryService;
@@ -300,6 +303,13 @@ public int saveInventoryConsumable(UserInfo user,ConsumableOutFormDTO dto) {
 		}
 		form.setId(formid);
 		outWarehouseFormMapper.insert(form);
+		//记录耗材出库的主SKU
+        if(dto.getConsumablelist()!=null && dto.getConsumablelist().size()>0){
+			for (OutwhFormConsumable item:dto.getConsumablelist()){
+				item.setFormid(formid);
+				outwhFormConsumableMapper.insert(item);
+			}
+		}
 			if(hasConsumableQty==true) {
 				for(int i=0;i<dto.getSkulist().size();i++) {
 					ConsumableSkuDTO skuinfo = dto.getSkulist().get(i);
@@ -425,6 +435,7 @@ public List<Map<String, Object>> findConsumableDetailBySkuList(UserInfo user, Ma
 	}
 	map.put("mskulist", skulist);
 	List<Map<String, Object>> list = this.baseMapper.findConsumableDetailBySkuList(map) ;
+	List<Map<String, Object>> recordList=new ArrayList<Map<String, Object>>();
 	Map<String,Integer> entryMap=new HashMap<String,Integer>();
 	if(StrUtil.isNotBlank(dto.getNumber())) {
 		LambdaQueryWrapper<OutWarehouseForm> query=new LambdaQueryWrapper<OutWarehouseForm>();
@@ -453,6 +464,19 @@ public List<Map<String, Object>> findConsumableDetailBySkuList(UserInfo user, Ma
 			Double newneed = units*shipqty;
 			Double oldneed=need.get(item.get("materialid").toString())!=null?Double.parseDouble(need.get(item.get("materialid").toString()).toString()):0.00;
 			need.put(item.get("materialid").toString(), oldneed+newneed);
+			Map<String, Object> myitem=new HashMap<String, Object>();
+			myitem.put("submid", item.get("materialid"));
+			myitem.put("mainmid", item.get("mainmid"));
+			myitem.put("units", item.get("units"));
+			myitem.put("shipqty", shipqty);
+			myitem.put("subout", newneed);
+			myitem.put("formid", null);
+			//显示结构--------------------------------------------
+			myitem.put("image", item.get("image"));
+			myitem.put("mname", item.get("mname"));
+			myitem.put("sku", item.get("sku"));
+			myitem.put("mainsku", item.get("mainsku"));
+			recordList.add(myitem);
 		}
 		subskuMap.put(item.get("materialid").toString(),item);
 	}
@@ -467,6 +491,9 @@ public List<Map<String, Object>> findConsumableDetailBySkuList(UserInfo user, Ma
 		item.put("residue",needValue-intneed  );
 		item.put("out", entryMap.get(item.get("materialid").toString()));
 		result.add(item);
+	}
+	if(result!=null && result.size()>0){
+		result.get(0).put("recordList", recordList);
 	}
 	return result;
 }

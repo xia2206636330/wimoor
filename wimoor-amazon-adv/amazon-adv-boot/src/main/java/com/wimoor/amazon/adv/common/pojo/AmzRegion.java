@@ -1,6 +1,7 @@
 package com.wimoor.amazon.adv.common.pojo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +34,9 @@ public class AmzRegion  implements Serializable{
 
 	@Column(name = "client_secret")
     private String clientSecret;
+
+    @Column(name = "createtime")
+    private Date createtime;
 
     public String getCode() {
         return code;
@@ -81,6 +85,12 @@ public class AmzRegion  implements Serializable{
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret == null ? null : clientSecret.trim();
     }
-    
-    
+
+    public Date getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
+    }
 }

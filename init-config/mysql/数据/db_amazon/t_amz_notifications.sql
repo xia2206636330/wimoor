@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
--- 主机:                           rm-wz903sa454i2h35ik6o.mysql.rds.aliyuncs.com
--- 服务器版本:                        5.7.28-log - Source distribution
+-- 主机:                           wimoor.rwlb.rds.aliyuncs.com
+-- 服务器版本:                        8.0.36 - Source distribution
 -- 服务器操作系统:                      Linux
 -- HeidiSQL 版本:                  12.6.0.6765
 -- --------------------------------------------------------
@@ -14,7 +14,7 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- 正在导出表  db_amazon.t_amz_notifications 的数据：~16 rows (大约)
+-- 正在导出表  db_amazon.t_amz_notifications 的数据：~18 rows (大约)
 DELETE FROM `t_amz_notifications`;
 INSERT INTO `t_amz_notifications` (`id`, `notifications`, `description`, `isrun`) VALUES
 	(101, 'ACCOUNT_STATUS_CHANGED', '每当开发人员订阅的商家/市场对的帐户状态发生变化时发送。每当商家的帐户状态在 NORMAL、AT_RISK 和 DEACTIVATED 之间变化时，都会发布通知。', b'0'),
@@ -30,9 +30,11 @@ INSERT INTO `t_amz_notifications` (`id`, `notifications`, `description`, `isrun`
 	(111, 'LISTINGS_ITEM_STATUS_CHANGE', '每当销售伙伴拥有的商品状态发生变化时发送。', b'0'),
 	(112, 'LISTINGS_ITEM_ISSUES_CHANGE', '每当与销售伙伴拥有的商品相关的问题发生变化时发送。', b'0'),
 	(113, 'MFN_ORDER_STATUS_CHANGE', 'MFN 订单可用性状态发生变化时发送', b'0'),
-	(114, 'ORDER_STATUS_CHANGE', '每当订单可用性状态发生变化时发送。', b'1'),
+	(114, 'ORDER_CHANGE', '每当订单可用性状态发生变化时发送。', b'1'),
 	(115, 'PRICING_HEALTH', '每当卖家报价因为没有竞争力的价格而没有资格成为特色报价（Buy Box 报价）时发送', b'0'),
-	(116, 'REPORT_PROCESSING_FINISHED', '每当您使用 Selling Partner API for Reports 请求的任何报告达到 DONE、CANCELLED 或 FATAL 的报告处理状态时发送。', b'1');
+	(116, 'REPORT_PROCESSING_FINISHED', '每当您使用 Selling Partner API for Reports 请求的任何报告达到 DONE、CANCELLED 或 FATAL 的报告处理状态时发送。', b'1'),
+	(117, 'PRICE_HEALTH', '获取buy box price', b'1'),
+	(118, 'ORDER_STATUS_CHANGE', '订单状态变化', b'0');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

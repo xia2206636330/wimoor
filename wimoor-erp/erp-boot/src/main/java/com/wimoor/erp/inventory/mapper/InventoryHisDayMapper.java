@@ -22,6 +22,6 @@ public interface InventoryHisDayMapper extends BaseMapper<InventoryHisDay> {
 	Map<String, Object> getInvDayTotal(Map<String, Object> parameter);
 	
 	void summaryInvEveryDay(@Param("byday") String byday,@Param("endday") String endday);
-	
-	
+
+	void summaryInvtoDay();
 }

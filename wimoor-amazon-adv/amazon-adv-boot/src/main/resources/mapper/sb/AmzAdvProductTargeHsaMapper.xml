@@ -38,7 +38,7 @@
 			${serchstr}
 		</if>
 		from t_amz_adv_rpt2_hsa_product_targets t
-		left join t_amz_adv_rpt2_hsa_product_targets_attributed d on d.targetId=t.targetId and d.bydate=t.bydate
+		left join t_amz_adv_rpt2_hsa_product_targets_attributed_all d on d.targetId=t.targetId and d.bydate=t.bydate
 		left join t_amz_adv_product_targe_hsa_hsa pd on pd.adGroupId=t.adGroupId and pd.campaignId=t.campaignId and pd.targetId=t.targetId and pd.profileid=t.profileid
 		left join t_amz_adv_rpt2_hsa_product_targets_attributed_same sa on sa.adId=t.adId and sa.bydate=t.bydate
 		left join t_amz_adv_adgroups ad on ad.adGroupId=t.adGroupId and ad.campaignId=t.campaignId and t.profileid=ad.profileid
@@ -62,7 +62,7 @@
 			${serchstr}
 		</if>
 		from t_amz_adv_rpt2_hsa_product_targets t
-		left join t_amz_adv_rpt2_hsa_product_targets_attributed d on d.targetId=t.targetId and d.bydate=t.bydate
+		left join t_amz_adv_rpt2_hsa_product_targets_attributed_all d on d.targetId=t.targetId and d.bydate=t.bydate
 		left join t_amz_adv_product_targe_hsa pd on pd.adGroupId=t.adGroupId and pd.campaignId=t.campaignId and pd.targetId=t.targetId and pd.profileid=t.profileid
 		left join t_amz_adv_rpt2_hsa_product_targets_attributed_same sa on sa.adId=t.adId and sa.bydate=t.bydate
 		left join t_amz_adv_adgroups ad on ad.adGroupId=t.adGroupId and ad.campaignId=t.campaignId and t.profileid=ad.profileid
@@ -102,20 +102,18 @@
 					IFNULL((SUM(cost) / SUM(clicks)),0) avgcost,
 					IFNULL((SUM(clicks) / SUM(impressions)),0) CTR,
 					CASE WHEN IFNULL(SUM(cost),0)> 0
-					AND IFNULL(SUM(attributedSales14d),0)= 0 THEN 10000000000 
-					ELSE IFNULL( ( SUM(cost) / SUM(attributedSales14d) ), 0 ) END ACOS,
-					IFNULL( ( SUM(attributedSales14d) / SUM(cost) ), 0 ) ROAS,
-					IFNULL(	SUM(attributedSales14d),0) sumSales,
-					IFNULL(	SUM(attributedConversions14d),0) sumUnits,
-					IFNULL(	(SUM(attributedConversions14d) / SUM(clicks)),0	) CSRT,
-					IFNULL(	SUM(attributedConversions14d) - SUM(attributedConversions14dSameSKU	),0) attributedConversions,
-					IFNULL(	SUM(attributedConversions14dSameSKU	),0) attributedConversionsSameSKU,
-					IFNULL(	SUM(attributedConversions14d),0) attributedUnitsOrdered,
-					IFNULL(	SUM(attributedSales14dSameSKU),	0) attributedSalesSameSKU,
-					IFNULL(SUM(attributedSales14d) - SUM(attributedSales14dSameSKU),0) attributedSales
+					AND IFNULL(SUM(sales),0)= 0 THEN 10000000000
+					ELSE IFNULL( ( SUM(cost) / SUM(sales) ), 0 ) END ACOS,
+					IFNULL( ( SUM(sales) / SUM(cost) ), 0 ) ROAS,
+					IFNULL(	SUM(sales),0) sumSales,
+					IFNULL(	SUM(unitsSold),0) sumUnits,
+					IFNULL(	(SUM(purchases) / SUM(clicks)),0	) CSRT,
+					IFNULL(	SUM(purchases) ,0) attributedConversions,
+					IFNULL(	SUM(unitsSold),0) attributedUnitsOrdered,
+					IFNULL(SUM(sales),0) attributedSales
 				FROM
 					t_amz_adv_rpt2_hsa_product_targets t
-					LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_attributed d ON d.targetId = t.targetId AND d.bydate = t.bydate
+					LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_attributed_all d ON d.targetId = t.targetId AND d.bydate = t.bydate
 					LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_brand bd ON bd.targetId = t.targetId AND bd.bydate = t.bydate
 					LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_video vd ON vd.targetId = t.targetId AND vd.bydate = t.bydate
 					LEFT JOIN t_amz_adv_product_targe_hsa pd ON pd.adGroupId = t.adGroupId
@@ -230,7 +228,7 @@
 			${HSAserchlist}
 		</if>
 		from t_amz_adv_rpt2_hsa_product_targets v
-		left join t_amz_adv_rpt2_hsa_product_targets_attributed d on d.targetId=v.targetId and d.bydate=v.bydate
+		left join t_amz_adv_rpt2_hsa_product_targets_attributed_all d on d.targetId=v.targetId and d.bydate=v.bydate
 		left join t_amz_adv_rpt2_hsa_product_targets_brand bd on bd.targetId=v.targetId and bd.bydate=v.bydate
 		left join t_amz_adv_rpt2_hsa_product_targets_video vd on vd.targetId=v.targetId and vd.bydate=v.bydate
 		left join t_amz_adv_adgroups ad on ad.adGroupId=v.adGroupId and ad.campaignId=v.campaignId and v.profileid=ad.profileid
@@ -323,20 +321,18 @@
 			sum(impressions) impressions, sum(clicks) clicks, sum(cost) Spend,
 			ifnull((sum(clicks) / sum(impressions)),0) 'Click Thru Rate (CTR)',
 			ifnull((sum(cost) / sum(clicks)),0) 'Cost Per Click (CPC)',
-			ifnull(sum(attributedSales7d),0) '7 Day Total Sales',
-			case when ifnull(sum(cost),0) > 0 and ifnull(sum(attributedSales7d),0) = 0
+			ifnull(sum(sales),0) '7 Day Total Sales',
+			case when ifnull(sum(cost),0) > 0 and ifnull(sum(sales),0) = 0
 			then 0
-			else ifnull((sum(cost) / sum(attributedSales7d)),0) end 'Total Advertising Cost of Sales (ACoS)',
-			ifnull((sum(attributedSales7d) / sum(cost)),0) 'Total Return on Advertising Spend (RoAS)',
-			ifnull(sum(attributedConversions7d),0) '7 Day Total Orders',
-			ifnull(sum(attributedUnitsOrdered7d),0) '7 Day Total Units',
-			ifnull((sum(attributedConversions7d) / sum(clicks)),0) '7 Day Conversion Rate',
-			ifnull(sum(attributedConversions7dSameSKU),0) '7 Day Advertised SKU Units',
-			ifnull(sum(attributedConversions7d) - sum(attributedConversions7dSameSKU),0) '7 Day Other SKU Units',
-			ifnull(sum(attributedSales7dSameSKU),0) '7 Day Advertised SKU Sales',
-			ifnull(sum(attributedSales7d) - sum(attributedSales7dSameSKU),0) '7 Day Other SKU Sales'
+			else ifnull((sum(cost) / sum(sales)),0) end 'Total Advertising Cost of Sales (ACoS)',
+			ifnull((sum(sales) / sum(cost)),0) 'Total Return on Advertising Spend (RoAS)',
+			ifnull(sum(purchases),0) '7 Day Total Orders',
+			ifnull(sum(unitsSold),0) '7 Day Total Units',
+			ifnull((sum(purchases) / sum(clicks)),0) '7 Day Conversion Rate',
+			ifnull(sum(unitsSold) ,0) '7 Day Other SKU Units',
+			ifnull(sum(sales) ,0) '7 Day Other SKU Sales'
 		from      t_amz_adv_rpt2_hsa_product_targets t
-		left join t_amz_adv_rpt2_hsa_product_targets_attributed d on d.targetId=t.targetId and d.bydate=t.bydate
+		left join t_amz_adv_rpt2_hsa_product_targets_attributed_all d on d.targetId=t.targetId and d.bydate=t.bydate
 		left join t_amz_adv_rpt2_hsa_product_targets_attributed_same sa on sa.targetId=t.targetId and sa.bydate=t.bydate
 		left join t_amz_adv_product_targe_hsa pd on pd.adGroupId=t.adGroupId and pd.campaignId=t.campaignId and pd.targetId=t.targetId and pd.profileid=t.profileid
 		left join t_amz_adv_adgroups ad on ad.adGroupId=t.adGroupId and ad.campaignId=t.campaignId and t.profileid=ad.profileid
@@ -356,21 +352,19 @@
 		select sum(impressions) impressions, sum(clicks) clicks, sum(cost) cost,
 			ifnull((sum(cost) / sum(clicks)),0) avgcost,
 			ifnull((sum(clicks) / sum(impressions)),0) CTR,
-			case when ifnull(sum(cost),0)>0 and ifnull(sum(attributedSales14d),0)=0
+			case when ifnull(sum(cost),0)>0 and ifnull(sum(sales),0)=0
 			then 10000000000
-			else ifnull((sum(cost) / sum(attributedSales14d)),0)
+			else ifnull((sum(cost) / sum(sales)),0)
 			end ACOS,
-			ifnull((sum(attributedSales14d) / sum(cost)),0) ROAS,
-			ifnull(sum(attributedSales14d),0) sumSales,
-			ifnull(sum(attributedConversions14d),0) sumUnits,
-			ifnull((sum(attributedConversions14d) / sum(clicks)),0) CSRT,
-			ifnull(sum(attributedConversions14d) - sum(attributedConversions14dSameSKU),0) attributedConversions,
-			ifnull(sum(attributedConversions14dSameSKU),0) attributedConversionsSameSKU,
-			ifnull(sum(attributedConversions14d),0) attributedUnitsOrdered,
-			ifnull(sum(attributedSales14dSameSKU),0) attributedSalesSameSKU,
-			ifnull(sum(attributedSales14d) - sum(attributedSales14dSameSKU),0) attributedSales
+			ifnull((sum(sales) / sum(cost)),0) ROAS,
+			ifnull(sum(sales),0) sumSales,
+			ifnull(sum(unitsSold),0) sumUnits,
+			ifnull((sum(purchases) / sum(clicks)),0) CSRT,
+			ifnull(sum(purchases) ,0) attributedConversions,
+			ifnull(sum(unitsSold),0) attributedUnitsOrdered,
+			ifnull(sum(sales),0) attributedSales
 		from t_amz_adv_rpt2_hsa_product_targets v
-		LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_attributed d ON d.targetId = v.targetId AND d.bydate = v.bydate
+		LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_attributed_all d ON d.targetId = v.targetId AND d.bydate = v.bydate
 		LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_brand bd ON bd.targetId = v.targetId AND bd.bydate = v.bydate
 		LEFT JOIN t_amz_adv_rpt2_hsa_product_targets_video vd ON vd.targetId = v.targetId AND vd.bydate = v.bydate
 		left join t_amz_adv_product_targe_hsa t on t.targetId = v.targetId and t.adGroupId= v.adGroupId  and t.campaignId = v.campaignId and t.profileid = v.profileid

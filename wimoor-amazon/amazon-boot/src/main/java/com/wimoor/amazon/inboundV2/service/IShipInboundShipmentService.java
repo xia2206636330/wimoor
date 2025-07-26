@@ -99,4 +99,6 @@ public interface IShipInboundShipmentService extends IService<ShipInboundShipmen
 	void handleShipmentV2Trace(ShipInboundShipment shipmentV2);
 
     void handlerResult(AmazonAuthority auth, Marketplace market, GetShipmentsResponse result);
+
+    void ignoreShipment(UserInfo user, String shipmentid);
 }

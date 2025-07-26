@@ -86,6 +86,7 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 
 
 	@Override
+	@CacheEvict(value = { "AmzAdvAuthorityCache" }, allEntries = true)
 	public synchronized int updateAll(AmzAdvAuth entity) throws BizException {
 		return super.updateAll(entity);
 	}
@@ -209,9 +210,11 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 			if (StringUtil.isNotEmpty(response)) {
 				com.alibaba.fastjson.JSONObject a = com.alibaba.fastjson.JSON.parseObject(response);
 				Object access_token = a.get("access_token");
-				if (access_token != null)
+				if (access_token != null){
 					advauth.setAccessToken(access_token.toString());
-				this.updateNotNull(advauth);
+				}
+				advauth.setDisableTime(null);
+				this.updateAll(advauth);
 				return advauth;
 			}
 		}
@@ -265,10 +268,12 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 			advauth.setCode(code);
 			advauth.setShopid(group.getShopid());
 			advauth.setCreator(group.getCreator());
+			advauth.setCreatetime(new Date());
 			advauth.setGroupid(groupid);
 			advauth.setOpttime(new Date());
 			advauth.setRegion(region);
 			advauth.setDisable(false);
+			advauth.setDisableTime(null);
 			AmzAdvAuth old = getAdvAuthDisable(groupid, region);
 			if (old == null) {
 				advauth.setCreatetime(advauth.getOpttime());
@@ -277,7 +282,7 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 				return "绑定成功";
 			} else {
 				advauth.setId(old.getId());
-				this.updateNotNull(advauth);
+				this.updateAll(advauth);
 				captureProfiles(groupid, region);
 				return "绑定成功";
 			}
@@ -376,6 +381,8 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 						amzAdvProfile.setAdvauthid(advauth.getId());
 						amzAdvProfile.setTimezone(timezone);
 						amzAdvProfile.setOpttime(new Date());
+						amzAdvProfile.setErrorDay(null);
+						amzAdvProfile.setErrorLog(null);
 						amzAdvProfile.setType(type);
 						amzAdvProfile.setDailyBudget(dailyBudget);
 						if (amzAdvProfileMapper.existsWithPrimaryKey(profileId)) {
@@ -393,7 +400,6 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 					 Thread thread = new Thread(new Runnable() {
 							public void run() {
 								for (AmzAdvProfile item : addList) {
-									iAmzAdvSnapshotHandlerService.requestSnapshotByProfile(item, advauth);
 									iAmzAdvSnapshotHandlerService.requestStoreBrand(item);
 								}
 							}

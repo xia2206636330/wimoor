@@ -101,9 +101,24 @@
 	</if>
 	AND  t.byday =#{toDate,jdbcType=CHAR} 
   </select>
- 
+
+	<update id="summaryInvtoDay"  >
+		replace into `t_erp_inventory_his_day`(`shopid`,`warehouseid`,`materialid`,`byday`,`inbound`,`fulfillable`,`outbound`,`operator`,`opttime`)
+		select iv.`shopid`,iv.`warehouseid`,iv.`materialid`,max(CURDATE()) `byday` ,
+			   sum(case when     iv.`status` like 'inbound%'
+							then iv.`quantity` else 0 end ) `inbound`,
+			   sum(case when (iv.`status`='fulfillable')
+							then iv.quantity else 0 end) `fulfillable`,
+			   sum(case when  iv.`status` like 'outbound%'
+							then iv.`quantity` else 0 end) `outbound`,
+			   MAX(iv.`operator`) `operator`,
+			   MAX(iv.`opttime`) `opttime`
+		FROM   `t_erp_inventory` iv
+		WHERE iv.`quantity`>0
+		group by iv.`shopid`,iv.`warehouseid`,iv.`materialid`
+	</update>
 	<insert id="summaryInvEveryDay" parameterType="java.lang.String">
-	  replace into t_erp_inventory_his_day(shopid,warehouseid,materialid,byday,inbound,fulfillable,outbound,operator,opttime)
+	    replace into t_erp_inventory_his_day(shopid,warehouseid,materialid,byday,inbound,fulfillable,outbound,operator,opttime)
 		SELECT* FROM (
 		select iv.shopid,iv.warehouseid,iv.materialid,#{byday,jdbcType=CHAR} `byday` ,
 		      	sum(case when   POSITION('inbound' IN iv.`status` )

@@ -79,7 +79,8 @@
 			   ifnull(inv.quantity,0) inventoryqty,
  			   ifnull(cs.amount,0) units,
  			   ifnull(ci.quantity,0) residue,
- 			   msub.id materialid
+ 			   msub.id materialid,
+		      cs.materialid mainmid
 		from   t_erp_material m 
 		left join t_erp_material_consumable cs on cs.materialid=m.id
 		left join t_erp_material msub on cs.submaterialid = msub.id

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.wimoor.erp.warehouse.pojo.dto.WarehouseDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,8 @@ import com.wimoor.common.GeneralUtil;
 import com.wimoor.common.service.ISerialNumService;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.api.AdminClientOneFeignManager;
-import com.wimoor.erp.assembly.mapper.AssemblyFormMapper;
-import com.wimoor.erp.assembly.pojo.entity.AssemblyForm;
+import com.wimoor.erp.material.mapper.AssemblyFormMapper;
+import com.wimoor.erp.material.pojo.entity.AssemblyForm;
 import com.wimoor.erp.common.pojo.entity.ERPBizException;
 import com.wimoor.erp.inventory.mapper.InventoryMapper;
 import com.wimoor.erp.inventory.pojo.entity.Inventory;
@@ -193,70 +194,91 @@ public class WarehouseServiceImpl extends  ServiceImpl<WarehouseMapper,Warehouse
 	public Integer saveScrap(String wname, String sernum, String parentid) {
 		return this.baseMapper.saveScrap(wname, sernum, parentid);
 	}
+   public String checkDeleteWarehouse(String id){
+	   String message="";
+	   Warehouse warehouse = this.baseMapper.selectById(id);
+	   if (warehouse != null) {
+		   if (warehouse.getParentid() != null) {
+			   QueryWrapper<Warehouse> queryWrapperWarehouse = new QueryWrapper<Warehouse>();
+			   queryWrapperWarehouse.eq("parentid", warehouse.getParentid());
+			   queryWrapperWarehouse.eq("disabled", false);
+			   List<Warehouse> wBrotherlist = this.baseMapper.selectList(queryWrapperWarehouse);
+			   if (wBrotherlist != null && wBrotherlist.size() == 1) {
+				   message = message + "仓库【"+warehouse.getName()+"】中至少需要一个仓位！";
+			   }
+			   QueryWrapper<Inventory> queryWrapperInventory = new QueryWrapper<Inventory>();
+			   queryWrapperInventory.eq("warehouseid", warehouse.getId());
+			   List<Inventory> stocklist = inventoryMapper.selectList(queryWrapperInventory);
+			   if (stocklist != null && stocklist.size() > 0) {
+				   for (Inventory item : stocklist) {
+					   if (item.getQuantity() > 0) {
+						   message = message.equals("") ? message + "该仓库【"+warehouse.getName()+"】还存在着产品库存！" : message + " , 该仓库【"+warehouse.getName()+"】还存在着产品库存！";
+					  		break;
+					   }
+				   }
+			   }
+		   } else {
+			   QueryWrapper<Warehouse> queryWrapper = new QueryWrapper<Warehouse>();
+			   queryWrapper.eq("parentid", warehouse.getId());
+			   List<Warehouse> wlist = this.baseMapper.selectList(queryWrapper);
+			   for (int i = 0; i < wlist.size(); i++) {
+				   Warehouse subwarehouse = wlist.get(i);
+				   List<AssemblyForm> asseList = assemblyFormMapper.getAssemblyFormByWarehouseid(subwarehouse.getId());
+				   if (asseList != null && asseList.size() > 0) {
+					   message = message.equals("") ? message + "该仓库【"+warehouse.getName()+"】还有组装单！" : message + " , 该仓库【"+warehouse.getName()+"】还有组装单！";
+				   }
+				   List<ChangeWhForm> changeList = changeWhFormMapper.getChangeWhFormByWarehouseid(subwarehouse.getId());
+				   if (changeList != null && changeList.size() > 0) {
+					   message = message.equals("") ? message + "该仓库【"+warehouse.getName()+"】还有换货单！" : message + " , 该仓库【"+warehouse.getName()+"】还有换货单！";
+				   }
+				   List<DispatchForm> dispatchList = dispatchFormMapper.getDispatchFormByWarehouseid(subwarehouse.getId());
+				   if (dispatchList != null && dispatchList.size() > 0) {
+					   message = message.equals("") ? message + "该仓库【"+warehouse.getName()+"】还有调库单！" : message + " , 该仓库【"+warehouse.getName()+"】还有调库单！";
+				   }
+				   QueryWrapper<Inventory> queryWrapperInventory2 = new QueryWrapper<Inventory>();
+				   queryWrapperInventory2.eq("warehouseid", subwarehouse.getId());
+				   List<Inventory> incList = inventoryMapper.selectList(queryWrapperInventory2);
+				   if (incList != null && incList.size() > 0) {
+					   for (Inventory item : incList) {
+						   if (item.getQuantity() > 0) {
+							   message = message.equals("") ? message + "该仓库【"+warehouse.getName()+"】还存在着产品库存！" : message + " , 该仓库【"+warehouse.getName()+"】还存在着产品库存！";
+							   break;
+						   }
+					   }
+				   }
+				   if (StrUtil.isNotBlank(message)) {
+					   break;
+				   }
+			   }
+		   }
+	   }
+        return message;
+   }
 
-	// 同时删除父亲的数据和同级的数据
-	public Integer deleteInfoById(String id) throws ERPBizException {
-		int result = 0;// 总操作条数
-		// 父亲(找到父亲的孩子里,是否有inventory或者plan在用它,有则不能disabled)
-		Warehouse warehouse = this.baseMapper.selectById(id);
-		if (warehouse != null) {
-			QueryWrapper<Warehouse> queryWrapper = new QueryWrapper<Warehouse>();
-			queryWrapper.eq("parentid", warehouse.getId());
-			List<Warehouse> wlist = this.baseMapper.selectList(queryWrapper);
-			if(warehouse.getParentid()!=null) {
-				QueryWrapper<Warehouse> queryWrapperWarehouse = new QueryWrapper<Warehouse>();
-				queryWrapperWarehouse.eq("parentid", warehouse.getParentid());
-				queryWrapperWarehouse.eq("disabled",false);
-				List<Warehouse> wBrotherlist = this.baseMapper.selectList(queryWrapperWarehouse);
-				if (wBrotherlist != null && wBrotherlist.size()== 1) {
-					throw new ERPBizException("仓库中至少需要一个仓位！");
-				}
-			}
-		
-			QueryWrapper<Inventory> queryWrapperInventory = new QueryWrapper<Inventory>();
-			queryWrapperInventory.eq("warehouseid", warehouse.getId());
-			List<Inventory> stocklist = inventoryMapper.selectList(queryWrapperInventory);
-			if (stocklist != null && stocklist.size() > 0) {
-				for(Inventory item:stocklist) {
-					if(item.getQuantity()>0) {
-						throw new ERPBizException("该仓库还存在着产品库存！");
-					}
-				}
-			}
-			for (int i = 0; i < wlist.size(); i++) {
-				Warehouse subwarehouse = wlist.get(i);
-				List<AssemblyForm> asseList = assemblyFormMapper.getAssemblyFormByWarehouseid(subwarehouse.getId());
-				if (asseList != null && asseList.size() > 0) {
-					throw new ERPBizException("该仓库还有产品库存！");
-				}
-				List<ChangeWhForm> changeList = changeWhFormMapper.getChangeWhFormByWarehouseid(subwarehouse.getId());
-				if (changeList != null && changeList.size() > 0) {
-					throw new ERPBizException("该仓库还有产品库存！");
-				}
-				List<DispatchForm> dispatchList = dispatchFormMapper.getDispatchFormByWarehouseid(subwarehouse.getId());
-				if (dispatchList != null && dispatchList.size() > 0) {
-					throw new ERPBizException("该仓库还有产品库存！");
-				}
-				QueryWrapper<Inventory> queryWrapperInventory2 = new QueryWrapper<Inventory>();
-				queryWrapperInventory2.eq("warehouseid", subwarehouse.getId());
-				List<Inventory> incList = inventoryMapper.selectList(queryWrapperInventory2);
-				if (incList != null && incList.size() > 0) {
-					throw new ERPBizException("该仓库还有产品库存！");
-				}
-				wlist.get(i).setDisabled(true);
-				this.baseMapper.updateById(subwarehouse);
-				result += 1;
-			}
-			warehouse.setDisabled(true);
-			if(warehouse.getIsdefault()&&warehouse.getFtype().equals("self_usable")) {
-				 throw new ERPBizException("默认仓位不支持删除，请将其它正品仓位设置为默认之后再删除此仓位。");
-			}
-			this.baseMapper.updateById(warehouse);
-			
-			result += 1;
-		}
-		return result;
-	}
+	   // 同时删除父亲的数据和同级的数据
+	   public Integer deleteInfoById(String id) throws ERPBizException {
+		   int result = 0;// 总操作条数
+		   // 父亲(找到父亲的孩子里,是否有inventory或者plan在用它,有则不能disabled)
+		   Warehouse warehouse = this.baseMapper.selectById(id);
+		   if (warehouse != null) {
+			   QueryWrapper<Warehouse> queryWrapper = new QueryWrapper<Warehouse>();
+			   queryWrapper.eq("parentid", warehouse.getId());
+			   List<Warehouse> wlist = this.baseMapper.selectList(queryWrapper);
+			   for (int i = 0; i < wlist.size(); i++) {
+				   Warehouse subwarehouse = wlist.get(i);
+				   subwarehouse.setDisabled(true);
+				   this.baseMapper.updateById(subwarehouse);
+				   result += 1;
+			   }
+			   warehouse.setDisabled(true);
+			   if(warehouse.getIsdefault()&&warehouse.getFtype().equals("self_usable")) {
+				   throw new ERPBizException("默认仓位不支持删除，请将其它正品仓位设置为默认之后再删除此仓位，可以直接删除仓库。");
+			   }
+			   this.baseMapper.updateById(warehouse);
+			   result += 1;
+		   }
+		   return result;
+	   }
 
 	public Integer saveMyware(Warehouse wh) throws ERPBizException {
 		QueryWrapper<Warehouse> queryWrapper = new QueryWrapper<Warehouse>();
@@ -637,8 +659,12 @@ public class WarehouseServiceImpl extends  ServiceImpl<WarehouseMapper,Warehouse
 		return this.baseMapper.getUUID();
 	}
 
-	@Cacheable(value = "warehosueCache" )
-	public IPage<Warehouse> findByCondition(Page<?> page,String search, String shopid, String ftype,String parentid ) {
+	public IPage<Warehouse> findByCondition(UserInfo userinfo , WarehouseDTO dto ) {
+		Page<?> page=dto.getPage();
+		String search=dto.getSearch();
+		String shopid=userinfo.getCompanyid();
+		String ftype=dto.getFtype();
+		String parentid=dto.getParentid();
 		if(GeneralUtil.isEmpty(search)) {
 			search = null;
 		}else {
@@ -647,7 +673,12 @@ public class WarehouseServiceImpl extends  ServiceImpl<WarehouseMapper,Warehouse
 		if(StrUtil.isBlankOrUndefined(parentid)) {
 			parentid=null;
 		}
-		return this.baseMapper.findByCondition(page,search,shopid,ftype,parentid);
+		if(StrUtil.isNotBlank(dto.getShowhide())){
+			dto.setShowhide( "1");
+		}else{
+			dto.setShowhide(null);
+		}
+		return this.baseMapper.findByCondition(page,search,shopid,ftype,parentid,dto.getShowhide());
 	}
 
 	@Override
@@ -656,6 +687,6 @@ public class WarehouseServiceImpl extends  ServiceImpl<WarehouseMapper,Warehouse
 		// TODO Auto-generated method stub
 		return this.baseMapper.getOverseaWarehouse(shopid,ftype, groupid, country);
 	}
- 
- 
+
+
 }

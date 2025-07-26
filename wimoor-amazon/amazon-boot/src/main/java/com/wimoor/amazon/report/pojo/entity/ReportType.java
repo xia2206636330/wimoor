@@ -35,6 +35,8 @@ public class ReportType {
 	public static final String InventorySummaryViewReport = "GET_LEDGER_SUMMARY_VIEW_DATA";
 	public static final String FbaReimbursementsFeeReport="GET_FBA_REIMBURSEMENTS_DATA";
 	public static final String BrandAnalyticsSearchTermsReport = "GET_BRAND_ANALYTICS_SEARCH_TERMS_REPORT";
+	public static final String FBAVatTransactionReport="GET_VAT_TRANSACTION_DATA";
+	public static final String FBAEPRMonthlyReport="GET_EPR_MONTHLY_REPORTS";
 	public static Set<String> set=null;
 		public static Set<String> getSingleReport(){
 			if(set==null) {
@@ -42,6 +44,7 @@ public class ReportType {
 				set.add(ReportType.SettlementReport);
 				set.add(ReportType.InventoryReport);
 				set.add(ReportType.FbaFeeReport);
+				set.add(ReportType.ProductListings);
 				set.add(ReportType.OrdersByLastUpdateReport);
 			}
 			return set;

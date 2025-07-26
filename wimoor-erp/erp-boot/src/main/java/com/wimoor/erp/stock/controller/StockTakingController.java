@@ -453,6 +453,30 @@ public class StockTakingController {
 					}
 				return Result.success("ok");
 	 }
+
+	@PostMapping(value = "/uploadBaseInfoFileSimple",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public Result<List<Map<String,Object>>> uploadBaseInfoFileSimpleAction(@RequestParam("file")MultipartFile file,@RequestParam("warehouseid")String warehouseid)  {
+		UserInfo user=UserInfoContext.get();
+		if (file != null) {
+			try {
+				InputStream inputStream = file.getInputStream();
+				Workbook workbook = WorkbookFactory.create(inputStream);
+				List<Map<String,Object>>  result = stockTakingService.uploadStockTakingFileByWarehouse(user, workbook, warehouseid);
+				workbook.close();
+				return Result.success(result);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new BizException("文件读写错误");
+			} catch (EncryptedDocumentException e) {
+				e.printStackTrace();
+				throw new BizException("文件解码错误");
+			} catch (InvalidFormatException e) {
+				e.printStackTrace();
+				throw new BizException("文件解析错误");
+			}
+		}
+		return Result.success();
+	}
 		    
 	
 	@GetMapping(value = "/downloadStockingList")
@@ -477,5 +501,29 @@ public class StockTakingController {
 			e.printStackTrace();
 			throw new BizException("文件解码错误");
 		} 
+	}
+
+	@GetMapping(value = "/downloadWarehouseList")
+	public void downloadWarehouseListAction(String warehouseid, HttpServletResponse response) {
+		Map<String, Object> maps = stockTakingService.selectAllStocktakingByWarehouseId(warehouseid);
+		try {
+			// 创建新的Excel工作薄
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			response.setContentType("application/force-download");// 设置强制下载不打开
+			response.addHeader("Content-Disposition", "attachment;fileName=" + "AllStockTaking" + System.currentTimeMillis() + ".xlsx");// 设置文件名
+			ServletOutputStream fOut = response.getOutputStream();
+			// 将数据写入Excel
+			stockTakingService.getExcelStockAllInfoReport(workbook, maps);
+			workbook.write(fOut);
+			workbook.close();
+			fOut.flush();
+			fOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new BizException("文件读写错误");
+		} catch (EncryptedDocumentException e) {
+			e.printStackTrace();
+			throw new BizException("文件解码错误");
+		}
 	}
 }

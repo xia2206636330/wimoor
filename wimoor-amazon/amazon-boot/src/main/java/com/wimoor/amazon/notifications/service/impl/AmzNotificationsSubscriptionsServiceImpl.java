@@ -141,7 +141,7 @@ public void deleteSubscriptions(String destinationId) {
     	NotificationsApi api = apiBuildService.getNotificationsApi(amazonAuthority);
     	try {
 			DeleteSubscriptionByIdResponse response = api.deleteSubscriptionById(item.getSubscriptionId(),item.getEventFilterType());
-		     System.out.println(response.getErrors().get(0));
+		     System.out.println(response.getErrors().getErrors().get(0));
 		} catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

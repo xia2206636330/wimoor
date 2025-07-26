@@ -8,6 +8,7 @@
     <result column="status" property="status" jdbcType="CHAR" />
     <result column="recordType" property="recordtype" jdbcType="CHAR" />
     <result column="campaignType" property="campaigntype" jdbcType="CHAR" />
+      <result column="expires" property="expires" jdbcType="TIMESTAMP" />
     <result column="opttime" property="opttime" jdbcType="TIMESTAMP" />
     <result column="requesttime" property="requesttime" jdbcType="TIMESTAMP" />
     <result column="treat_number" property="treatnumber" jdbcType="INTEGER" />
@@ -15,7 +16,7 @@
     <result column="log" property="log" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    snapshotId, profileid, region, status, recordType, opttime,campaignType ,requesttime ,treat_number,treat_status,log 
+    snapshotId, profileid, region, status, recordType,expires, opttime,campaignType ,requesttime ,treat_number,treat_status,log
   </sql>
   
   <select id="selectByProfileAndType" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -35,7 +36,7 @@
             and recordType= #{recordType,jdbcType=CHAR}
         </if>
  		and requesttime&gt;=DATE_ADD(now(),INTERVAL -20 HOUR)
-		and treat_number&lt;10
+		and treat_number&lt;4
 		and (status='IN_PROGRESS' or status='SUCCESS' or status='PROCESSING'  or status='COMPLETED')
  		and (treat_status is null or treat_status='error' or treat_status='')
 	limit 200

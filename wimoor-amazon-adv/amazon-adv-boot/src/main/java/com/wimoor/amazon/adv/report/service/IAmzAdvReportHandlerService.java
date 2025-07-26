@@ -15,5 +15,7 @@ public interface IAmzAdvReportHandlerService extends IAmzAdvHttpClientResponseHa
 	public Map<String,Object> getNeedRequestReport(String profileid,String non_segment,String isnow);
 	
 	
-	public void requestReport(); 
+	public void requestReport();
+
+	public void requestProductAdsReport();
 }

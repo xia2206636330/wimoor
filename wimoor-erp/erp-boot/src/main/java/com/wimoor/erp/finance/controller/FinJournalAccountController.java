@@ -1,5 +1,6 @@
 package com.wimoor.erp.finance.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -306,7 +307,7 @@ public class FinJournalAccountController {
 			workbook.close();
 			fOut.flush();
 			fOut.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 

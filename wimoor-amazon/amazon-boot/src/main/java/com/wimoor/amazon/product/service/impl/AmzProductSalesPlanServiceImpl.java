@@ -717,7 +717,9 @@ public List<Map<String, Object>> handlePurchase(PlanDTO dto, List<Map<String, Ob
 		 List<Map<String, Object>> listplanitem = iAmzProductSalesPlanShipItemService.getPlanedItem(dto) ;
 		 if(listplanitem!=null&&listplanitem.size()>0) {
 			 for(Map<String, Object> item:listplanitem) {
-				 mskuplaneditem.put(item.get("vmsku").toString(), item);
+				 if(item.get("vmsku")!=null){
+					 mskuplaneditem.put(item.get("vmsku").toString(), item);
+				 }
 			 }
 		 }
 			 for(Map<String, Object> item:list) {
@@ -869,7 +871,17 @@ public void setShipRecord(Map<String,Object> item,String shopid,String groupid,S
 	    String msku=item.get("msku").toString();
 	    String key=groupid+amazonauthid+marketplaceid+psku+msku;
 	    Map<String, Object> plansku = planmap.get(key);
-	    
+		if(plansku!=null&&plansku.get("subplannum")!=null&&Integer.parseInt(plansku.get("subplannum").toString())>=1){
+			LambdaQueryWrapper<AmzProductSalesPlanShipItem> query=new LambdaQueryWrapper<AmzProductSalesPlanShipItem>();
+			query.eq(AmzProductSalesPlanShipItem::getShopid, dto.getShopid());
+			query.eq(AmzProductSalesPlanShipItem::getGroupid, item.get("groupid").toString());
+			query.eq(AmzProductSalesPlanShipItem::getMarketplaceid,item.get("marketplaceid").toString());
+			query.eq(AmzProductSalesPlanShipItem::getSku, 	item.get("sku").toString());
+			query.eq(AmzProductSalesPlanShipItem::getAmazonauthid, item.get("amazonauthid").toString());
+			query.eq(AmzProductSalesPlanShipItem::getWarehouseid, dto.getWarehouseid());
+			List<AmzProductSalesPlanShipItem> subList = iAmzProductSalesPlanShipItemService.list(query);
+			item.put("subList", subList);
+		}
 	    if(plansku!=null) {
 	    	item.put("subnum",plansku.get("subnum"));
 	    	item.put("aftersalesday",plansku.get("aftersalesday"));

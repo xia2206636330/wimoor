@@ -101,10 +101,14 @@ public class AmzAdvCampaignsSDServiceImpl  extends BaseService<AmzAdvCampaignsSD
 					
 				}
 				if(item.getString("creationDate") != null) {
-					campaigns.setCreationDate(fmt.parse(item.getString("creationDate")));
+					long creationDate_timestamp = Long.parseLong(item.getString("creationDate"));
+					Date creationDate = new Date(creationDate_timestamp);
+					campaigns.setCreationDate(creationDate);
 				}
 				if(item.getString("lastUpdatedDate") != null) {
-					campaigns.setLastUpdatedDate(fmt.parse(item.getString("lastUpdatedDate")));
+					long lastUpdatedDate_timestamp = Long.parseLong(item.getString("lastUpdatedDate"));
+					Date lastUpdatedDate = new Date(lastUpdatedDate_timestamp);
+					campaigns.setLastUpdatedDate(lastUpdatedDate);
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();

@@ -149,6 +149,10 @@ public class ShipInboundTransportationServiceImpl implements IShipInboundTranspo
 //			e.setDimensions(dim);
 //			pallets.add(e);
 //			config.setPallets(pallets);
+			config.setPallets(null);
+			FreightInformation fre=new FreightInformation();
+			fre.setFreightClass("NONE");
+			config.setFreightInformation(fre);
 			list.add(config);
 		}
 		request.setShipmentTransportationConfigurations(list);
@@ -169,10 +173,26 @@ public class ShipInboundTransportationServiceImpl implements IShipInboundTranspo
 		// TODO Auto-generated method stub
 		ShipInboundPlan plan = iShipInboundPlanService.getById(dto.getFormid());
 		AmazonAuthority auth = amazonAuthorityService.selectByGroupAndMarket(plan.getGroupid(), plan.getMarketplaceid());
+		ShipInboundShipment shipment = null;
+		if(StrUtil.isNotBlank(dto.getShipmentid())) {
+			shipment=this.shipInboundShipmentService.getById(dto.getShipmentid());
+		}
 		ListTransportationOptionsResponse response =null;
-	    if(dto.getPaginationToken()==null&&plan.getTransportationToken()==null){
+		String token=null;
+		if( StrUtil.isNotBlank(dto.getPaginationToken())){
+			token=dto.getPaginationToken();
+		}else if(StrUtil.isNotBlank(plan.getTransportationToken())){
+			token=plan.getTransportationToken();
+		}else if(shipment!=null&&StrUtil.isNotBlank(shipment.getTransportationToken())){
+			token=shipment.getTransportationToken();
+		}
+
+	    if(StrUtil.isBlank(token)){
 			LambdaQueryWrapper<ShipInboundPlanTransportationOptions> query=new LambdaQueryWrapper<ShipInboundPlanTransportationOptions>();
 			query.eq(ShipInboundPlanTransportationOptions::getFormid, plan.getId());
+			if(StrUtil.isNotBlank(dto.getShipmentid())){
+				query.eq(ShipInboundPlanTransportationOptions::getShipmentid, dto.getShipmentid());
+			}
 			List<ShipInboundPlanTransportationOptions> translist=shipInboundPlanTransportationOptionsMapper.selectList(query);
 			if(translist!=null&&translist.size()>0){
 				response = new ListTransportationOptionsResponse();
@@ -183,15 +203,12 @@ public class ShipInboundTransportationServiceImpl implements IShipInboundTranspo
 			}
 		}
 		try{
-			if(plan.getTransportationToken()!=null&&dto.getPaginationToken()==null){
-				dto.setPaginationToken(plan.getTransportationToken());
-			}
 			response = iInboundApiHandlerService.listTransportationOptions(auth,
 					                                                       plan.getInboundPlanId(),
 					                                                       dto.getPlacementOptionId(),
 					                                                       dto.getShipmentid(),
 					                                                       dto.getPageSize(),
-					                                                       dto.getPaginationToken());
+					                                                       token);
 			if(response==null){
 				throw new BizException("无法获取到物流信息");
 			}
@@ -203,13 +220,30 @@ public class ShipInboundTransportationServiceImpl implements IShipInboundTranspo
 				o.setOpttime(new Date());
 				o.setTransportationOptionId(option.getTransportationOptionId());
 				o.setPlacementOptionId(plan.getPlacementOptionId());
-				shipInboundPlanTransportationOptionsMapper.insert(o);
+				LambdaQueryWrapper<ShipInboundPlanTransportationOptions> query = new LambdaQueryWrapper<ShipInboundPlanTransportationOptions>();
+				query.eq(ShipInboundPlanTransportationOptions::getTransportationOptionId, o.getTransportationOptionId());
+				query.eq(ShipInboundPlanTransportationOptions::getPlacementOptionId,o.getPlacementOptionId());
+				query.eq(ShipInboundPlanTransportationOptions::getShipmentid, o.getShipmentid());
+				ShipInboundPlanTransportationOptions old = shipInboundPlanTransportationOptionsMapper.selectOne(query);
+				if(old!=null){
+					shipInboundPlanTransportationOptionsMapper.update(o,query);
+				}else{
+					shipInboundPlanTransportationOptionsMapper.insert(o);
+				}
 			}
-			plan.setTransportationToken(response!=null&&response.getPagination()!=null?response.getPagination().getNextToken():null);
-			iShipInboundPlanService.lambdaUpdate()
-					               .eq(ShipInboundPlan::getId, plan.getId())
-					               .set(ShipInboundPlan::getTransportationToken,plan.getTransportationToken())
-					               .update();
+			token=response!=null&&response.getPagination()!=null&&response.getPagination().getNextToken()!=null?response.getPagination().getNextToken():null;
+			if(StrUtil.isNotBlank(dto.getShipmentid())){
+				 this.shipInboundShipmentService.lambdaUpdate()
+						 .eq(ShipInboundShipment::getShipmentid, dto.getShipmentid())
+						 .set(ShipInboundShipment::getTransportationToken,token)
+						 .update();
+			}else{
+				iShipInboundPlanService.lambdaUpdate()
+						.eq(ShipInboundPlan::getId, plan.getId())
+						.set(ShipInboundPlan::getTransportationToken,token)
+						.update();
+			}
+
 
 			return response;
 		}catch(Exception e) {
@@ -218,11 +252,19 @@ public class ShipInboundTransportationServiceImpl implements IShipInboundTranspo
 				if(bize.getMessage().contains("There is an issue with the input")||
 						bize.getMessage().contains("Unable to parse the provided paginationToken")){
 					shipInboundPlanTransportationOptionsMapper.delete(new LambdaQueryWrapper<ShipInboundPlanTransportationOptions>().eq(ShipInboundPlanTransportationOptions::getFormid,plan.getId()));
+					if(shipment!=null && shipment.getTransportationToken()!=null){
+						shipInboundShipmentService.lambdaUpdate()
+								.eq(ShipInboundShipment::getShipmentid, shipment.getShipmentid())
+								.set(ShipInboundShipment::getTransportationToken,null)
+								.update();
+						dto.setPaginationToken(null);
+						return listTransportationOptions(dto);
+					}
 					if(plan.getTransportationToken()!=null){
 						iShipInboundPlanService.lambdaUpdate()
-								               .eq(ShipInboundPlan::getId, plan.getId())
-								               .set(ShipInboundPlan::getTransportationToken,null)
-								               .update();
+								.eq(ShipInboundPlan::getId, plan.getId())
+								.set(ShipInboundPlan::getTransportationToken,null)
+								.update();
 						dto.setPaginationToken(null);
 						return listTransportationOptions(dto);
 					}

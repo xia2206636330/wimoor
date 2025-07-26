@@ -170,15 +170,15 @@
 	</select>
 
 	<select id="selectReturnsListBySKU" resultType="java.util.Map" parameterType="com.wimoor.amazon.orders.pojo.dto.AmazonOrdersReturnDTO">
-		select v.*,v.quantity/(select sum(rt.quantity) from t_orders_report rt where rt.amazonAuthId=v.amazonAuthId
-		                                                            and rt.sales_channel=v.sales_channel
+		select v.*,v.quantity/(select sum(rt.quantity) from t_orders_summary rt where rt.amazonAuthId=v.amazonAuthId
+		                                                            and rt.marketplaceid=v.marketplaceid
 		                                                            and rt.sku=v.sku
 																	and rt.purchase_date >=#{param.startDate,jdbcType=TIMESTAMP}
 																	AND rt.purchase_date &lt;=#{param.endDate,jdbcType=TIMESTAMP}
 		                                                            ) returnrate
 		from (
       SELECT sum(r.quantity) quantity,
-		       m.marketplaceid,
+		       max(ifnull(m.marketplaceid,r.marketplaceid)) marketplaceid,
 		       max(ifnull(p.location,p.url)) image,
 		       max(m.name) marketname,
 		       max(g.name) groupname,

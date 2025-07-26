@@ -165,7 +165,7 @@ public class AmzNotificationsDestinationServiceImpl extends ServiceImpl<AmzNotif
     			 NotificationsApi api = apiBuildService.getNotificationsApiGrantless(amazonAuthority);
 	     			try {
 	     					DeleteDestinationResponse response = api.deleteDestination(item.getDestinationid());
-	     					if(response.getErrors().isEmpty()) {
+	     					if(response.getErrors().getErrors().isEmpty()) {
 	     						this.baseMapper.deleteById(item.getDestinationid());
 	     						return;
 	     					}

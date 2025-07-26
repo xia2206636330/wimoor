@@ -155,7 +155,7 @@ public class AmzFinSettlementFormulaServiceImpl extends ServiceImpl<AmzFinSettle
 		titlemap.put("storagefee", "仓储费");
 		titlemap.put("longTermFee", "长期仓储费");
 		titlemap.put("firstShipment", "货件头程运费");
-		titlemap.put("profit_vat", "预估VAT税费");
+		titlemap.put("profit_vat", "VAT税费");
 		titlemap.put("reimbursementsFee", "赔偿金");
 		
 		
@@ -193,7 +193,7 @@ public class AmzFinSettlementFormulaServiceImpl extends ServiceImpl<AmzFinSettle
 		titlemap.put("shipmentfee", "预估运费");
 		titlemap.put("othersfee", "其它成本");
 		titlemap.put("firstShipment", "货件头程运费");
-		titlemap.put("vat", "VAT税费");
+		titlemap.put("profit_vat", "VAT税费");
 		titlemap.put("itemshopfee", "店铺费用");
 		return titlemap;
 	}

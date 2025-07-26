@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wimoor.erp.change.mapper.PurchaseFormEntryChangeMapper">
+<mapper namespace="com.wimoor.erp.purchase.mapper.PurchaseFormEntryChangeMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.wimoor.erp.change.pojo.entity.PurchaseFormEntryChange">
+    <resultMap id="BaseResultMap" type="com.wimoor.erp.purchase.pojo.entity.PurchaseFormEntryChange">
         <id column="id" property="id" />
         <result column="entryid" property="entryid" />
         <result column="supplierid" property="supplierid" />

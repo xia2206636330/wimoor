@@ -27,7 +27,6 @@ public interface IStockTakingService extends IService<StockTaking> {
 
 	StockTaking  updateStockTakingAndItem(String id, String itemid) throws BizException;
 	IPage<Map<String, Object>> findByCondition(Page<?> page,Map<String, Object> map);
-
 	boolean cancelAction(StockTaking stocktaking) throws BizException;
 
 	Map<String, Object> selectAllStocktakingBySKU(String stockid);
@@ -35,4 +34,9 @@ public interface IStockTakingService extends IService<StockTaking> {
 	List<Map<String, Object>> findStockInv(String wid);
 	public void getExcelStockAllInfoReport(SXSSFWorkbook workbook, Map<String, Object> maps);
 	public void uploadStockTakingFile(UserInfo user,Workbook workbook,String stockid);
+	StockTaking updateTotalProfitAndLoss(StockTaking stockTaking) throws BizException;
+
+    Map<String, Object> selectAllStocktakingByWarehouseId(String warehouseid);
+	List<Map<String,Object>> uploadStockTakingFileByWarehouse(UserInfo user,Workbook workbook,String warehouseid);
+
 }

@@ -244,7 +244,8 @@ public class AmzAdvReportHandlerServiceImpl implements IAmzAdvReportHandlerServi
 	public void readReport(AmzAdvProfile profile,AmzAdvRequest request) {
 		String response = null;
 		try {
-			if(request.getCampaigntype().equals("sp")) {
+			if(request.getCampaigntype().equals("sp")||request.getCampaigntype().equals("sd") || request.getCampaigntype().equals("hsa")
+					|| request.getCampaigntype().equals("sb")) {
 				String url = "/reporting/reports/" + request.getReportid();
 	            response = apiBuildService.amzAdvGet(profile, url);
 			}else {
@@ -396,7 +397,9 @@ public class AmzAdvReportHandlerServiceImpl implements IAmzAdvReportHandlerServi
 		}
 		return true;
 	}
-	  
+
+
+
 
 
 	
@@ -410,6 +413,7 @@ public class AmzAdvReportHandlerServiceImpl implements IAmzAdvReportHandlerServi
 				// TODO Auto-generated method stub
 		        final Date start=new Date();
 		        Example example=new Example(AmzAdvReportRequestType.class);
+				example.createCriteria().andEqualTo("disabled",false);
 				List<AmzAdvReportRequestType> typeList = amzAdvReportRequestTypeMapper.selectByExample(example);
 		        final List<AmzAdvAuth> authlist =advauthlist;
 				        for(AmzAdvReportRequestType type:typeList) {
@@ -426,7 +430,9 @@ public class AmzAdvReportHandlerServiceImpl implements IAmzAdvReportHandlerServi
 										for (AmzAdvProfile profile : profiles) {
 								        	if(checkReport(profile,type.getSegment())) {
 								        		try {
-								        			reportTreat.requestReport(advauth,profile,type);
+													if(!type.getDisabled()){
+														reportTreat.requestReport(advauth,profile,type);
+													}
 								        		}catch(Exception e) {
 								        			e.printStackTrace();
 								        		}
@@ -455,7 +461,62 @@ public class AmzAdvReportHandlerServiceImpl implements IAmzAdvReportHandlerServi
 					AdvUtils.executThreadForAdv(runnables);
 				}
 	}
-	
+
+
+	@Override
+	public void requestProductAdsReport() {
+		List<Runnable> runnables = new ArrayList<Runnable>();
+		List<AmzAdvAuth> advauthlist =amzAdvAuthService.selectLastAuthList();
+		if(advauthlist==null || advauthlist.size()==0){
+			return;
+		}
+		// TODO Auto-generated method stub
+		final Date start=new Date();
+		Example example=new Example(AmzAdvReportRequestType.class);
+		Criteria crit = example.createCriteria();
+		crit.andEqualTo("disabled",false);
+		crit.andEqualTo("reporttype", "productAds");
+		List<AmzAdvReportRequestType> typeList = amzAdvReportRequestTypeMapper.selectByExample(example);
+		final List<AmzAdvAuth> authlist =advauthlist;
+		for(AmzAdvReportRequestType type:typeList) {
+			IAmzAdvReportTreatService reportTreat = SpringUtil.getBean(type.getBean());
+			// TODO Auto-generated method stub
+			for (AmzAdvAuth advauth : authlist) {
+				if (advauth.getDisable()) {
+					continue;
+				}
+				Runnable runnable =new Runnable() {
+					@Override
+					public void run() {
+						List<AmzAdvProfile> profiles = amzAdvAuthService.getAmzAdvProfile(advauth);
+						for (AmzAdvProfile profile : profiles) {
+							try {
+								reportTreat.requestProductAdsReport(advauth,profile,type);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+							if(GeneralUtil.distanceOfHour(start, new Date())>=1) {
+								return;
+							}
+							if(apiBuildService.isBusy()) {
+								try {
+									Thread.sleep(60000);
+								} catch (InterruptedException e2) {
+									// TODO Auto-generated catch block
+									e2.printStackTrace();
+								}
+							}
+						}
+					}
+				};
+				runnables.add(runnable);
+			}
+
+		}
+		if(runnables.size()>0){
+			AdvUtils.executThreadForAdv(runnables);
+		}
+	}
 	 
  
 	 

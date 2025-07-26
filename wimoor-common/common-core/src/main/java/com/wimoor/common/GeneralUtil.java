@@ -1969,6 +1969,9 @@ public class GeneralUtil {
 	public static BigDecimal getIndexBigDecimal(String[] info, int i) {
 		if (info.length > i) {
 			String value = info[i];
+			if(value.contains(".")&&value.contains(",")){
+				value=value.replace(",","");
+			}
 			if (StrUtil.isEmpty(value)) {
 				return null;
 			} else {

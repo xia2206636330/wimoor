@@ -128,6 +128,7 @@
 			item.quantity	quantityincase,
 			p.asin,
 			p.name,
+			p.currency,
 			m.name ,
 		    m.color mcolor,
 		    m.issfg, 
@@ -165,6 +166,7 @@
 		            v.sku,
 		            v.marketplaceid,
 		            auth.groupid,
+		            max(vm.currency) currency,
 		            max(v.id) id,
 		            max(v.asin) asin,
 		            max(v.name) name,
@@ -173,6 +175,7 @@
 					max(v.price) infoprice
 					from t_product_info v
 					left join t_product_in_opt opt on opt.pid = v.id
+					left join t_marketplace vm on vm.marketplaceid=v.marketplaceid
 					left join t_amazon_auth auth on auth.id=v.amazonAuthId
 					left join t_erp_ship_v2_inboundplan p on p.groupid=auth.groupid and p.marketplaceid=v.marketplaceid
 					left join t_erp_ship_v2_inboundshipment s on s.formid=p.id

@@ -24,6 +24,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1177,7 +1179,12 @@ public class OrderManagerServiceImpl implements IOrderManagerService{
 				this.addOrder(oldrecordlist.get(0), orderreport);
 				this.addOrder2(oldrecordlist.get(0), orderreport);
 				this.addOrder3(oldrecordlist.get(0), orderreport);
-				ordersReportMapper.updateById(orderreport);
+				QueryWrapper<OrdersReport> query=new QueryWrapper<OrdersReport>();
+				query.eq("amazonAuthId", orderreport.getAmazonauthid());
+				query.eq("amazon_order_id", orderreport.getAmazonOrderId());
+				query.eq("sku", orderreport.getSku());
+				query.eq("sales_channel", orderreport.getSalesChannel());
+				ordersReportMapper.update(orderreport,query);
 			}
 		}
 		
@@ -1868,7 +1875,23 @@ public class OrderManagerServiceImpl implements IOrderManagerService{
 						list.get(0).setFinancialfee(financialfee);
 					}
 				}
-		
+				for (AmazonOrdersDetailVo map : list){
+					String sku = map.getSku();
+					String amzorderid = orderMain.getAmazonOrderId();
+					OrdersReport ordersReports = ordersReportMapper.selectBySkuOrder(sku,amzorderid);
+					if(ordersReports!=null ){
+						ordersReports.setOrderStatus(orderMain.getOrderStatus());
+						ordersReports.setLastUpdatedDate(orderMain.getLastUpdatedDate());
+						QueryWrapper<OrdersReport> query=new QueryWrapper<OrdersReport>();
+						query.eq("amazonAuthId", ordersReports.getAmazonauthid());
+						query.eq("amazon_order_id", ordersReports.getAmazonOrderId());
+						query.eq("sku", ordersReports.getSku());
+						query.eq("sales_channel", ordersReports.getSalesChannel());
+						ordersReportMapper.update(ordersReports,query);
+
+					}
+				}
+
 			}
 			return list;
 		} else {

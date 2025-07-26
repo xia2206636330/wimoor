@@ -29,7 +29,7 @@ import com.amazon.spapi.model.productpricing.PriceList;
 import com.amazon.spapi.model.productpricing.PriceType;
 import com.amazon.spapi.model.productpricing.Product;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.squareup.okhttp.Call;
+import okhttp3.Call;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.service.IAmazonAuthorityService;
 import com.wimoor.amazon.auth.service.IMarketplaceService;

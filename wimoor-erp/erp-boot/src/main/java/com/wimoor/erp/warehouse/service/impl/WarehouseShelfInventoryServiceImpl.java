@@ -25,7 +25,7 @@ import com.wimoor.common.mvc.BizException;
 import com.wimoor.common.mvc.FileUpload;
 import com.wimoor.common.user.UserInfo;
 import com.wimoor.erp.assembly.pojo.vo.AssemblyVO;
-import com.wimoor.erp.assembly.service.IAssemblyService;
+import com.wimoor.erp.material.service.IAssemblyService;
 import com.wimoor.erp.inventory.pojo.vo.InventoryVo;
 import com.wimoor.erp.inventory.service.IInventoryService;
 import com.wimoor.erp.material.pojo.entity.DimensionsInfo;
@@ -124,6 +124,12 @@ public class WarehouseShelfInventoryServiceImpl extends ServiceImpl<WarehouseShe
 			List<WarehouseShelfInventoryVo> shelfinvVoList = findByMaterial(shopid,warehouse,item.getId());
 			for(WarehouseShelfInventoryVo inv:shelfinvVoList) {
 				inv.setShelfname(iWarehouseShelfService.getAllParentName(inv.getShelfid()));
+				if(inv.getQuantity()!=null){
+					amount=amount-inv.getQuantity();
+					if(amount<=0){
+						amount=0;
+					}
+				}
 			}
 			if(item.getPkgdimensions()!=null) {
 				DimensionsInfo pkgdim = dimensionsInfoService.getById(item.getPkgdimensions());
@@ -153,9 +159,11 @@ public class WarehouseShelfInventoryServiceImpl extends ServiceImpl<WarehouseShe
 			item.setName( m.getName());
 			item.setBoxnum(m.getBoxnum());
 			item.setConList(iMaterialConsumableService.selectConsumableByMainmid(m.getId(),dto.getWarehouseid() ,m.getShopid()));
+
 			if(m!=null&&m.getIssfg()!=null&&m.getIssfg().equals("1")) {
 				List<AssemblyVO> assvolist = assemblyService.selectByMainmid(item.getId());
 				for(AssemblyVO assvo:assvolist) {
+					assvo.setNeedamount(assvo.getSubnumber()*skuvo.getAmount());
 					assvo.setSubamount(assvo.getSubnumber()*amount);
 					Map<String, Object> map = inventoryService.findInvDetailById(assvo.getSubmid(), dto.getWarehouseid(), shopid);
 					if(map!=null) {
@@ -493,8 +501,9 @@ public class WarehouseShelfInventoryServiceImpl extends ServiceImpl<WarehouseShe
     		if(shelfid!=null) {
     			WarehouseShelf  shelf = iWarehouseShelfService.getById(shelfid)  ;
         		param.put("addressid", shelf.getAddressid());
-        		param.put("treepath", shelf.getTreepath());
-        		param.put("shelfid",null);
+        		param.put("treepath",StrUtil.isNotBlank(shelf.getTreepath())? shelf.getTreepath().trim():null);
+				param.put("rootid",shelfid);
+				param.put("shelfid",null);
     		   } else {
     			   param.put("treepath",null);
     		   }
@@ -580,7 +589,7 @@ public class WarehouseShelfInventoryServiceImpl extends ServiceImpl<WarehouseShe
 					String image=fileUpload.getPictureImage(item.getImage());
 					String sku=item.getSku();
 					String name=item.getName();
-					Long quantity = item.getQuantity();
+					Integer quantity = item.getQuantity();
 					if (j==0) {
 						cell.setCellValue(shelfname);
 					}

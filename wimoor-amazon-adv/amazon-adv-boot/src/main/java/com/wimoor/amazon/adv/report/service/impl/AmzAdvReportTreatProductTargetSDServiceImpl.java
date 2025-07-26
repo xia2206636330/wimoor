@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.wimoor.amazon.adv.sd.pojo.*;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -14,11 +15,6 @@ import com.wimoor.amazon.adv.common.pojo.AmzAdvProfile;
 import com.wimoor.amazon.adv.report.pojo.AmzAdvRequest;
 import com.wimoor.amazon.adv.report.service.IAmzAdvReportTreatService;
 import com.wimoor.amazon.adv.sd.dao.AmzAdvReportProductTargeSDMapper;
-import com.wimoor.amazon.adv.sd.pojo.AmzAdvReportProductTargetsSD;
-import com.wimoor.amazon.adv.sd.pojo.AmzAdvReportProductTargetsSDAttributed;
-import com.wimoor.amazon.adv.sd.pojo.AmzAdvReportProductTargetsSDAttributedNew;
-import com.wimoor.amazon.adv.sd.pojo.AmzAdvReportProductTargetsSDAttributedSame;
-import com.wimoor.amazon.adv.sd.pojo.AmzAdvReportProductTargetsSDAttributedView;
 import com.wimoor.common.GeneralUtil;
 @Service("amzAdvReportTreatProductTargetSDService")
 public class AmzAdvReportTreatProductTargetSDServiceImpl extends AmzAdvReportTreatServiceImpl implements IAmzAdvReportTreatService{
@@ -29,23 +25,17 @@ public class AmzAdvReportTreatProductTargetSDServiceImpl extends AmzAdvReportTre
 	public synchronized void treatReport(AmzAdvProfile profile,AmzAdvRequest request, JSONReader jsonReader) {
 		// TODO Auto-generated method stub
 			  List<AmzAdvReportProductTargetsSD> list = new LinkedList<AmzAdvReportProductTargetsSD>();
-			  List<AmzAdvReportProductTargetsSDAttributed> listAttributed = new LinkedList<AmzAdvReportProductTargetsSDAttributed>();
-			  List<AmzAdvReportProductTargetsSDAttributedView> listAttributedView = new LinkedList<AmzAdvReportProductTargetsSDAttributedView>();
-			  List<AmzAdvReportProductTargetsSDAttributedSame> listAttributedSame = new LinkedList<AmzAdvReportProductTargetsSDAttributedSame>();
-			  List<AmzAdvReportProductTargetsSDAttributedNew> listAttributedNew = new LinkedList<AmzAdvReportProductTargetsSDAttributedNew>();
+			  List<AmzAdvReportProductTargetsSDAttributedAll> listAttributed = new LinkedList<AmzAdvReportProductTargetsSDAttributedAll>();
+
 			try {
 				jsonReader.startArray();
 				while (jsonReader.hasNext()) {
 					String elem = jsonReader.readString();
 					JSONObject item = GeneralUtil.getJsonObject(elem);
 					AmzAdvReportProductTargetsSD amzAdvReportProductTarge = new AmzAdvReportProductTargetsSD();
-					AmzAdvReportProductTargetsSDAttributed amzAdvReportProductTargetsSDAttributed = new AmzAdvReportProductTargetsSDAttributed();
-					AmzAdvReportProductTargetsSDAttributedView amzAdvReportProductTargetsSDAttributedView = new AmzAdvReportProductTargetsSDAttributedView();
-					AmzAdvReportProductTargetsSDAttributedSame amzAdvReportProductTargetsSDAttributedSame = new AmzAdvReportProductTargetsSDAttributedSame();
-					AmzAdvReportProductTargetsSDAttributedNew amzAdvReportProductTargetsSDAttributedNew = new AmzAdvReportProductTargetsSDAttributedNew();
-					
+					AmzAdvReportProductTargetsSDAttributedAll amzAdvReportProductTargetsSDAttributed = new AmzAdvReportProductTargetsSDAttributedAll();
 					amzAdvReportProductTarge.setCampaignid(item.getBigInteger("campaignId"));
-					amzAdvReportProductTarge.setTargetid(item.getBigInteger("targetId"));
+					amzAdvReportProductTarge.setTargetid(item.getBigInteger("targetingId"));
 					amzAdvReportProductTarge.setAdgroupid(item.getBigInteger("adGroupId"));
 				 
 
@@ -59,55 +49,104 @@ public class AmzAdvReportTreatProductTargetSDServiceImpl extends AmzAdvReportTre
 					}else {
 						amzAdvReportProductTarge.setBydate(date);
 					}
-					amzAdvReportProductTarge.setOpttime(new Date());
-					amzAdvReportProductTargetsSDAttributed.setTargetid(amzAdvReportProductTarge.getTargetid());
+
+					amzAdvReportProductTargetsSDAttributed.setTargetingId(amzAdvReportProductTarge.getTargetid().toString());
 					amzAdvReportProductTargetsSDAttributed.setBydate(amzAdvReportProductTarge.getBydate());
-					amzAdvReportProductTargetsSDAttributed.setAttributedsales1d(item.getBigDecimal("attributedSales1d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedsales7d(item.getBigDecimal("attributedSales7d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedsales14d(item.getBigDecimal("attributedSales14d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedsales30d(item.getBigDecimal("attributedSales30d"));
+					// 购物车相关字段
+					amzAdvReportProductTargetsSDAttributed.setAddToCart(item.getInteger("addToCart"));
+					amzAdvReportProductTargetsSDAttributed.setAddToCartClicks(item.getInteger("addToCartClicks"));
+					amzAdvReportProductTargetsSDAttributed.setAddToCartRate(item.getBigDecimal("addToCartRate"));
+					amzAdvReportProductTargetsSDAttributed.setAddToCartViews(item.getInteger("addToCartViews"));
+
+// 列表相关字段
+					amzAdvReportProductTargetsSDAttributed.setAddToList(item.getInteger("addToList"));
+					amzAdvReportProductTargetsSDAttributed.setAddToListFromClicks(item.getInteger("addToListFromClicks"));
+					amzAdvReportProductTargetsSDAttributed.setAddToListFromViews(item.getInteger("addToListFromViews"));
+
+// 借阅相关字段
+					amzAdvReportProductTargetsSDAttributed.setQualifiedBorrows(item.getInteger("qualifiedBorrows"));
+					amzAdvReportProductTargetsSDAttributed.setQualifiedBorrowsFromClicks(item.getInteger("qualifiedBorrowsFromClicks"));
+					amzAdvReportProductTargetsSDAttributed.setQualifiedBorrowsFromViews(item.getInteger("qualifiedBorrowsFromViews"));
+					amzAdvReportProductTargetsSDAttributed.setRoyaltyQualifiedBorrows(item.getInteger("royaltyQualifiedBorrows"));
+					amzAdvReportProductTargetsSDAttributed.setRoyaltyQualifiedBorrowsFromClicks(item.getInteger("royaltyQualifiedBorrowsFromClicks"));
+					amzAdvReportProductTargetsSDAttributed.setRoyaltyQualifiedBorrowsFromViews(item.getInteger("royaltyQualifiedBorrowsFromViews"));
+
+// 品牌搜索相关字段
+					amzAdvReportProductTargetsSDAttributed.setBrandedSearches(item.getInteger("brandedSearches"));
+					amzAdvReportProductTargetsSDAttributed.setBrandedSearchesClicks(item.getInteger("brandedSearchesClicks"));
+					amzAdvReportProductTargetsSDAttributed.setBrandedSearchesViews(item.getInteger("brandedSearchesViews"));
+					amzAdvReportProductTargetsSDAttributed.setBrandedSearchRate(item.getBigDecimal("brandedSearchRate"));
+
+// 预算和货币代码
+					amzAdvReportProductTargetsSDAttributed.setCampaignBudgetCurrencyCode(item.getString("campaignBudgetCurrencyCode"));
+
+// 详情页相关字段
+					amzAdvReportProductTargetsSDAttributed.setDetailPageViews(item.getInteger("detailPageViews"));
+					amzAdvReportProductTargetsSDAttributed.setDetailPageViewsClicks(item.getInteger("detailPageViewsClicks"));
+
+// 成本相关字段
+					amzAdvReportProductTargetsSDAttributed.setECPAddToCart(item.getBigDecimal("eCPAddToCart"));
+					amzAdvReportProductTargetsSDAttributed.setECPBrandSearch(item.getBigDecimal("eCPBrandSearch"));
+
+// 展示相关字段
+					amzAdvReportProductTargetsSDAttributed.setImpressionsViews(item.getInteger("impressionsViews"));
+
+// 新品牌相关-详情页
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandDetailPageViewRate(item.getBigDecimal("newToBrandDetailPageViewRate"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandDetailPageViews(item.getInteger("newToBrandDetailPageViews"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandDetailPageViewsClicks(item.getInteger("newToBrandDetailPageViewsClicks"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandECPDetailPageView(item.getInteger("newToBrandECPDetailPageView"));
+
+// 新品牌相关-购买
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandPurchasesPercentage(item.getBigDecimal("newToBrandPurchasesPercentage"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandPurchases(item.getInteger("newToBrandPurchases"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandPurchasesClicks(item.getInteger("newToBrandPurchasesClicks"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandPurchasesRate(item.getBigDecimal("newToBrandPurchasesRate"));
+
+// 新品牌相关-销售
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandSales(item.getBigDecimal("newToBrandSales"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandSalesClicks(item.getInteger("newToBrandSalesClicks"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandSalesPercentage(item.getBigDecimal("newToBrandSalesPercentage"));
+
+// 新品牌相关-销售单位
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandUnitsSold(item.getInteger("newToBrandUnitsSold"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandUnitsSoldClicks(item.getInteger("newToBrandUnitsSoldClicks"));
+					amzAdvReportProductTargetsSDAttributed.setNewToBrandUnitsSoldPercentage(item.getBigDecimal("newToBrandUnitsSoldPercentage"));
+
+// 购买相关字段
+					amzAdvReportProductTargetsSDAttributed.setPurchases(item.getInteger("purchases"));
+					amzAdvReportProductTargetsSDAttributed.setPurchasesClicks(item.getInteger("purchasesClicks"));
+					amzAdvReportProductTargetsSDAttributed.setPurchasesPromoted(item.getInteger("purchasesPromoted"));
+					amzAdvReportProductTargetsSDAttributed.setPurchasesPromotedClicks(item.getInteger("purchasesPromotedClicks"));
+
+// 销售相关字段
+					amzAdvReportProductTargetsSDAttributed.setSales(item.getBigDecimal("sales"));
+					amzAdvReportProductTargetsSDAttributed.setSalesClicks(item.getBigDecimal("salesClicks"));
+					amzAdvReportProductTargetsSDAttributed.setSalesPromoted(item.getBigDecimal("salesPromoted"));
+					amzAdvReportProductTargetsSDAttributed.setSalesPromotedClicks(item.getBigDecimal("salesPromotedClicks"));
+
+// 销售单位相关字段
+					amzAdvReportProductTargetsSDAttributed.setUnitsSold(item.getInteger("unitsSold"));
+					amzAdvReportProductTargetsSDAttributed.setUnitsSoldClicks(item.getInteger("unitsSoldClicks"));
+
+// 视频相关字段
+					amzAdvReportProductTargetsSDAttributed.setVideo5SecondViewRate(item.getBigDecimal("video5SecondViewRate"));
+					amzAdvReportProductTargetsSDAttributed.setVideo5SecondViews(item.getInteger("video5SecondViews"));
+					amzAdvReportProductTargetsSDAttributed.setVideoCompleteViews(item.getInteger("videoCompleteViews"));
+					amzAdvReportProductTargetsSDAttributed.setVideoFirstQuartileViews(item.getInteger("videoFirstQuartileViews"));
+					amzAdvReportProductTargetsSDAttributed.setVideoMidpointViews(item.getInteger("videoMidpointViews"));
+					amzAdvReportProductTargetsSDAttributed.setVideoThirdQuartileViews(item.getInteger("videoThirdQuartileViews"));
+					amzAdvReportProductTargetsSDAttributed.setVideoUnmutes(item.getInteger("videoUnmutes"));
+
+// 可视性相关字段
+					amzAdvReportProductTargetsSDAttributed.setViewabilityRate(item.getBigDecimal("viewabilityRate"));
+					amzAdvReportProductTargetsSDAttributed.setViewClickThroughRate(item.getBigDecimal("viewClickThroughRate"));
+
+// 操作时间
+					amzAdvReportProductTargetsSDAttributed.setOpttime(new Date());
 
 
-					amzAdvReportProductTargetsSDAttributed.setAttributedunitsordered1d(item.getInteger("attributedUnitsOrdered1d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedunitsordered7d(item.getInteger("attributedUnitsOrdered7d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedunitsordered14d(item.getInteger("attributedUnitsOrdered14d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedunitsordered30d(item.getInteger("attributedUnitsOrdered30d"));
 
-					amzAdvReportProductTargetsSDAttributed.setAttributedconversions1d(item.getInteger("attributedConversions1d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedconversions7d(item.getInteger("attributedConversions7d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedconversions14d(item.getInteger("attributedConversions14d"));
-					amzAdvReportProductTargetsSDAttributed.setAttributedconversions30d(item.getInteger("attributedConversions30d"));
-
-
-					amzAdvReportProductTargetsSDAttributedSame.setTargetid(amzAdvReportProductTarge.getTargetid());
-					amzAdvReportProductTargetsSDAttributedSame.setBydate(amzAdvReportProductTarge.getBydate());
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedsales1dsamesku(item.getBigDecimal("attributedSales1dSameSKU"));
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedsales7dsamesku(item.getBigDecimal("attributedSales7dSameSKU"));
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedsales14dsamesku(item.getBigDecimal("attributedSales14dSameSKU"));
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedsales30dsamesku(item.getBigDecimal("attributedSales30dSameSKU"));
-					
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedconversions1dsamesku(item.getInteger("attributedConversions1dSameSKU"));
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedconversions7dsamesku(item.getInteger("attributedConversions7dSameSKU"));
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedconversions14dsamesku(item.getInteger("attributedConversions14dSameSKU"));
-					amzAdvReportProductTargetsSDAttributedSame.setAttributedconversions30dsamesku(item.getInteger("attributedConversions30dSameSKU"));
-
-					
-					
-					amzAdvReportProductTargetsSDAttributedNew.setTargetid(amzAdvReportProductTarge.getTargetid());
-					amzAdvReportProductTargetsSDAttributedNew.setBydate(amzAdvReportProductTarge.getBydate());
-					amzAdvReportProductTargetsSDAttributedNew.setAttributedUnitsOrderedNewToBrand14d(item.getInteger("attributedUnitsOrderedNewToBrand14d"));
-					amzAdvReportProductTargetsSDAttributedNew.setAttributedOrdersNewToBrand14d(item.getInteger("attributedOrdersNewToBrand14d"));
-					amzAdvReportProductTargetsSDAttributedNew.setAttributedSalesNewToBrand14d(item.getBigDecimal("attributedSalesNewToBrand14d"));
-					
-					amzAdvReportProductTargetsSDAttributedView.setTargetid(amzAdvReportProductTarge.getTargetid());
-					amzAdvReportProductTargetsSDAttributedView.setBydate(amzAdvReportProductTarge.getBydate());
-					amzAdvReportProductTargetsSDAttributedView.setViewAttributedConversions14d(item.getInteger("viewAttributedConversions14d"));
-					amzAdvReportProductTargetsSDAttributedView.setViewAttributedSales14d(item.getBigDecimal("viewAttributedSales14d"));
-					amzAdvReportProductTargetsSDAttributedView.setViewAttributedUnitsOrdered14d(item.getInteger("viewAttributedUnitsOrdered14d"));
-					amzAdvReportProductTargetsSDAttributedView.setViewImpressions(item.getInteger("viewImpressions"));
-					if(!amzAdvReportProductTargetsSDAttributedView.isZero()) {
-						listAttributedView.add(amzAdvReportProductTargetsSDAttributedView);
-					}
 					if ((amzAdvReportProductTarge.getImpressions() == null || amzAdvReportProductTarge.getImpressions() == 0)) {
 						continue;
 					}
@@ -115,12 +154,7 @@ public class AmzAdvReportTreatProductTargetSDServiceImpl extends AmzAdvReportTre
 					if(!amzAdvReportProductTargetsSDAttributed.isZero()) {
 						listAttributed.add(amzAdvReportProductTargetsSDAttributed);
 					}
-					if(!amzAdvReportProductTargetsSDAttributedSame.isZero()) {
-						listAttributedSame.add(amzAdvReportProductTargetsSDAttributedSame);
-					}
-					if(!amzAdvReportProductTargetsSDAttributedNew.isZero()) {
-						listAttributedNew.add(amzAdvReportProductTargetsSDAttributedNew);
-					}
+
 					list.add(amzAdvReportProductTarge);
 					if (list.size() >= 2000) {
 						amzAdvReportProductTargeSDMapper.insertBatch(list);
@@ -130,33 +164,13 @@ public class AmzAdvReportTreatProductTargetSDServiceImpl extends AmzAdvReportTre
 						amzAdvReportProductTargeSDMapper.insertBatchAttributed(listAttributed);
 						listAttributed.clear();
 					}
-					if (listAttributedView.size() >= 2000) {
-						amzAdvReportProductTargeSDMapper.insertBatchAttributedView(listAttributedView);
-						listAttributedView.clear();
-					}
-					if (listAttributedSame.size() >= 2000) {
-						amzAdvReportProductTargeSDMapper.insertBatchAttributedSame(listAttributedSame);
-						listAttributedSame.clear();
-					}
-					if (listAttributedNew.size() >= 2000) {
-						amzAdvReportProductTargeSDMapper.insertBatchAttributedNew(listAttributedNew);
-						listAttributedNew.clear();
-					}
+
 				}
 				if (list.size() > 0) {
 					amzAdvReportProductTargeSDMapper.insertBatch(list);
 				}
 				if (listAttributed.size() > 0) {
 					amzAdvReportProductTargeSDMapper.insertBatchAttributed(listAttributed);
-				}
-				if (listAttributedView.size() > 0) {
-					amzAdvReportProductTargeSDMapper.insertBatchAttributedView(listAttributedView);
-				}
-				if (listAttributedSame.size() > 0) {
-					amzAdvReportProductTargeSDMapper.insertBatchAttributedSame(listAttributedSame);
-				}
-				if (listAttributedNew.size() > 0) {
-					amzAdvReportProductTargeSDMapper.insertBatchAttributedNew(listAttributedNew);
 				}
 			} catch(Exception e){
 				e.printStackTrace();

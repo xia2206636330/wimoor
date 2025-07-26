@@ -164,6 +164,68 @@ public class InventoryRecordController {
 			e.printStackTrace();
 		}
 	}
+
+	@PostMapping("/downloadConsumableExcel")
+	public void downloadConsumableExcelAction(@RequestBody InventoryRecordDTO dto, HttpServletResponse response)  {
+		Map<String,Object> maps=new HashMap<String, Object>();
+		UserInfo userinfo = UserInfoContext.get();
+		String warehouseid=dto.getWarehouseid();
+		if(StrUtil.isNotEmpty(warehouseid)) {
+			maps.put("warehouseid", warehouseid);
+		}else {
+			maps.put("warehouseid", null);
+		}
+		String search=dto.getSearch();
+		if(StrUtil.isNotEmpty(search)) {
+			maps.put("search", "%"+search+"%");
+		}else {
+			maps.put("search", null);
+		}
+		String operator=dto.getOperator();
+		if(StrUtil.isNotEmpty(operator)) {
+			maps.put("operator", operator);
+		}else {
+			maps.put("operator", null);
+		}
+		List<String> formtypes=dto.getFormtype();
+		if(formtypes!=null && formtypes.size()>0) {
+			maps.put("formtypeList", formtypes);
+		}else {
+			maps.put("formtypeList", null);
+		}
+		String searchtype=dto.getSearchtype();
+		if(StrUtil.isNotEmpty(searchtype)) {
+			maps.put("searchtype", searchtype);
+		}else {
+			maps.put("searchtype", null);
+		}
+		String fromdatestr=dto.getFromDate();
+		String enddatestr=dto.getToDate();
+		if (StrUtil.isNotEmpty(enddatestr)) {
+			maps.put("fromDate",fromdatestr );
+			maps.put("toDate", enddatestr);
+		} else {
+			maps.put("fromDate",null );
+			maps.put("toDate", null);
+		}
+		maps.put("shopid", userinfo.getCompanyid());
+		List<Map<String, Object>> recordlist = inventoryRecordService.selectConsumableRecord(maps);
+		try {
+			// 创建新的Excel工作薄
+			SXSSFWorkbook workbook = new SXSSFWorkbook();
+			response.setContentType("application/force-download");// 设置强制下载不打开
+			response.addHeader("Content-Disposition", "attachment;fileName=inventoryRecords" + System.currentTimeMillis() + ".xlsx");// 设置文件名
+			ServletOutputStream fOut = response.getOutputStream();
+			// 将数据写入Excel
+			inventoryRecordService.setExcelBookInventoryConsumableReport(workbook,  recordlist);
+			workbook.write(fOut);
+			workbook.close();
+			fOut.flush();
+			fOut.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
     @ApiOperation(value = "本地产品库存每天结余计算")

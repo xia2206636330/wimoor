@@ -398,6 +398,7 @@ public class AmazonAuthorityServiceImpl extends ServiceImpl<AmazonAuthorityMappe
 				oldAuth.setMwsauthtoken(auth.getMwsauthtoken());
 				oldAuth.setRefreshToken(auth.getRefreshToken());
 				oldAuth.setRefreshTokenTime(new Date());
+				oldAuth.setShopId(group.getShopid());
 				oldAuth.setDisable(false);
 				oldAuth.setOpttime(new Date());
 				oldAuth.setStatus(null);
@@ -542,6 +543,9 @@ public class AmazonAuthorityServiceImpl extends ServiceImpl<AmazonAuthorityMappe
        		    	   String countrykey=advcountry.get("marketplaceId").toString()+advcountry.get("sellerId").toString();
        		    	   sellerid=advcountry.get("sellerId").toString();
        		    	   Marketplace marketplace = marketMap.get(marketplaceid);
+						  if(marketplace==null){
+							  continue;
+						  }
        		    	   regionName=marketplace.getRegionName();
        		    	     AmazonMarketVO country =null;
        		    	     region=regions.get(sellerid);

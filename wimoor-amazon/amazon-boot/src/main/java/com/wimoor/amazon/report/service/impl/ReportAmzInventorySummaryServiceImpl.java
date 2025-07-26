@@ -203,12 +203,12 @@ public class ReportAmzInventorySummaryServiceImpl extends ReportServiceImpl{
 					e.printStackTrace();
 				}
 				}
-				new Thread(new Runnable(){
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						iOrdersFulfilledShipmentsFeeService.orderTransFee(amazonAuthority.getId());
-					}}).start();
+//				new Thread(new Runnable(){
+//					@Override
+//					public void run() {
+//						// TODO Auto-generated method stub
+//						iOrdersFulfilledShipmentsFeeService.orderTransFee(amazonAuthority.getId());
+//					}}).start();
 		}
       return mlog;
 	

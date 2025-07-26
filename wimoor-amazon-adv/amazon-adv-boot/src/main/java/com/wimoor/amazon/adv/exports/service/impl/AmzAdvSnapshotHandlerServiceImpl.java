@@ -115,6 +115,10 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 	}
 
 	public void requestSnapshot(String exportType, String campaignType) {//线程数量=20*9
+//		Example example=new Example(AmzAdvAuth.class);
+//		Criteria criteria = example.createCriteria();
+//		criteria.andEqualTo("id", "");
+//		List<AmzAdvAuth> advauthlist = amzAdvAuthService.selectByExample(example);
 		List<AmzAdvAuth> advauthlist = amzAdvAuthService.selectLastAuthList();
 		if(advauthlist==null || advauthlist.size()==0){
 			return;
@@ -151,7 +155,11 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 		return new Runnable() {
 			public void run() {
 				for(Map<String, Object> map : list) {
-					requestSnapshot(map);
+					try{
+						requestSnapshot(map);
+					}catch(Exception e){
+                        e.printStackTrace();
+					}
 				}
 			}
 		};
@@ -178,6 +186,7 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.HOUR, -6);
 			crit.andGreaterThan("requesttime", calendar.getTime());
+			crit.andNotEqualTo("treatstatus","error");
 			int count = amzAdvSnapshotMapper.selectCountByExample(example);
 			if(count>0){
 				continue;
@@ -349,6 +358,7 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 				amzsnap.setStatus(item.getString("status"));
 				amzsnap.setLocation(item.getString("url"));
 				amzsnap.setFilesize(fileSize);
+                amzsnap.setExpires(item.getDate("urlExpiresAt"));
 				if ("COMPLETED".equals(amzsnap.getStatus())) {
 					if (fileSize <= 22) {
 						amzsnap.setTreatstatus("success");
@@ -405,69 +415,36 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 	private boolean treatAmzAdvSnapshot(AmzAdvSnapshot record, AmzAdvProfile advProfile) {
 		String log="";
 		String responseJson=null;
+		boolean result = false;
 		try {
-			  apiBuildService.amzAdvDownloadGZIP(advProfile, record,this);
+			result= apiBuildService.amzAdvDownloadGZIP(advProfile, record,this);
 		} catch (BaseException e1) {
 			if (BaseException.AmazonBusy.equals(e1.getCode())) {
 				throw new BaseException(e1.getMessage());
 			}
 			if(BaseException.Expired.equals(e1.getCode())) {
 				record.setTreatstatus(BaseException.Expired);
+				record.setLog(e1.getMessage());
 				amzAdvSnapshotMapper.updateByPrimaryKey(record);
+				return false;
 			}
 			e1.printStackTrace();
 			log=e1.getMessage();
 		}
 		record.setLog(log);
-		if(log.contains("异常")){
+		if(log.contains("异常")||result==false){
 			record.setTreatstatus("error");
 		} else {
 			record.setTreatstatus("success");
 		}
-		return true;
+		return result;
 	}
 
  
 
  
-	public void requestSnapshotByProfile(AmzAdvProfile profile, String recordType, String campaignType, AmzAdvAuth advauth) {
-		String url = "/" + campaignType + "/" + recordType + "/snapshot";
-		JSONObject map = new JSONObject();
-		map.put("stateFilter", "enabled,paused,archived");
-		profile.setAdvAuth(advauth);
-		String response = apiBuildService.amzAdvPost_V2(profile, url, map.toJSONString());
-		if (StringUtil.isNotEmpty(response)) {
-			JSONObject item = GeneralUtil.getJsonObject(response);
-			AmzAdvSnapshot record = new AmzAdvSnapshot();
-			record.setRequesttime(new Date());
-			record.setOpttime(new Date());
-			record.setProfileid(profile.getId());
-			record.setRegion(profile.getAdvAuth().getRegion());
-			record.setSnapshotid(item.getString("snapshotId"));
-			record.setStatus(item.getString("status"));
-			record.setRecordtype(item.getString("recordType"));
-			record.setCampaigntype(campaignType);
-			amzAdvSnapshotMapper.insert(record);
-		}
-	}
+
 	
-
-	public void requestSnapshotByProfile(AmzAdvProfile profiles, AmzAdvAuth advauth) {
-		if("agency".equals(profiles.getType())){
-			return;
-		}
-		requestSnapshotByProfile(profiles, AdvRecordType.campaigns, CampaignType.sp, advauth);
-		requestSnapshotByProfile(profiles, AdvRecordType.campaigns, CampaignType.hsa, advauth);
-		requestSnapshotByProfile(profiles, AdvRecordType.adGroups, CampaignType.sp, advauth);
-		requestSnapshotByProfile(profiles, AdvRecordType.keywords, CampaignType.sp, advauth);
-		requestSnapshotByProfile(profiles, AdvRecordType.keywords, CampaignType.hsa, advauth);
-		if (!"vendor".equals(profiles.getType())) {
-			requestSnapshotByProfile(profiles, AdvRecordType.productAds, CampaignType.sp, advauth);
-		}
-		requestSnapshotByProfile(profiles, AdvRecordType.negativeKeywords, CampaignType.sp, advauth);
-		requestSnapshotByProfile(profiles, AdvRecordType.campaignNegativeKeywords, CampaignType.sp, advauth);
-		requestSnapshotByProfile(profiles, AdvRecordType.targets, CampaignType.sp, advauth);
-	}
 
 	public void requestStoreBrand() {
 		   List<Runnable> runnables = new ArrayList<Runnable>();
@@ -515,7 +492,7 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 		amzAdvPortfoliosService.amzGetListPortfolios(null, pro, portfoliosParam);
 	}
 	   
-	@Scheduled(cron = "0 0/3 * * * ?")
+
 	public void requestApiSnapshot() {
 		// TODO Auto-generated method stub
 	    if(!"prod".equals(profile)) {return;}

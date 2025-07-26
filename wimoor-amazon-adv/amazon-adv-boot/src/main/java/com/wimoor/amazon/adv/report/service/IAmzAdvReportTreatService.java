@@ -11,4 +11,5 @@ import com.wimoor.amazon.adv.report.pojo.AmzAdvRequest;
 public interface IAmzAdvReportTreatService {
 	void treatReport( AmzAdvProfile profile, AmzAdvRequest request,JSONReader a);
 	void requestReport(AmzAdvAuth advauth, AmzAdvProfile profile, AmzAdvReportRequestType type);
+	void  requestProductAdsReport(AmzAdvAuth advauth, AmzAdvProfile profile, AmzAdvReportRequestType type);
 	}

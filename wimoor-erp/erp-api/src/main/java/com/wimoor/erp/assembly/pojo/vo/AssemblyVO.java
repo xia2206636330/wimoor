@@ -32,9 +32,12 @@ public class AssemblyVO {
 	Integer subnumber;
 	
 	
-	@ApiModelProperty(value = "子产品总需求数量")
+	@ApiModelProperty(value = "子产品实际总需求数量")
 	Integer subamount;
-	
+
+	@ApiModelProperty(value = "子产品初始需求数量")
+	Integer needamount;
+
 	@ApiModelProperty(value = "备注")
 	String remark;
 	

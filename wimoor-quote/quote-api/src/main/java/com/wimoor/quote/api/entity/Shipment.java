@@ -82,6 +82,10 @@ public class Shipment {
     @TableField(exist = false)
     private BigDecimal calweight;
 
+    @ApiModelProperty(value = "材积重量")
+    @TableField(exist = false)
+    private BigDecimal dimweight;
+
     @ApiModelProperty(value = "最小费用")
     @TableField(exist = false)
     private BigDecimal minfee;

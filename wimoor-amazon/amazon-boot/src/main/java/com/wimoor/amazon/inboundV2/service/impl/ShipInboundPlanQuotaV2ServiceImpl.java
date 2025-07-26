@@ -135,9 +135,9 @@ public class ShipInboundPlanQuotaV2ServiceImpl implements IShipInboundPlanQuotaV
 				int row=0;
 				for(MaterialConsumableVO conitem:conList) {
 						if(row==0) {
-							namecell=namecell+item.getSku()+"×"+conitem.getAmount().intValue();
+							namecell=namecell+conitem.getSku()+"×"+conitem.getAmount().intValue();
 						}else {
-							namecell=namecell+"，"+item.getSku()+"×"+conitem.getAmount().intValue();
+							namecell=namecell+"，"+conitem.getSku()+"×"+conitem.getAmount().intValue();
 						}
 						row++;
 				}
@@ -202,7 +202,7 @@ public class ShipInboundPlanQuotaV2ServiceImpl implements IShipInboundPlanQuotaV
 				}
 			}
 			dataLine.add(shelfinv);
-			if(item.getFulfillable()!=null){
+			if(item.getAmount()!=null){
 				dataLine.add(item.getAmount().toString());
 			}else{
 				dataLine.add("0");

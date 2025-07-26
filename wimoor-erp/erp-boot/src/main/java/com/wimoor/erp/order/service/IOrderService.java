@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wimoor.common.pojo.entity.BasePageQuery;
 import com.wimoor.common.user.UserInfo;
+import com.wimoor.erp.common.pojo.entity.ChartLine;
 import com.wimoor.erp.order.pojo.entity.Order;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -17,5 +18,9 @@ public interface IOrderService extends IService<Order> {
     public List<Map<String, Object>> listOrderByCondition(BasePageQuery dto);
     IPage<Map<String, Object>> findMaterialByCondition(Page<?> page, Map<String, String> map);
     List<Map<String, Object>> findMaterialBySelect(Map<String, String> map);
-    String uploadOrder(Sheet sheet, UserInfo user);
+    String uploadOrder(Sheet sheet, UserInfo user,String warehouseid);
+    public String getCountryCode(String countryName);
+    public void summary();
+
+    ChartLine findOrderSummaryBySku(String companyid, String warehouseid, String sku, String daysize, UserInfo userinfo);
 }

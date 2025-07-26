@@ -22,10 +22,7 @@ import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
@@ -133,14 +130,16 @@ public class HttpClientUtil {
 			httpPost.setConfig(getConfig());
 			client = getClient();
 			if (param != null && param.size() > 0) {
-				String imgStr = param.get("asset").toString();
-				String imageType = param.get("imageType").toString();
-				String base64ImgData = imgStr.substring(imgStr.indexOf("base64,") + "base64,".length());// 图片数据
-				 
-				File file = GeneralUtil.getFileByBytes(GeneralUtil.decryptBASE64(base64ImgData), null, param.get("name").toString(), "." + imageType);
+
+				String imgStr =param.get("asset")!=null? param.get("asset").toString():null;
+				String imageType = param.get("imageType")!=null? param.get("imageType").toString():null;
+				String base64ImgData =imgStr!=null? imgStr.substring(imgStr.indexOf("base64,") + "base64,".length()):null;// 图片数据
 				MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 				builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
-			    builder.addBinaryBody("asset",file , ContentType.create("image/"+imageType) , file.getName());
+				if(base64ImgData!=null){
+					File file = GeneralUtil.getFileByBytes(GeneralUtil.decryptBASE64(base64ImgData), null, param.get("name").toString(), "." + imageType);
+					builder.addBinaryBody("asset",file , ContentType.create("image/"+imageType) , file.getName());
+				}
 				for (Map.Entry<String, Object> entry : param.entrySet()) {
 					if (entry.getValue() == null || "asset".equals(entry.getKey()) || "name".equals(entry.getKey())
 							|| "imageType".equals(entry.getKey())) {
@@ -625,6 +624,31 @@ public class HttpClientUtil {
 		}
 		return result;
 	}
-	
 
+	public static String postForm(String url,String formData) {
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
+
+		// 设置请求头为application/x-www-form-urlencoded
+		httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
+		// 创建表单数据字符串，例如：key1=value1&key2=value2
+		StringEntity entity = new StringEntity(formData, "UTF-8");
+		httpPost.setEntity(entity);
+
+		try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+			HttpEntity responseEntity = response.getEntity();
+			String responseString = EntityUtils.toString(responseEntity, "UTF-8");
+			return responseString;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				httpClient.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 }

@@ -11,4 +11,5 @@ public class PackingDTO extends QueryApiPageDTO {
 	String packingOptionId;
 	String packingGroupId;
 	String shipmentid;
+	String arecase;
 }

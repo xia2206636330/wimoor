@@ -242,7 +242,13 @@
 			  (SELECT SUM(i.quantity) FROM  t_erp_ship_v2_inbounditem i
 			  LEFT JOIN t_erp_ship_v2_inboundplan p ON p.id=i.formid
 			  left join t_marketplace m on m.marketplaceid=p.marketplaceid
-			  WHERE p.auditstatus&lt;=7 and p.auditstatus>=2  AND p.amazonauthid=v.amazonauthid
+			  WHERE   p.amazonauthid=v.amazonauthid
+					  and (p.auditstatus=2 or p.auditstatus=3 or p.auditstatus=4
+					  or p.auditstatus=5 or p.auditstatus=8
+					  or p.auditstatus=9 or p.auditstatus=10 or p.auditstatus=11
+					  or ((p.auditstatus=6 or p.auditstatus=7)
+					       and (select max(opttime) from t_erp_ship_v2_inbound_record where formid=p.id AND STATUS=6)>CURDATE())
+					  )
 			    and not exists(
 			                 select s1.shipmentid from t_erp_ship_inboundshipment s1
 			                 left join t_erp_ship_v2_inboundshipment s2 on s2.shipment_confirmation_id=s1.shipmentid

@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -28,11 +29,7 @@ import com.amazon.spapi.model.feeds.CreateFeedSpecification;
 import com.amazon.spapi.model.feeds.Feed;
 import com.amazon.spapi.model.feeds.FeedOptions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
 import com.wimoor.amazon.auth.pojo.entity.Marketplace;
 import com.wimoor.amazon.auth.service.IAmazonAuthorityService;
@@ -294,7 +291,6 @@ public class SubmitfeedServiceImpl implements ISubmitfeedService,IAwsSQSMessageH
 	
 	public String upload(byte[] source, String url,AmzSubmitFeedQueue queue) {
 		    OkHttpClient client = new OkHttpClient();
-		    ApiBuildService.initClient(client);
 		    String contentType =getContentType(queue.getFeedType());
 		    String mlog=null;
 		    try {
