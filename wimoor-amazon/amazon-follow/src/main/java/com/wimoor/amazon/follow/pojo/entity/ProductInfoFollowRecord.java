@@ -58,7 +58,7 @@ public class ProductInfoFollowRecord implements Serializable {
 
     private String timeid;
     
-    private String remark;
+    private String rank;
     
     private String errormsg;
     

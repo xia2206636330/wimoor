@@ -79,5 +79,15 @@ public class ProductInfoFollow implements Serializable {
     private String templateid;
     
     private Date refreshtime;
+
+
+    //下方是自己新加的参数
+    private BigDecimal lowprice;
+
+    private BigDecimal shopprice;
+
+    private Date pricetime;
+
+    private String rank;
     
 }

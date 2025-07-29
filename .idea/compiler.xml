@@ -12,6 +12,7 @@
         <module name="quote-api" />
         <module name="common-storage" />
         <module name="admin-api" />
+        <module name="amazon-follow" />
         <module name="admin-boot" />
         <module name="quote-boot" />
         <module name="common-redis" />
@@ -38,6 +39,7 @@
       <module name="amazon-adv-boot" options="-parameters" />
       <module name="amazon-api" options="-parameters" />
       <module name="amazon-boot" options="-parameters" />
+      <module name="amazon-follow" options="-parameters" />
       <module name="amazon-sp-api" options="-parameters" />
       <module name="common-core" options="-parameters" />
       <module name="common-entity" options="-parameters" />
