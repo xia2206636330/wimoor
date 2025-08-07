@@ -195,6 +195,7 @@ public class ProductCatalogItemServiceImpl implements IProductCatalogItemService
 				includedData.add("relationships");
 				includedData.add("salesRanks");
 				includedData.add("summaries");
+				includedData.add("dimensions");
 				if(skuRefresh.getCatalogRefreshTime()==null) {
 					includedData.add("images");
 				}	
