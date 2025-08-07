@@ -898,6 +898,11 @@ IAmzFinAccountService iAmzFinAccountService;
 			}
 	       	 for(AmazonSettlementOpen item:list) {
 				 String date=DateUtil.format(item.getPostedDate(),"yyyy-MM-dd HH:mm:ss");
+
+				 if (date == null){
+					 item.setPostedDate(old);
+				 }
+
 				 if(date.equals(oldDate)){
 					item.setPostedDate(old);
 				 }

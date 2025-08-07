@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -296,10 +297,10 @@ public class ProfitCfgServiceImpl extends ServiceImpl<ProfitConfigMapper, Profit
 
 	@Override
 	@Caching(evict={@CacheEvict(value = "defaultProfitCfgCache", allEntries = true),
-            @CacheEvict(value = "profitCfgCache", allEntries = true)})
+    @CacheEvict(value = "profitCfgCache", allEntries = true)})
 	public boolean updateById(ProfitConfig entity) {
 		// TODO Auto-generated method stub
-		return this.updateById(entity);
+		return SqlHelper.retBool(this.getBaseMapper().updateById(entity));
 	}
 	
 	

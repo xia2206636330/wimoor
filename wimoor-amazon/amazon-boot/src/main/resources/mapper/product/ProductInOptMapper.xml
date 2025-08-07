@@ -350,9 +350,10 @@
   <select id="findSKUImageForProduct" resultType="java.util.Map" parameterType="java.util.Map">
 
 			select ifnull(opt.msku,info.sku) materialSKU,
-			       max(info.sku) infoSKU,
-				   max(info.image) imageid,
+			      max(info.sku) infoSKU,
+				  max(info.image) imageid,
 				  max(info.name) infoName,
+				  max(info.pageDimensions) dimid,
 				  max(ifnull(pic.location,pic.url)) image,
 				  max(ifnull(dm.length,0)) length,
 				  max(ifnull(dm.length_units,'cm')) lenunit,

@@ -30,6 +30,7 @@
     <file url="file://$PROJECT_DIR$/wimoor-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wimoor-erp/erp-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wimoor-erp/erp-boot/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wimoor-erp/proxy/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wimoor-erp/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wimoor-erp/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wimoor-gateway/src/main/java" charset="UTF-8" />

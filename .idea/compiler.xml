@@ -21,6 +21,7 @@
         <module name="amazon-adv-boot" />
         <module name="common-mvc" />
         <module name="common-mybatis" />
+        <module name="proxy" />
         <module name="common-feishu" />
         <module name="erp-boot" />
         <module name="common-swagger" />
@@ -51,6 +52,7 @@
       <module name="common-swagger" options="-parameters" />
       <module name="erp-api" options="-parameters" />
       <module name="erp-boot" options="-parameters" />
+      <module name="proxy" options="-parameters" />
       <module name="quote-api" options="-parameters" />
       <module name="quote-boot" options="-parameters" />
       <module name="wimoor-gateway" options="-parameters" />
