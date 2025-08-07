@@ -356,7 +356,7 @@ public class AmzAdvSnapshotHandlerServiceImpl implements IAmzAdvSnapshotHandlerS
 				Integer fileSize = item.getInteger("fileSize");
 				amzsnap.setSnapshotid(item.getString("exportId"));
 				amzsnap.setStatus(item.getString("status"));
-				amzsnap.setLocation(item.getString("url"));
+				amzsnap.setLocation(item.getString("url"));//TODO:看这里存入存储桶参数
 				amzsnap.setFilesize(fileSize);
                 amzsnap.setExpires(item.getDate("urlExpiresAt"));
 				if ("COMPLETED".equals(amzsnap.getStatus())) {

@@ -65,6 +65,8 @@ public class OrdersController{
 	IAmzOrderSolicitationsService iAmzOrderSolicitationsService;
 	@Resource
 	ISummaryOrderReportService summaryOrderReportService;
+
+
 	@ApiOperation(value = "抓取产品订单")
 	@GetMapping("/refreshOrder")
 	public Result<String> refreshOrderAction() {

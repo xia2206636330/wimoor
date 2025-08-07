@@ -347,7 +347,7 @@ public class AmzAdvAuthServiceImpl extends BaseService<AmzAdvAuth> implements IA
 		header.put("Amazon-Advertising-API-ClientId", regionObject.getClientId());
 		final AmzAdvAuth advauth = generateToken(groupid, region);
 		if (advauth != null) {
-			header.put("Authorization", advauth.getAccessToken());
+			header.put("Authorization", advauth.getTokenType()+" "+advauth.getAccessToken());
 			advauth.setOpttime(new Date());
 			String response = null;
 			try {

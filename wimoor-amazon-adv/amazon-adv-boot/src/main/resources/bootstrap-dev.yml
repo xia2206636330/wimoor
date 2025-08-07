@@ -9,7 +9,8 @@ spring:
     nacos:
       # 注册中心
       discovery:
-        server-addr: localhost:8848
+        server-addr: 192.168.10.191:8848
+        ip: 192.168.10.191
         namespace: public
       # 配置中心
       config:

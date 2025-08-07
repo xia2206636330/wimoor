@@ -165,7 +165,8 @@ public class AmazonAuthorityController {
 	    @ApiOperation(value = "获取店铺")
 	    @GetMapping("/authSeller")
 	    public Result<AmazonAuthority> authSellerAction(String state,String selling_partner_id,String mws_auth_token,String spapi_oauth_code) {
-	    	AmazonAuthority result = iAmazonAuthorityService.authSeller(state,selling_partner_id,mws_auth_token,spapi_oauth_code);
+	    	//todo:这个方法是亚马逊回调入参接口
+			AmazonAuthority result = iAmazonAuthorityService.authSeller(state,selling_partner_id,mws_auth_token,spapi_oauth_code);
 	    	if(result!=null) {
 	    		wareHouseFBAService.refreshFBA(result.getShopId(), null);
 	    		result.setMwsauthtoken("****");

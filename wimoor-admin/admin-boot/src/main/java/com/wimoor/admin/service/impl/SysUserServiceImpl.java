@@ -184,7 +184,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		SysCompany company = sysCompanyMapper.selectById(companyid);
 		String companyname=null;
 		if(company.getName()!=null) {
-			companyname=company.getName();
+			companyname = company.getName();
 		}
 		return companyname;
     }

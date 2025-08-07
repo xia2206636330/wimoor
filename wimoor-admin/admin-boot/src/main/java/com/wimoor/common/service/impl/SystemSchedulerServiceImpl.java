@@ -76,6 +76,7 @@ public class SystemSchedulerServiceImpl implements SystemSchedulerService {
   
    public void refreshTask() {
 	   deleteAllTask();
+
 	   insertTask();
    }
    public void deleteAllTask() {
