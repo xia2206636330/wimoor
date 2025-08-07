@@ -12,7 +12,6 @@
         <module name="quote-api" />
         <module name="common-storage" />
         <module name="admin-api" />
-        <module name="amazon-follow" />
         <module name="admin-boot" />
         <module name="quote-boot" />
         <module name="common-redis" />
@@ -31,6 +30,9 @@
         <module name="common-core" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="amazon-follow" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
