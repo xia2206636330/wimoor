@@ -1615,29 +1615,9 @@ public class MaterialController {
 			return Result.success(iMaterialService.copyImageForProduct(list, user));
 		}
 		
-	    @GetMapping("/copyDimsForProduct")
-		public Result<List<Map<String, Object>>> copyDimsForProductAction(String sku,String materialid,String dims) {
-			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+	    @PostMapping("/copyDimsForProduct")
+		public Result<List<Map<String, Object>>> copyDimsForProductAction(@RequestBody List<Map<String, Object>> list) {
 			UserInfo user=UserInfoContext.get();
-			String[] skuStr = null;
-			String[] materialidStr = null;
-			String[] dimStr = null;
-			if(StrUtil.isNotEmpty(sku)) {
-				skuStr = sku.split("%,#");
-			}
-			if(StrUtil.isNotEmpty(materialid)) {
-				materialidStr = materialid.split("%,#");
-			}
-			if(StrUtil.isNotEmpty(dims)) {
-				dimStr = dims.split("%,#");
-			}
-			for(int i = 0; i < skuStr.length; i++) {
-				Map<String, Object> maps = new HashMap<String, Object>();
-				maps.put("sku", skuStr[i]);
-				maps.put("materialid", materialidStr[i]);
-				maps.put("dims", dimStr[i]);
-				list.add(maps);
-			}
 			return Result.success(iMaterialService.copyDimsForProduct(list, user));
 		}
 	    

@@ -9,25 +9,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.amazon.spapi.model.catalogitems.*;
+import com.wimoor.amazon.common.mapper.DimensionsInfoMapper;
+import com.wimoor.amazon.common.pojo.entity.DimensionsInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.amazon.spapi.SellingPartnerAPIAA.LWAException;
 import com.amazon.spapi.api.CatalogApi;
 import com.amazon.spapi.client.ApiException;
-import com.amazon.spapi.model.catalogitems.Item;
-import com.amazon.spapi.model.catalogitems.ItemClassificationSalesRank;
-import com.amazon.spapi.model.catalogitems.ItemDisplayGroupSalesRank;
-import com.amazon.spapi.model.catalogitems.ItemImage;
-import com.amazon.spapi.model.catalogitems.ItemImagesByMarketplace;
-import com.amazon.spapi.model.catalogitems.ItemRelationship;
-import com.amazon.spapi.model.catalogitems.ItemRelationships;
-import com.amazon.spapi.model.catalogitems.ItemRelationshipsByMarketplace;
-import com.amazon.spapi.model.catalogitems.ItemSalesRanks;
-import com.amazon.spapi.model.catalogitems.ItemSalesRanksByMarketplace;
-import com.amazon.spapi.model.catalogitems.ItemSearchResults;
-import com.amazon.spapi.model.catalogitems.ItemSummaries;
-import com.amazon.spapi.model.catalogitems.ItemSummaryByMarketplace;
 import com.amazon.spapi.model.catalogitems.ItemImage.VariantEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wimoor.amazon.auth.pojo.entity.AmazonAuthority;
@@ -62,6 +52,8 @@ public class ProductCatalogItemServiceImpl implements IProductCatalogItemService
 	private ProductInOrderMapper productInOrderMapper;
 	@Resource
 	private ProductInOptMapper productInOptMapper;
+	@Resource
+	private DimensionsInfoMapper dimensionsInfoMapper;
 	@Autowired
 	ApiBuildService apiBuildService;
 	@Autowired
@@ -342,7 +334,44 @@ public class ProductCatalogItemServiceImpl implements IProductCatalogItemService
     	       }
            }
        }
-       ItemSummaries summary = result.getSummaries();
+
+
+		ItemDimensions dimensions= result.getDimensions();
+		if(dimensions!=null && !dimensions.isEmpty()){
+			for(ItemDimensionsByMarketplace dim:dimensions){
+				ProductInfo info = iProductInfoService.productOnlyone(auth.getId(),skuRefresh.getSku(),  dim.getMarketplaceId());
+				if(dim.getItem()!=null){
+					DimensionsInfo item=new DimensionsInfo();
+					item.setLength(dim.getItem().getLength().getValue());
+					item.setWidth(dim.getItem().getWidth().getValue());
+					item.setHeight(dim.getItem().getHeight().getValue());
+					item.setWeight(dim.getItem().getWeight().getValue());
+					item.setLengthUnits(dim.getItem().getLength().getUnit());
+					item.setHeightUnits(dim.getItem().getHeight().getUnit());
+					item.setWidthUnits(dim.getItem().getWidth().getUnit());
+					item.setWeightUnits(dim.getItem().getWeight().getUnit());
+					dimensionsInfoMapper.insert(item);
+					info.setItemDimensions(new BigInteger(item.getId()));
+				}
+				if(dim.getPackage()!=null){
+					DimensionsInfo item=new DimensionsInfo();
+					item.setLength(dim.getPackage().getLength().getValue());
+					item.setWidth(dim.getPackage().getWidth().getValue());
+					item.setHeight(dim.getPackage().getHeight().getValue());
+					item.setWeight(dim.getPackage().getWeight().getValue());
+					item.setLengthUnits(dim.getPackage().getLength().getUnit());
+					item.setHeightUnits(dim.getPackage().getHeight().getUnit());
+					item.setWidthUnits(dim.getPackage().getWidth().getUnit());
+					item.setWeightUnits(dim.getPackage().getWeight().getUnit());
+					dimensionsInfoMapper.insert(item);
+					info.setPageDimensions(new BigInteger(item.getId()));
+				}
+				iProductInfoService.updateById(info);
+			}
+		}
+
+
+		ItemSummaries summary = result.getSummaries();
        String imageurl = null;
 	if(summary!=null&&summary.size()>0) {
     	   for(ItemSummaryByMarketplace item:summary) {

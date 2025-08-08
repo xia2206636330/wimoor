@@ -85,10 +85,11 @@
             <appender-ref ref="CONSOLE" />
         </root>
     </springProfile>
-    <!-- 生产环境输出至文件 -->
+    <!-- 生产环境输出至文件和控制台-->
     <springProfile name="prod">
         <root level="INFO">
               <appender-ref ref="FILE" />
+              <appender-ref ref="CONSOLE" />
         </root>
     </springProfile>
 

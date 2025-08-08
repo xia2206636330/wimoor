@@ -933,22 +933,29 @@ public class MaterialServiceImpl extends  ServiceImpl<MaterialMapper,Material> i
 	
 	public List<Map<String, Object>> copyDimsForProduct(List<Map<String, Object>> list, UserInfo user) {
 		List<Map<String, Object>> errorList = new ArrayList<Map<String,Object>>();
-	 	for(Map<String, Object> map : list) {
-			String dimsid = map.get("dims").toString();
-			String materialid = map.get("materialid").toString();
-			Material material = this.getById(materialid);
-			DimensionsInfo dimension = dimensionsInfoService.getById(dimsid);
-			if(material != null && dimension!=null) {
+		for(Map<String, Object> map : list) {
+			String materialSKU = map.get("materialSKU").toString();
+			Material material = this.getBySku(user.getCompanyid(),materialSKU);
+			if( map.get("length")==null
+					|| map.get("width")==null
+					|| map.get("height")==null
+					|| map.get("weight")==null
+					|| map.get("lenunit")==null
+					|| map.get("wunit")==null
+					|| map.get("hunit")==null
+					|| map.get("weunit")==null ){continue;}
+			if(material != null) {
+				Map<String,Object> dimension=new HashMap<String,Object>();
 				String odldimid = material.getPkgdimensions();
 				DimensionsInfo olddim = dimensionsInfoService.getById(odldimid);
-				String lenunits=dimension.getLengthUnits();
-				BigDecimal length = dimension.getLength();
-				String widthunits=dimension.getWidthUnits();
-				BigDecimal width = dimension.getWidth();
-				String heightunits=dimension.getHeightUnits();
-				BigDecimal height = dimension.getHeight();
-				String weightunits=dimension.getWeightUnits();
-				BigDecimal weight = dimension.getWeight();
+				String lenunits=map.get("lenunit").toString();
+				BigDecimal length = new BigDecimal(map.get("length").toString());
+				String widthunits=map.get("wunit").toString();
+				BigDecimal width = new BigDecimal(map.get("width").toString());
+				String heightunits=map.get("lenunit").toString();
+				BigDecimal height =new BigDecimal(map.get("height").toString());
+				String weightunits=map.get("weunit").toString();
+				BigDecimal weight = new BigDecimal(map.get("weight").toString());
 				if(lenunits!=null) {
 					if("inches".equals(lenunits)) {
 						length=length.multiply(new BigDecimal("2.54")).setScale(2, RoundingMode.DOWN);
@@ -1000,7 +1007,7 @@ public class MaterialServiceImpl extends  ServiceImpl<MaterialMapper,Material> i
 			}else {
 				errorList.add(map);
 			}
-	 	}
+		}
 		return errorList;
 	}
 	
