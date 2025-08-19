@@ -27,7 +27,7 @@ public class MaterialStockCycleController {
 	@SystemControllerLog("更新仓库备货周期和最小补货周期")
 	@PostMapping("/updateStockByChange")
 	public Result<Boolean> updateStockAction(@RequestBody StockCycle sc){
-		UserInfo userinfo = UserInfoContext.get();
+		UserInfo userinfo = UserInfoContext.get();//todo:建议修改成批量提交
 		Boolean result=iStockCycleService.updateStockCycle(sc, userinfo);
 		return Result.success(result);
 	}

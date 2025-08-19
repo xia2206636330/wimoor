@@ -198,7 +198,7 @@
 				sum(i.inbound) inbound,sum(i.fulfillable) fulfillable,sum(i.outbound) outbound
 			from t_erp_warehouse w
 			left join t_erp_warehouse wp on w.parentid=wp.id
-			left join t_erp_stockcycle s on w.parentid=s.warehouseid and s.materialid=#{id,jdbcType=CHAR}
+			left join t_erp_stockcycle s on w.id=s.warehouseid and s.materialid=#{id,jdbcType=CHAR}
 			cross join t_erp_material m
 			left join (
 				select shopid,warehouseid,materialid ,

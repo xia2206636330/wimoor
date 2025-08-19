@@ -570,6 +570,7 @@ public class MaterialServiceImpl extends  ServiceImpl<MaterialMapper,Material> i
 			material.setCreator(material.getOperator());
 			material.setCreatedate(new Date());
 		}
+		material.setOtherCost(materialvo.getOtherCost());
 		material.setPrice(materialvo.getPrice());
 		material.setBoxnum(materialvo.getBoxnum());
 		material.setAddfee(materialvo.getAddfee());

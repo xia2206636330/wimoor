@@ -174,7 +174,7 @@
 			<if test="discountto !=null">
 				and t.discount_amount &lt;= #{discountto,jdbcType=DECIMAL}
 			</if>
-			<if test="is_business_order !=null">
+			<if test="is_business_order !=null and is_business_order.size > 0">
 				and
 				(
 				<foreach collection="is_business_order" item="busorderitem"
@@ -345,7 +345,7 @@
 			<if test="discountto !=null">
 				and t.discount_amount &lt;= #{discountto,jdbcType=DECIMAL}
 			</if>
-			<if test="is_business_order !=null">
+			<if test="is_business_order !=null and is_business_order.size > 0 " >
 				and
 				(
 				<foreach collection="is_business_order" item="busorderitem"

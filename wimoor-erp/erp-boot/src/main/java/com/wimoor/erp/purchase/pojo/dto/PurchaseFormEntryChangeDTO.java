@@ -44,6 +44,7 @@ public class PurchaseFormEntryChangeDTO extends BasePageQuery{
 	private Integer totalin;
 
 	private String materialid;
+
 	private Boolean withoutInv;
 
 	private String mainid;

@@ -633,7 +633,7 @@ public class PurchaseFormController {
 	    		@ApiParam("结束日期")@RequestParam String toDate,
 			    @ApiParam("是否包装")@RequestParam String isConsumable,
 	    		HttpServletResponse response) {
-	    	UserInfo userinfo = UserInfoContext.get();
+			UserInfo userinfo = UserInfoContext.get();
 			// 创建新的Excel工作薄
 			SXSSFWorkbook workbook = new SXSSFWorkbook();
 			// 将数据写入Excel

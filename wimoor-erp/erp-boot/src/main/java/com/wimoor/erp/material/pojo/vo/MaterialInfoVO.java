@@ -1,5 +1,6 @@
 package com.wimoor.erp.material.pojo.vo;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,9 @@ public class MaterialInfoVO {
 	
 	@ApiModelProperty(value = "可用库存")
 	Inventory fulfillable;
+
+	@ApiModelProperty(value = "其他费用")
+	private BigDecimal otherCost;
 	
 	@ApiModelProperty(value = "可组装库存")
 	Integer canAssembly;

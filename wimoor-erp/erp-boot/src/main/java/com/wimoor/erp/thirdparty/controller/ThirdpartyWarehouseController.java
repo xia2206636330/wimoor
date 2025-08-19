@@ -86,9 +86,12 @@ public class ThirdpartyWarehouseController {
         }
         return Result.success();
     }
-    @GetMapping("/list")
+        @GetMapping("/list")
     public Result<?> listAction(String apiid){
             ThirdPartyAPI api = thirdPartyApiService.getById(apiid);
+            if (api == null){
+                return Result.failed("无第三方绑定物流权限");
+            }
             List<ThirdPartyWarehouse> result = null;
             if(api.getSystem()!=null&&api.getSystem().equals("K5")){
                 result=warehouseK5Service.listByApi(api);

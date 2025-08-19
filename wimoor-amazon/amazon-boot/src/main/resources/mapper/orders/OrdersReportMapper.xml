@@ -288,10 +288,6 @@
 					</foreach>
 					)
 			 </if>
- 
-
-
-	
 		</where>
 		<if test="bytime =='Daily'">
 			group by date_format(t.purchase_date,'%Y-%m-%d')

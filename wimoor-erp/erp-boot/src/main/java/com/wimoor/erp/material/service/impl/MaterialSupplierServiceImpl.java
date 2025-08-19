@@ -178,7 +178,7 @@ public class MaterialSupplierServiceImpl extends  ServiceImpl<MaterialSupplierMa
   					String supid = item.getSupplierid();
   					boolean isdefault=item.getIsdefault();
   					String procode = item.getProductCode();
-  					BigDecimal costother= item.getOtherCost();
+  					BigDecimal costother= material.getOtherCost();//todo:自己改的
   					String purchaseurl = item.getPurchaseUrl();
   					BigDecimal badRate= item.getBadrate();
   					String remark=item.getRemark();

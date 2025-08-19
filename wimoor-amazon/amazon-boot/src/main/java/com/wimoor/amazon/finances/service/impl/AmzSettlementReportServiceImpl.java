@@ -354,6 +354,9 @@ public class AmzSettlementReportServiceImpl extends ServiceImpl<AmzSettlementRep
  		String fromDate = param.get("fromDate").toString().substring(2, 7);
  		for (Map<String, Object> item : resultLocal) {
  			String name = GeneralUtil.getStr(item.get("name"));
+			 if (name == null){//todo:新加的修改
+				 continue;
+			 }
  			String posted_date = GeneralUtil.getStr(item.get("posted_date"));
  			if (posted_date.equals(fromDate)) {
  				continue;

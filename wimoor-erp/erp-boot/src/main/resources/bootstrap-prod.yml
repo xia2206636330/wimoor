@@ -22,4 +22,9 @@ spring:
         shared-configs[1]: 
           data-id: wimoor-commom-ext
           refresh: true
+
+# application.yml
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
  

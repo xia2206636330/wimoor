@@ -84,7 +84,7 @@ public class PurchaseFinanceFormServiceImpl extends  ServiceImpl<PurchaseFinance
 		if(isformok>0) {
 			//处理feelist和cost ship的payment
 			JSONArray feeArray = null;
-			if(dto.getFeelist().contains("{")) {
+			if(dto.getFeelist().contains("{") && dto.getFeelist() != null) {
 				feeArray=GeneralUtil.getJsonArray("["+dto.getFeelist()+"]");	
 			}
 			//做cost和ship的payment新增

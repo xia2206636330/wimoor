@@ -573,7 +573,7 @@ public class OrdersSumServiceImpl implements IOrdersSumService {
 	if (userinfo.isLimit(UserLimitDataType.operations)||userinfo.isLimit(UserLimitDataType.owner)) {
 		map.put("myself", userinfo.getId());
 	}
-	if (map.get("sku") != null && map.get("sku").toString().trim() != "") {
+	if (map.get("sku") != null && map.get("sku").toString().trim() != "") {//todo:一会儿看
 		result = ordersReportMapper.selectByMutilParameter(map);
 	} else {
 		result = summaryAllMapper.selectByMutilParameter(map);
